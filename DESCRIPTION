@@ -1,0 +1,61 @@
+Package: madis
+Type: Package
+Title: Manipulating and Analyzing Data Interactively with Shiny 
+Version: 1.0.0
+Author: son tron
+Maintainer: son tron <sontron@foxmail.com>
+Description: This pakcage is mainly used for statistical analysis.
+License: MIT
+Encoding: UTF-8
+LazyData: true
+Collate:
+   "Aggregate.R"
+   "Apply.R"
+   "autoVarClass.R"
+   "biVar.R"
+   "coxS.R"
+   "descTab.R"
+   "ggplt.R"       
+   "glmS.R"         
+   "imputeData.R"   
+   "Madis.R"        
+   "predictNodes.R" 
+   "prophetS.R"     
+   "recode.R"       
+   "treeS.R"       
+   "uniVar.R"       
+   "uniVarVec.R"    
+   "validateData.R" 
+   "validateVec.R" 
+RoxygenNote: 6.0.1
+Imports:
+  compiler,
+  ggplot2,
+  shinyAce,
+  shinythemes,
+  shinyWidgets,
+  stringi,
+  reshape2,
+  vcdExtra,
+  pander,
+  rmarkdown,
+  rms,
+  ggfortify,
+  party,
+  partykit,
+  rpart,
+  moonBook,
+  fBasics,
+  plotly,
+  prophet,
+  skimr,
+  showtext,
+  knitr,
+  zoo,
+  xts,
+  Hmisc,
+  mgcv,
+  ROCR,
+  survival,
+  pander
+ByteCompile: true
