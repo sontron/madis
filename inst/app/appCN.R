@@ -18,11 +18,12 @@ library(plotly)
 library(prophet)
 library(reshape2)
 library(skimr)
+library(madis)
 
 options(shiny.maxRequestSize = 500*1024^2)
 
-rm(list=ls())
-gc()
+#rm(list=ls())
+#gc()
 
 
 as.numeric(Sys.time())->seed
@@ -34,7 +35,7 @@ dir.create(wd2)
 setwd(wd2)
 file.copy(paste0(sd,'madisReportTemp.Rmd'),'madisReportTemp.Rmd')
 file.copy(paste0(sd,'header.tex'),'header.tex')
-source(paste0(sd,'script.R'))
+#source(paste0(sd,'script.R'))
 
 rm(list=c('seed','wd','wd2','sd'))
 environment()->envMedstats
@@ -4384,4 +4385,4 @@ ui<-fluidPage(
 )
 
 
-shinyApp(ui = ui, server = server)
+#shinyApp(ui = ui, server = server)
