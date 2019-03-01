@@ -136,7 +136,7 @@ if(is.na(myGlmParms$data)){
     cat('\n')
     cat(paste0('#### 第',i,'个模型的全模型结果：'))
     cat('\n')
-    cat(pander(res$glmResFull))
+    cat(pander(summary(res$glmResFull)))
     cat('\n')
     cat(paste0('#### 第',i,'个模型的全模型诊断图结果：'))
     cat('\n')
@@ -160,7 +160,7 @@ if(is.na(myGlmParms$data)){
     cat('\n')
     cat(paste0('#### 第',i,'个模型的逐步回归模型结果：'))
     cat('\n')
-    cat(pander(res$glmResStep))
+    cat(pander(summary(res$glmResStep)))
     cat('\n')
     
     cat('\n')

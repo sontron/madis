@@ -59,7 +59,7 @@ assign('LstMedstats',LstMedstats,env=envMedstats)
 server<-function(input,output){
   
   
-  ###### 数据导入功能（data_Impt） ######
+  ###### 数据导入功能(data_Impt) ######
   data_dataImpt<-reactive({
     
     # input$go_dataImpt
@@ -165,8 +165,8 @@ server<-function(input,output){
     input$go_dataImpt
     req(input$go_dataImpt)
     isolate({
-      cat('当前数据共：',nrow(data_dataImpt()),'观测（行）','\n')
-      cat('当前数据共：',ncol(data_dataImpt()),'变量（列）','\n')
+      cat('当前数据共：',nrow(data_dataImpt()),'观测(行)','\n')
+      cat('当前数据共：',ncol(data_dataImpt()),'变量(列)','\n')
       cat('数据各变量类型如下：','\n')
       sapply(data_dataImpt(),class)
     })
@@ -204,7 +204,7 @@ server<-function(input,output){
   
   
   
-  ###### 变量名修改功能（var_Name） ######
+  ###### 变量名修改功能(var_Name) ######
   
   output$more1_varName<-renderUI({
     
@@ -274,7 +274,7 @@ server<-function(input,output){
   
   
   
-  ###### 生成新变量（varMnp） ######
+  ###### 生成新变量(varMnp) ######
   output$more1_varMnp<-renderUI({
 
     change_data()
@@ -473,7 +473,7 @@ server<-function(input,output){
                 ),
                 textInputAddon(inputId='reGroup_varMnp',label='设定分组',value='',addon=icon('pencil')),
                 textInputAddon(inputId='reGroupLabel_varMnp',label='设定分组标签',value='',addon=icon('pencil')),
-                textInputAddon(inputId='reGroupOther_varMnp',label='设定其他组（未定义组）分组标签',value='Others',addon=icon('pencil'))
+                textInputAddon(inputId='reGroupOther_varMnp',label='设定其他组(未定义组)分组标签',value='Others',addon=icon('pencil'))
               )
             )
           ),
@@ -670,7 +670,7 @@ server<-function(input,output){
   
   
   
-  ###### 变量类型转换（varClass） ######
+  ###### 变量类型转换(varClass) ######
   
   output$more1_varClass<-renderUI({
     
@@ -878,7 +878,7 @@ server<-function(input,output){
   
   
   
-  ###### 数据变形（reshape） ######
+  ###### 数据变形(reshape) ######
   
   output$more1_reshape<-renderUI({
     
@@ -928,7 +928,7 @@ server<-function(input,output){
       conditionalPanel(
         condition = "input['reshapeMethod']=='melt'",
         panel(
-          heading='设定行转列（melt）方法的各个参数',
+          heading='设定行转列(melt)方法的各个参数',
           pickerInput(
             inputId='idVars',
             label='选择ID变量',
@@ -955,7 +955,7 @@ server<-function(input,output){
       conditionalPanel(
         condition="input['reshapeMethod']=='cast'",
         panel(
-          heading='设定列转行方法（dcast）的各个参数',
+          heading='设定列转行方法(dcast)的各个参数',
           pickerInput(
             inputId='lhs_cast',
             label='选择左变量',
@@ -980,14 +980,14 @@ server<-function(input,output){
             multiple=TRUE,
             options = list(`actions-box` = TRUE)
           ),
-          textInputAddon(inputId='argsMore_cast','其他参数（参考dcast）',value='',placeholder = 'eg:drop=TRUE',addon = icon("pencil")),
+          textInputAddon(inputId='argsMore_cast','其他参数(参考dcast)',value='',placeholder = 'eg:drop=TRUE',addon = icon("pencil")),
           pickerInput(
             inputId='fnAggre',
             label='选择合并函数',
             choices=c(
               '最小值'='min',
               '最大值'='max',
-              '平均值'='max',
+              '平均值'='mean',
               '中位数'='median',
               '标准差'='sd',
               '自定义函数'='myFun'
@@ -1079,7 +1079,7 @@ server<-function(input,output){
   
   
   
-  ###### 数据去重（unique） ######
+  ###### 数据去重(unique) ######
   output$more1_unique<-renderUI({
     
     change_data()
@@ -1139,7 +1139,7 @@ server<-function(input,output){
   
   
   
-  ###### 数据合并（Merge and Bind） ######
+  ###### 数据合并(Merge and Bind) ######
   output$more1_dataMerge<-renderUI({
     
     change_data()
@@ -1189,8 +1189,8 @@ server<-function(input,output){
           inputId='method_dataMerge',
           label="合并方式",
           choices=c(
-            '链接（Join）'='Merge',
-            '合并（Bind）'='Bind'
+            '链接(Join)'='Merge',
+            '合并(Bind)'='Bind'
           ),
           selected ='Merge',
           multiple=FALSE,
@@ -1307,7 +1307,7 @@ server<-function(input,output){
   
   
   
-  ###### 缺失值填补（naImpute） ######
+  ###### 缺失值填补(naImpute) ######
   
   output$more1_naImpute<-renderUI({
     
@@ -1487,7 +1487,7 @@ server<-function(input,output){
   
   
   
-  ###### 数据筛选（dataFilter） ######
+  ###### 数据筛选(dataFilter) ######
   
   output$more1_dataFilter<-renderUI({
     
@@ -1614,7 +1614,7 @@ server<-function(input,output){
   
   
   
-  ###### 数据导出（dataExpt） ######
+  ###### 数据导出(dataExpt) ######
   
   output$more1_dataExpt<-renderUI({
     
@@ -1686,7 +1686,7 @@ server<-function(input,output){
             inputId='fileEncoding_dataExpt',
             label='字符集编码',
             choices = c(
-              '国标（GB18030）'='GB18030',
+              '国标(GB18030)'='GB18030',
               'UTF8编码'='utf8'
             ),
             selected ='GB18030',
@@ -1741,7 +1741,7 @@ server<-function(input,output){
   
   
   
-  ###### r代码编写（Ace） ######
+  ###### r代码编写(Ace) ######
   
   
   output$result_Ace<-renderPrint({
@@ -1781,7 +1781,7 @@ server<-function(input,output){
   
   
   
-  ###### 分类统计表（myTable） ######
+  ###### 分类统计表(myTable) ######
   
   output$more1_myTable<-renderUI({
     change_data()
@@ -1894,7 +1894,7 @@ server<-function(input,output){
   
   
   
-  ###### 统计图形制作（myGplt） ######
+  ###### 统计图形制作(myGplt) ######
   
   output$more1_myGplt<-renderUI({
     change_data()
@@ -2252,7 +2252,7 @@ server<-function(input,output){
   
   
   
-  ###### 描述性分析（desc） ######
+  ###### 描述性分析(desc) ######
   
   output$more1_desc<-renderUI({
     
@@ -2411,7 +2411,7 @@ server<-function(input,output){
   
   
   
-  ###### 单因素分析（hTest） ######
+  ###### 单因素分析(hTest) ######
   
   output$more1_hTest<-renderUI({
     change_data()
@@ -2554,7 +2554,7 @@ server<-function(input,output){
         pickerInput(
           inputId='Res_hTest',
           label='选择展示的结果',
-          choices = paste(apply(expand.grid(input$varsx_hTest,input$varsy_hTest),1,function(x)paste(x,collapse=' & ')))
+          choices = apply(expand.grid(input$varsx_hTest,input$varsy_hTest),1,function(x)paste(x,collapse=','))
       )
     )
     )
@@ -2564,7 +2564,7 @@ server<-function(input,output){
   output$res_hTest<-renderPrint({
     
     
-    apply(expand.grid(input$varsx_hTest,input$varsy_hTest),1,function(x)paste(x,collapse=' & '))->namesRes
+    apply(expand.grid(input$varsx_hTest,input$varsy_hTest),1,function(x)paste(x,collapse=','))->namesRes
     
     which(namesRes==input$Res_hTest)->ind
     print(pander(res_hTest()[[ind]]$hTestRes))
@@ -2575,7 +2575,7 @@ server<-function(input,output){
     
     
     
-    apply(expand.grid(input$varsx_hTest,input$varsy_hTest),1,function(x)paste(x,collapse=' & '))->namesRes
+    apply(expand.grid(input$varsx_hTest,input$varsy_hTest),1,function(x)paste(x,collapse=','))->namesRes
     
     which(namesRes==input$Res_hTest)->ind
     
@@ -2595,7 +2595,7 @@ server<-function(input,output){
   
   
   
-  ###### 线性模型（myGlm） ######
+  ###### 线性模型(myGlm) ######
   
   
   output$more1_myGlm<-renderUI({
@@ -2845,10 +2845,10 @@ server<-function(input,output){
       cat('######模型分析结果如下########')
       cat('\n')
       cat('######全模型分析结果如下########')
-      print(pander(res_myGlm()$glmResFull))
+      print(pander(summary(res_myGlm()$glmResFull)))
       cat('\n')
       cat('######逐步回归模型分析结果如下########')
-      print(pander(res_myGlm()$glmResStep))
+      print(pander(summary(res_myGlm()$glmResStep)))
       cat('\n')
       
     })
@@ -2930,7 +2930,7 @@ server<-function(input,output){
   
   
   
-  ###### 决策树模型（myTree） ######
+  ###### 决策树模型(myTree) ######
   
   
   output$more1_myTree<-renderUI({
@@ -3243,7 +3243,7 @@ server<-function(input,output){
   
   
   
-  ###### COXPH模型（myCox） ######
+  ###### COXPH模型(myCox) ######
   
   
   output$more1_myCox<-renderUI({
@@ -3574,7 +3574,7 @@ server<-function(input,output){
   
   
   
-  ###### 时间序列分析（myProphet） ######
+  ###### 时间序列分析(myProphet) ######
   
   output$more1_myProphet<-renderUI({
     change_data()
@@ -3899,7 +3899,7 @@ server<-function(input,output){
   
   
   
-  ###### 生成报告（report） ######
+  ###### 生成报告(report) ######
   
   observe({
     change_report()
@@ -3946,7 +3946,7 @@ server<-function(input,output){
 ###### uiHeader ######
 
 ui<-fluidPage(
-  shinythemes::themeSelector(),
+  #shinythemes::themeSelector(),
   tags$head(
     tags$style(
       type="text/css", "
@@ -3971,8 +3971,8 @@ ui<-fluidPage(
   
   
   navbarPage(
-    'Medstats',
-    ###### 导入数据功能（data_Impt）######
+    'MADIS',
+    ###### 导入数据功能(data_Impt)######
     
     tabPanel(
       '导入本地数据',
@@ -3990,7 +3990,7 @@ ui<-fluidPage(
                 '.txt'
               )
             ),
-            helpText('注意：数据需为txt或csv格式文件，或复制表格数据（excel，csv等文件）到下面的窗口中'),
+            helpText('注意：数据需为txt或csv格式文件，或复制表格数据(excel，csv等文件)到下面的窗口中'),
             aceEditor("text_dataImpt", value="Sex\tEffect\nM\tNo\nW\tNo\nW\tNo\nM\tNo\nM\tYes\nM\tYes\nM\tYes\nM\tNo\nW\tYes", mode="r", theme="chrome",height="150px")
             
           ),
@@ -4099,7 +4099,7 @@ ui<-fluidPage(
       ),
       
       
-      ###### 数据去重（unique） ######
+      ###### 数据去重(unique) ######
       tabPanel(
         '数据去重',
         sidebarLayout(
@@ -4150,7 +4150,7 @@ ui<-fluidPage(
       ),
       
       
-      ###### 数据处理-筛选数据（行（子集，行号），列（变量）） ######
+      ###### 数据处理-筛选数据(行(子集，行号)，列(变量)) ######
       tabPanel(
         '筛选数据',
         sidebarLayout(
@@ -4270,7 +4270,7 @@ ui<-fluidPage(
     ),
     
     
-    ###### 单因素（统计检验）分析 ######
+    ###### 单因素(统计检验)分析 ######
     tabPanel(
       '单因素分析',
       sidebarLayout(
@@ -4385,4 +4385,4 @@ ui<-fluidPage(
 )
 
 
-#shinyApp(ui = ui, server = server)
+shinyApp(ui = ui, server = server)
