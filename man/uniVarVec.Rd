@@ -8,5 +8,5 @@ uniVarVec(x, varType = c("numeric", "character", "factor", "integer",
   "ordered")[1], Digits = 4, nameX = "x", seed = 123, tabSort = TRUE)
 }
 \description{
-a function provide description statistics vor vectors
+a function provide description statistics for vectors
 }

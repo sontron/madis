@@ -1,6 +1,18 @@
 #' autoVarClass
 #'
-#' is a function that determine the variable classes automatically.
+#' automatically chage variable mode in a data.frame.
+#' 
+#' some discrete variables maybe coded into integer, eg. sex (male=1,female=2),and should be treated as character or factor when analyzing.
+#' autoVarClass can be used to automatically detect variable mode in a data.frame.
+#' 
+#' @param data   a data.frame object.
+#' 
+#' @param lenTab length of a single variable elements.
+#' 
+#' @param thresh  thershold value when transform a variable into numeric.
+#' 
+#' @examples 
+#' autoVarClass(data=mtcars,lenTab=10,thresh=0.75)
 #'
 #'
 #' @export

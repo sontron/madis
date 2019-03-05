@@ -7,6 +7,29 @@
 uniVar(data, xvars, varType = c("numeric", "character", "factor", "integer",
   "ordered")[1], Digits = 4, nameX = "x", seed = 123, tabSort = TRUE)
 }
+\arguments{
+\item{data}{data.frame}
+
+\item{xvars}{}
+
+\item{varType}{variable modes}
+
+\item{Digits}{digits printed in the results.}
+
+\item{nameX}{table head.}
+
+\item{seed}{}
+
+\item{tabSort}{sort results of the output.}
+}
 \description{
-a function provide description statistics.
+a function provide description statistics on a single variable.
+}
+\examples{
+uniVar(mtcars,xvars=c('disp'),varType=c('numeric'),Digits=3,nameX=c('disp'))
+
+
+
+
+
 }

@@ -1,16 +1,16 @@
 #' uniVarVec
 #'
-#' a function provide description statistics vor vectors
+#' a function provide description statistics for vectors
 #'
 #' @export
 
 
 uniVarVec<-function(x,varType=c('numeric','character','factor','integer','ordered')[1],Digits=4,nameX='x',seed=123,tabSort=TRUE){
-  if(is.character(data)) data=eval(as.name(data))
-  as.data.frame(data[,xvars])->dt
-  nameX=xvars
-  varType=class(data[,xvars])[1]
-  x=data[,xvars]
+  # if(is.character(data)) data=eval(as.name(data))
+  # as.data.frame(data[,xvars])->dt
+  nameX=nameX
+  varType=class(x)[1]
+  # x=data[,xvars]
   names(dt)<-nameX
   if(varType%in%c('numeric','integer')){
     summary(x)->resNum

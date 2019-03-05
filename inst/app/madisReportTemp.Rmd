@@ -88,7 +88,7 @@ if(is.na(hTestParams$xvars)){
     cat(paste0('### ',hTestParams$xvars[i],' & ',hTestParams$yvars[i],'的结果：'))
     cat('\n')
     #print(pander(resDesc[[i]]$resTabDesc))
-    biVars(data=LstMedstats$Data[[hTestParams$dataName[i]]],xvars=hTestParams$xvars[i],yvars=hTestParams$yvars[i],alter=hTestParams$alter[i],paired=hTestParams$paired[i],confLevel=hTestParams$confLevel[i],nullHyp=hTestParams$nullHyp[i])->res
+    hTest(data=LstMedstats$Data[[hTestParams$dataName[i]]],xvars=hTestParams$xvars[i],yvars=hTestParams$yvars[i],alter=hTestParams$alter[i],paired=hTestParams$paired[i],confLevel=hTestParams$confLevel[i],nullHyp=hTestParams$nullHyp[i])->res
     cat(pander(res$hTestRes))
     cat('\n')
     plot(res$hTestGraph)

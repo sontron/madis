@@ -6,18 +6,20 @@
 \usage{
 validateData(data, val, legal, method = c("ranges", "substrs", "elements")[1],
   mode = c("numeric", "character", "datetime")[1], type = c("fixed",
-  "regex")[1])
+  "regex")[1], tsFormat = "ymd")
 }
 \arguments{
 \item{data}{is a data.frame object}
 
-\item{val}{is a character vector to specified the variables in data. It's same as x in legal_set.}
+\item{val}{is a character vector to specified the variables in data. It's same as x in validateVec}
 
-\item{legal}{is a list to specified legal sets for each val. It's same as L in legal_set}
+\item{legal}{is a list to specified expression for each val. It's same as L in validateVec}
 
 \item{method}{is a character vector specified methods for each variable in val param.}
 
 \item{mode}{is a character vector specified modes for each variable in val.}
+
+\item{tsFormat}{used to detect tsFormat in ts value}
 }
 \value{
 logical value such as T,F,NA.

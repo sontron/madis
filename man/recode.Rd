@@ -5,7 +5,8 @@
 \title{recode}
 \usage{
 recode(x, groups, Labels = NULL, na.val = "others", method = c("ranges",
-  "substrs", "elements")[1], mode = c("numeric", "character", "datetime")[1])
+  "substrs", "elements")[1], mode = c("numeric", "character", "datetime")[1],
+  tsFormat = "ymd")
 }
 \arguments{
 \item{x}{is a vector which could be numeric, datetime or character}
@@ -14,15 +15,19 @@ recode(x, groups, Labels = NULL, na.val = "others", method = c("ranges",
 
 \item{Labels}{defines the labels for the returned value}
 
+\item{na.val}{label that are not included in the groups.}
+
 \item{method}{could be ranges, substrs and elements}
 
 \item{mode}{could be numeric, character or datetime}
+
+\item{tsFormat}{tsFormat to define the ts variable.}
 }
 \value{
-a regrouped vector
+a recoded vector
 }
 \description{
-recode is a function simlar with legal_set, but return a regrouped value from input x.
+recode is a function recode a variable into recoded groups.
 }
 \examples{
 x=rnorm(100)
@@ -31,6 +36,9 @@ x=sample(letters[1:5],100,rep=T)
 recode(x,groups=list(c('a','b'),c('c','d','e')),Labels=c('a-b','c-e'),method='elements',mode='character')
 x=c('google','goodbye','doodle','doodoge','go!','bad')
 recode(x,groups=list(c('goo'),c('doo')),Labels=c('include_goo','include_doo'),method='substrs',mode='character')
+
+x=apply(expand.grid(2018,3:5,1:30),1,function(x)paste(x,collapse='-'))
+recode(x,groups=c('[2018-3-1,2018-3-31]','[2018-4-1,2018-4-30]','[2018-5-1,2018-5-31]'),Labels=c('march','april','may'),method='ranges',mode='datetime',tsFormat='ymd')
 
 }
 \author{

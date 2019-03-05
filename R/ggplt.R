@@ -1,7 +1,8 @@
-
 #' ggpltS
 #' 
-#' a wrapper function based on ggplot for easy plot
+#' a wrapper function based on ggplot for easy plot. used in shiny app.
+#' 
+#' 
 #' @export
 
 
@@ -93,7 +94,61 @@ ggpltS<-function(data,
 
 #' ggplt2S
 #' 
-#' test
+#' use ggplot2S!
+#' 
+#' @param data  data.frame
+#' 
+#' @param x x vars.
+#' 
+#' @param y  y vars, could be NULL
+#' 
+#' @param size  variable mapping to size aes.
+#' 
+#' @param fill variable mapping to fill aes.
+#' 
+#' @param color variable mapping to color aes.
+#' 
+#' @param shape variable mapping to shape aes.
+#' 
+#' @param alpha variable mapping to alpha aes.
+#' 
+#' @param facetVar  variables used in faceting.
+#' 
+#' @param geom  geoms for ploting, eg: geom=c('point','smooth')
+#' 
+#' @param smoothMethod smoothing method used in a smooth line.
+#' 
+#' @param theme could be "grey","bw","classic","dark",etc.
+#' 
+#' @param labx  x lable.
+#' 
+#' @param laby y lable.
+#' 
+#' @param title  plot title.
+#' 
+#' @param barPos used when geom including "bar",could be "stack","dodge".
+#' 
+#' @param Bins numeric value to set binwidth in a histogram plot.
+#' 
+#' @param Colour setting colour, eg:Colour='red'
+#' 
+#' @param Fill setting Fill colour.
+#' 
+#' @param Size setting size of point, line,etc.
+#' 
+#' @param Alpha setting transparency.
+#' 
+#' @param Width setting width of barplot or boxplot.
+#' 
+#' @param Shape  setting shape.
+#' 
+#' 
+#' @return resGGplot  ggplot.
+#' 
+#' @return resPlotly  plot that's generated with ggplotly.
+#' 
+#' @examples 
+#' ggplt2S(data=mtcars,x='mpg',y='disp',size='wt',geom=c('point','smooth'),smoothMethod='lm',theme='bw',title='my plot')
 #' 
 #' @export
 

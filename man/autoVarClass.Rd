@@ -6,6 +6,22 @@
 \usage{
 autoVarClass(data, lenTab = 10, thresh = 0.8)
 }
+\arguments{
+\item{data}{a data.frame object.}
+
+\item{lenTab}{length of a single variable elements.}
+
+\item{thresh}{thershold value when transform a variable into numeric.}
+}
 \description{
-is a function that determine the variable classes automatically.
+automatically chage variable mode in a data.frame.
+}
+\details{
+some discrete variables maybe coded into integer, eg. sex (male=1,female=2),and should be treated as character or factor when analyzing.
+autoVarClass can be used to automatically detect variable mode in a data.frame.
+}
+\examples{
+autoVarClass(data=mtcars,lenTab=10,thresh=0.75)
+
+
 }

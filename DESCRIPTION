@@ -12,7 +12,7 @@ Collate:
    "Aggregate.R"
    "Apply.R"
    "autoVarClass.R"
-   "biVars.R"
+   "hTest.R"
    "coxS.R"
    "descTab.R"
    "ggplt.R"       

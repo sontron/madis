@@ -9,5 +9,5 @@ treeS(Formula, data, subset = "all", na.action = na.rm, Minsplit = 30,
   treeMethod = c("ctree", "rpart")[1])
 }
 \description{
-is a function of Tree models
+function of tree model used in shiny app.
 }

@@ -1,12 +1,13 @@
 #' validateVec
 #'
-#' This function return logic value that indicate which x values are in legal set that is set by L
+#' This function return validate value that indicate variable that met the rule described by L param.
 #'
 #' @author sontron
 #' @param x is a vector which could be numeric, character or datetime type
-#' @param L is a expression indicate legal sets for x
+#' @param L is a expression ,eg:(0,10]),['a','c','b'],etc.
 #' @param method specified the method should be used
 #' @param mode is the mode of x
+#' @param tsFormat used to detect tsFormat in ts value
 #'
 #' @return logic value which could be T,F,NA
 #'
@@ -26,7 +27,12 @@
 #' "[2013-1-2,2-13-10-11]",c('apple','orange')
 #'
 #' @export
-validateVec<-function(x,L,method=c('ranges','substrs','elements')[1],mode=c('numeric','character','datetime')[1],type=c('fixed','regex')[1]){
+validateVec<-function(x,
+                      L,
+                      method=c('ranges','substrs','elements')[1],
+                      mode=c('numeric','character','datetime')[1],
+                      type=c('fixed','regex')[1],
+                      tsFormat='ymd'){
   
   stopifnot(method%in%c('elements','substrs','ranges')|mode%in%c('numeric','character','datetime'))
   require('stringi')
@@ -46,11 +52,11 @@ validateVec<-function(x,L,method=c('ranges','substrs','elements')[1],mode=c('num
         }
         
         if(mode=='datetime'){
-          as.POSIXct(x)->x
-          if(grepl("(",l[1],fixed=T)) {as.numeric(as.POSIXct(gsub("(^[[:punct:]]|[[:punct:]]$)","",l[1])))->range_l;x>range_l->ind.l}
-          if(grepl(")",l[2],fixed=T)) {as.numeric(as.POSIXct(gsub("(^[[:punct:]]|[[:punct:]]$)","",l[2])))->range_r;x<range_r->ind.r}
-          if(grepl("[",l[1],fixed=T)) {as.numeric(as.POSIXct(gsub("(^[[:punct:]]|[[:punct:]]$)","",l[1])))->range_l;x>=range_l->ind.l}
-          if(grepl("]",l[2],fixed=T)) {as.numeric(as.POSIXct(gsub("(^[[:punct:]]|[[:punct:]]$)","",l[2])))->range_r;x<=range_r->ind.r}
+          parse_date_time(x,orders=tsFormat)->x
+          if(grepl("(",l[1],fixed=T)) {as.numeric(parse_date_time(gsub("(^[[:punct:]]|[[:punct:]]$)","",l[1]),orders=tsFormat))->range_l;x>range_l->ind.l}
+          if(grepl(")",l[2],fixed=T)) {as.numeric(parse_date_time(gsub("(^[[:punct:]]|[[:punct:]]$)","",l[2]),orders=tsFormat))->range_r;x<range_r->ind.r}
+          if(grepl("[",l[1],fixed=T)) {as.numeric(parse_date_time(gsub("(^[[:punct:]]|[[:punct:]]$)","",l[1]),orders=tsFormat))->range_l;x>=range_l->ind.l}
+          if(grepl("]",l[2],fixed=T)) {as.numeric(parse_date_time(gsub("(^[[:punct:]]|[[:punct:]]$)","",l[2]),orders=tsFormat))->range_r;x<=range_r->ind.r}
         }
         ifelse(ind.l&ind.r,T,F)->res
       } else {
@@ -62,8 +68,8 @@ validateVec<-function(x,L,method=c('ranges','substrs','elements')[1],mode=c('num
         
         if(mode=='datetime'){
           gsub("(^[[:punct:]]|[[:punct:]]$)","",L[i])->l
-          as.POSIXct(x)->x
-          as.numeric(as.POSIXct(l))->range_p
+          parse_date_time(x,orders=tsFormat)->x
+          as.numeric(parse_date_time(l,orders=tsFormat))->range_p
         }
         
         ifelse(x==range_p,T,F)->res

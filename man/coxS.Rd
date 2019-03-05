@@ -8,5 +8,5 @@ coxS(Formula, data, weightsVar = 1, subset = "all", strataVar = "1",
   lower = "~1")
 }
 \description{
-is a function of Coxph models
+function of coxph and mainly used in shiny app.
 }

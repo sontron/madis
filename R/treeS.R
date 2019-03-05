@@ -1,6 +1,8 @@
 #' treeS
 #' 
-#' is a function of Tree models
+#' function of tree model used in shiny app.
+#' 
+#' 
 #' 
 #' @export
 

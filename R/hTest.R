@@ -1,10 +1,36 @@
-#' biVars
+#' hTest
 #'
-#' is a function of basic hTest collection based on data.frame
+#' hTest provides some basic hypothesis statistical tests, and can detect which test method should be used based on the variable
+#' modes and distribution of continuous variables.
+#' 
+#' when there are multiple variables both in xvars and yvars params, hTest performs statistical tests on each x and y.
+#' 
+#' @param data  data.frame
+#' 
+#' @param xvars  variables on the right hand side.
+#' 
+#' @param  yvars variables on the left hand side. when yvars is null, statistical tests are made on xvars.
+#' 
+#' @param alter could be two.sided,less,greater.
+#' 
+#' @param paired logical, if the x variable and yvariable is paired.
+#' 
+#' @param confLevel confidence level,alpha=1-confLevel
+#' 
+#' @param nullHyp eg. mu=0 in t.test
+#' 
+#' @param normalSampleSize integer, when sample size exceed this value, always using parametric tests instead.
+#' 
+#' @examples 
+#' hTest(iris,xvars=c('Sepal.Length','Sepal.Width'),yvars='Species',alter='two.sided')->res
+#' res$hTestRes
+#' 
+#' plot(res$hTestGraph)
+#' 
 #'
 #' @export
 
-biVars<-function(data,xvars,yvars='',alter=c('two.sided','less','greater')[1],paired=FALSE,confLevel=0.95,nullHyp=0,normalSampleSize=100) {
+hTest<-function(data,xvars,yvars='',alter=c('two.sided','less','greater')[1],paired=FALSE,confLevel=0.95,nullHyp=0,normalSampleSize=100) {
   require(vcdExtra)
   require(fBasics)
   if(is.character(data)) data=eval(as.name(data))
@@ -13,7 +39,7 @@ biVars<-function(data,xvars,yvars='',alter=c('two.sided','less','greater')[1],pa
     dt<-data.frame(x=data[,xvars[1]],stringsAsFactors = F)
     #names(dt)[1]<-'x'
     nameX<-xvars[1]
-    if(class(dt$x)[1]%in%c('character','ordered')){
+    if(class(dt$x)[1]%in%c('character','ordered','factor')){
       table(dt$x)->Tab
       sum(Tab,na.rm=T)->sumTab
       uniVar(data=dt,xvars='x',varType='character')$resTabDesc->DescResult
@@ -68,7 +94,7 @@ biVars<-function(data,xvars,yvars='',alter=c('two.sided','less','greater')[1],pa
       }
     }
     
-    if(class(dt$x)[1]%in%c('character','ordered')&class(dt$y)[1]%in%c('character','ordered')){
+    if(class(dt$x)[1]%in%c('character','ordered','factor')&class(dt$y)[1]%in%c('character','ordered','factor')){
       table(dt$x,dt$y)->tab
       if(paired){
         hTestRes<-list(DescResult=tab,hTestResult=mcnemar.test(tab))
@@ -96,7 +122,7 @@ biVars<-function(data,xvars,yvars='',alter=c('two.sided','less','greater')[1],pa
       
     }
     
-    if(all(c('numeric','character')%in%c(class(dt$x)[1],class(dt$y)[1]))||all(c('integer','character')%in%c(class(dt$x)[1],class(dt$y)[1]))){
+    if(all(c('numeric','character')%in%c(class(dt$x)[1],class(dt$y)[1]))||all(c('numeric','factor')%in%c(class(dt$x)[1],class(dt$y)[1]))||all(c('integer','factor')%in%c(class(dt$x)[1],class(dt$y)[1]))||all(c('integer','character')%in%c(class(dt$x)[1],class(dt$y)[1]))){
       which(c(class(dt$x)[1],class(dt$y)[1])%in%c('numeric','integer'))->indNum
       which(c(class(dt$x)[1],class(dt$y)[1])=='character')->indChar
       dt[,c(indNum,indChar)]->dt

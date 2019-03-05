@@ -4,10 +4,11 @@
 #'
 #' @author sontron
 #' @param data is a data.frame object
-#' @param val is a character vector to specified the variables in data. It's same as x in legal_set.
-#' @param legal is a list to specified legal sets for each val. It's same as L in legal_set
+#' @param val is a character vector to specified the variables in data. It's same as x in validateVec
+#' @param legal is a list to specified expression for each val. It's same as L in validateVec
 #' @param method is a character vector specified methods for each variable in val param.
 #' @param mode is a character vector specified modes for each variable in val.
+#' @param tsFormat used to detect tsFormat in ts value
 #'
 #' @return  logical value such as T,F,NA.
 #'
@@ -17,7 +18,13 @@
 #' mode=c('character','numeric'))
 #'
 #' @export
-validateData<-function(data,val,legal,method=c('ranges','substrs','elements')[1],mode=c('numeric','character','datetime')[1],type=c('fixed','regex')[1]){
+validateData<-function(data,
+                       val,
+                       legal,
+                       method=c('ranges','substrs','elements')[1],
+                       mode=c('numeric','character','datetime')[1],
+                       type=c('fixed','regex')[1],
+                       tsFormat='ymd'){
   
   stopifnot(method%in%c('elements','substrs','ranges')|mode%in%c('numeric','character','datetime'))
   require('stringi')
@@ -43,10 +50,10 @@ validateData<-function(data,val,legal,method=c('ranges','substrs','elements')[1]
           
           if(modei=='datetime'){
             as.POSIXct(x)->x
-            if(grepl("(",l[1],fixed=T)) {as.numeric(as.POSIXct(gsub("(^[[:punct:]]|[[:punct:]]$)","",l[1])))->range_l;x>range_l->ind.l}
-            if(grepl(")",l[2],fixed=T)) {as.numeric(as.POSIXct(gsub("(^[[:punct:]]|[[:punct:]]$)","",l[2])))->range_r;x<range_r->ind.r}
-            if(grepl("[",l[1],fixed=T)) {as.numeric(as.POSIXct(gsub("(^[[:punct:]]|[[:punct:]]$)","",l[1])))->range_l;x>=range_l->ind.l}
-            if(grepl("]",l[2],fixed=T)) {as.numeric(as.POSIXct(gsub("(^[[:punct:]]|[[:punct:]]$)","",l[2])))->range_r;x<=range_r->ind.r}
+            if(grepl("(",l[1],fixed=T)) {as.numeric(parse_date_time(gsub("(^[[:punct:]]|[[:punct:]]$)","",l[1]),orders=tsFormat))->range_l;x>range_l->ind.l}
+            if(grepl(")",l[2],fixed=T)) {as.numeric(parse_date_time(gsub("(^[[:punct:]]|[[:punct:]]$)","",l[2]),orders=tsFormat))->range_r;x<range_r->ind.r}
+            if(grepl("[",l[1],fixed=T)) {as.numeric(parse_date_time(gsub("(^[[:punct:]]|[[:punct:]]$)","",l[1]),orders=tsFormat))->range_l;x>=range_l->ind.l}
+            if(grepl("]",l[2],fixed=T)) {as.numeric(parse_date_time(gsub("(^[[:punct:]]|[[:punct:]]$)","",l[2]),orders=tsFormat))->range_r;x<=range_r->ind.r}
           }
           ifelse(ind.l&ind.r,T,F)->res
         } else {
@@ -58,8 +65,8 @@ validateData<-function(data,val,legal,method=c('ranges','substrs','elements')[1]
           
           if(modei=='datetime'){
             gsub("(^[[:punct:]]|[[:punct:]]$)","",L[i])->l
-            as.POSIXct(x)->x
-            as.numeric(as.POSIXct(l))->range_p
+            parse_date_time(x,orders=tsFormat)->x
+            as.numeric(parse_date_time(l,orders=tsFormat))->range_p
           }
           
           ifelse(x==range_p,T,F)->res

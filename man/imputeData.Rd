@@ -7,6 +7,30 @@
 imputeData(data, impVars, modelVars, seed = 1, treeParams = list(),
   method = c("sample", "pred")[1])
 }
+\arguments{
+\item{data}{data.frame}
+
+\item{impVars}{variables needed imputed}
+
+\item{modelVars}{variables used in cart tree model}
+
+\item{treeParams}{parameters control aspects of cart tree.}
+
+\item{method}{impute methods, could be sample and pred. when using sample, the na values will be imputed from the raw data
+in the terminal node of a tree model. when using pred, the na values will be imputed by the predicted value of cart tree model.}
+}
 \description{
-is a imputation function
+using tree model to impute na values in a data
+}
+\examples{
+
+mt<-mtcars
+set.seed(123)
+mt[cbind(sample(1:30,10,rep=F),sample(1:3,10,rep=T))]<-NA
+imputeData(mt,impVars=names(mt)[1:3],modelVars=names(mt),treeParams=list(maxdepth=5,minbucket=7,minsplit=20,cp=0.01),method='sample')->mtImpSample
+imputeData(mt,impVars=names(mt)[1:3],modelVars=names(mt),treeParams=list(maxdepth=5,minbucket=7,minsplit=20,cp=0.01),method='pred')->mtImpPred
+
+plot(mtcars$mpg,mtImpSample$mpg)
+plot(mtcars$mpg,mtImpPred$mpg)
+
 }

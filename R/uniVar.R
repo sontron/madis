@@ -1,6 +1,22 @@
 #' uniVar
 #'
-#' a function provide description statistics.
+#' a function provide description statistics on a single variable.
+#' 
+#' 
+#' @param data  data.frame
+#' @param xvars 
+#' @param varType variable modes
+#' @param Digits digits printed in the results.
+#' @param nameX table head.
+#' @param seed 
+#' @param tabSort sort results of the output.
+#' 
+#' @examples 
+#' uniVar(mtcars,xvars=c('disp'),varType=c('numeric'),Digits=3,nameX=c('disp'))
+#'
+#'
+#'
+#'
 #'
 #' @export
 

@@ -19,7 +19,7 @@ Aggregate(data = NA, group = NA, val = NA, fun = "mean", subsets = NA)
 same as aggregate function
 }
 \description{
-this is a wrapp version of aggregate function in R base package.
+based on aggregate function in stats package.
 }
 \examples{
 Aggregate(iris,group='Species',val=c('Sepal.Length','Sepal.Width'),fun='mean')

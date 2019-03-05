@@ -6,22 +6,24 @@
 \usage{
 validateVec(x, L, method = c("ranges", "substrs", "elements")[1],
   mode = c("numeric", "character", "datetime")[1], type = c("fixed",
-  "regex")[1])
+  "regex")[1], tsFormat = "ymd")
 }
 \arguments{
 \item{x}{is a vector which could be numeric, character or datetime type}
 
-\item{L}{is a expression indicate legal sets for x}
+\item{L}{is a expression ,eg:(0,10]),['a','c','b'],etc.}
 
 \item{method}{specified the method should be used}
 
 \item{mode}{is the mode of x}
+
+\item{tsFormat}{used to detect tsFormat in ts value}
 }
 \value{
 logic value which could be T,F,NA
 }
 \description{
-This function return logic value that indicate which x values are in legal set that is set by L
+This function return validate value that indicate variable that met the rule described by L param.
 }
 \note{
 the expression of L is flexible,like "(0,3)","[7,11]","[0,Inf)",c('[-1,0]','(1,10)'),

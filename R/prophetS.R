@@ -3,6 +3,33 @@
 #' is a revised version of prophet that combine some other functions from xts package for dealing data.frame, multiple variables and adding group variables. 
 #' return the history data and graphs as well as predicted graph using prophet.
 #' 
+#' @param data data.frame
+#' 
+#' @param tsVar  ts variable
+#' 
+#' @param tsFormat could be 'ymd','ym','y','mdy','ymd hms', etc.
+#' 
+#' @param measureVars measurement variables in data.
+#' 
+#' @param groupVars  grouping variables in data
+#' 
+#' @param Period could be 'years','quarters','months','weeks','days','hours','minutes','seconds',etc.
+#' 
+#' @param FN  function eg: 'mean','function(x)sum(x,na.rm=T)',etc.
+#' 
+#' @param Cap same as cap in prophet.
+#' 
+#' @param Floor same as floor in prophet.
+#' 
+#' @param Growth same as growth in prophet.
+#' 
+#' @param H same as h in prophet.
+#' 
+#' @param yearlyS TRUE,FALSE or "auto", same as yearly.seasonality in prophet.
+#' 
+#' @param dailyS TRUE,FALSE or "auto", same as daily.seasonality in prophet.
+#' 
+#' @param weeklyS TRUE,FALSE or "auto", same as weekly.seasonality in prophet.
 #' 
 #' @export
 
@@ -91,7 +118,7 @@ prophetS<-function(data,
   
   as_datetime(resFinal[,tsVar])->resFinal[,tsVar]
   
-  #dfGraph[,tsVar]<-row.names(dfGraph)
+  # dfGraph[,tsVar]<-row.names(dfGraph)
   as_datetime(dfGraph[,tsVar])->dfGraph[,tsVar]
   
   row.names(resFinal)<-NULL
@@ -101,7 +128,7 @@ prophetS<-function(data,
     ggplot(dfGraph,aes_string(tsVar,'value',color='variable'))+geom_point()+geom_line()+facet_wrap(~variable,scales='free')->graph
   } else {
     
-    #ggplot(dfGraph,aes_string(tsVar,'value',color='variable'))+geom_point()+geom_line()+facet_wrap(as.formula(paste('~',paste('variable',paste(groupVars,collapse='_'),sep='+'),sep='')),scales='free')->graph
+    # ggplot(dfGraph,aes_string(tsVar,'value',color='variable'))+geom_point()+geom_line()+facet_wrap(as.formula(paste('~',paste('variable',paste(groupVars,collapse='_'),sep='+'),sep='')),scales='free')->graph
     ggplot(dfGraph,aes_string(tsVar,'value',color=paste(groupVars,collapse='_')))+geom_point()+geom_line()+facet_wrap(~variable,scales='free')->graph
     
   }
@@ -113,9 +140,9 @@ prophetS<-function(data,
       unique(dfGraph$variable)[i]->ii
       subset(dfGraph,variable==ii)->dfGraphi
       which(is.na(dfGraphi[,tsVar]))->ind
-      #dfGraphi[-ind,]->dfGraphi
+      # dfGraphi[-ind,]->dfGraphi
       
-      #dfGraphi$floor<-Floor
+      # dfGraphi$floor<-Floor
       names(dfGraphi)[which(names(dfGraphi)==tsVar)]<-'ds'
       names(dfGraphi)[which(names(dfGraphi)=='value')]<-'y'
       ifelse(Cap<0,max(dfGraphi$y,na.rm=T),Cap)->dfGraphi$cap
@@ -142,7 +169,11 @@ prophetS<-function(data,
     }
     do.call(rbind,Lst)->dfGraphNew
     
+    
     names(dfGraphNew)[1]<-tsVar
+    
+    dfGraphNew[,c(tsVar,'variable','y')]->predData
+    ifelse(is.na(predData$y),dfGraphNew$yhat,predData$y)->predData$y
     if(Growth=='logistic'){
       graphProphet<-ggplot(dfGraphNew,aes_string(tsVar,'y'))+
         geom_point(size=.75,na.rm=T)+geom_line(aes(y=yhat),color='#0072B2',na.rm=T)+
@@ -166,7 +197,7 @@ prophetS<-function(data,
       for(j in 1:length(Grp)){
         subset(dfGraph,variable==Var[i]&dfGraph[,paste(groupVars,collapse='_')]==Grp[j])->dfGraphi
         which(is.na(dfGraphi[,tsVar]))->ind
-        #dfGraphi[-ind,]->dfGraphi
+        # dfGraphi[-ind,]->dfGraphi
         # dfGraphi$cap<-Cap
         # dfGraphi$floor<-Floor
         
@@ -200,6 +231,8 @@ prophetS<-function(data,
     }
     do.call(rbind,Lst)->dfGraphNew
     names(dfGraphNew)[1]<-tsVar
+    dfGraphNew[,c(tsVar,'groupVars','variable','y')]->predData
+    ifelse(is.na(predData$y),dfGraphNew$yhat,predData$y)->predData$y
     
     if(Growth=='logistic'){
       graphProphet<-ggplot(dfGraphNew,aes_string(tsVar,'y',color=paste(groupVars,collapse='_')))+
@@ -219,5 +252,5 @@ prophetS<-function(data,
   
   resFinal[,c(ncol(resFinal),1:(ncol(resFinal)-1))]->resFinal
   
-  return(list(tabRes=resFinal,graphRes=graph,graphPredict=graphProphet))
+  return(list(tabRes=resFinal,graphRes=graph,tabPred=predData,graphPredict=graphProphet))
 }

@@ -8,5 +8,5 @@ glmS(Formula, data, weightsVar = 1, subset = "all", Family = c("gaussian",
   "binomial", "poisson"), na.action = na.rm, lower = "~1")
 }
 \description{
-is a function of glm models
+is a function used in shiny app.
 }

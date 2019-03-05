@@ -12,5 +12,5 @@ ggpltS(data, x, y = "NULL", size = "NULL", fill = "NULL",
   barPos = c("stack", "dodge")[1], Bins = 2, Width = 0.5, ...)
 }
 \description{
-a wrapper function based on ggplot for easy plot
+a wrapper function based on ggplot for easy plot. used in shiny app.
 }

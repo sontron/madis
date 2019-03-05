@@ -1,6 +1,7 @@
 #' glmS
 #' 
-#' is a function of glm models
+#' is a function used in shiny app.
+#' 
 #' 
 #' @export
 

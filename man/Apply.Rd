@@ -2,14 +2,12 @@
 % Please edit documentation in R/Apply.R
 \name{Apply}
 \alias{Apply}
-\title{Apply
-a little change to apply. avoid error for apply function to a data.frame that only contain one var.}
+\title{Apply}
 \usage{
 Apply(data, vars, MARGIN, FUN, na.rm = T, ...)
 }
 \description{
-Apply
-a little change to apply. avoid error for apply function to a data.frame that only contain one var.
+based on apply function in base R.
 }
 \author{
 sontron

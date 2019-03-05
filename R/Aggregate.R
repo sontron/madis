@@ -1,6 +1,6 @@
 #' Aggregate
 #'
-#' this is a wrapp version of aggregate function in R base package.
+#' based on aggregate function in stats package. 
 #'
 #' @author sontron
 #' @param data is a data.frame object that need to be processed

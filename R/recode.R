@@ -1,15 +1,16 @@
-
 #' recode
 #'
-#' recode is a function simlar with legal_set, but return a regrouped value from input x.
+#' recode is a function recode a variable into recoded groups.
 #'
 #' @author sontron
 #' @param x is a vector which could be numeric, datetime or character
 #' @param groups is simlar with L in legal_set, but different in that for elements and substrs it should be a list
 #' @param Labels defines the labels for the returned value
+#' @param na.val label that are not included in the groups.
+#' @param tsFormat tsFormat to define the ts variable.
 #' @param method could be ranges, substrs and elements
 #' @param mode could be numeric, character or datetime
-#' @return a regrouped vector
+#' @return a recoded vector
 #'
 #' @examples
 #' x=rnorm(100)
@@ -18,12 +19,22 @@
 #' recode(x,groups=list(c('a','b'),c('c','d','e')),Labels=c('a-b','c-e'),method='elements',mode='character')
 #' x=c('google','goodbye','doodle','doodoge','go!','bad')
 #' recode(x,groups=list(c('goo'),c('doo')),Labels=c('include_goo','include_doo'),method='substrs',mode='character')
+#' 
+#' x=apply(expand.grid(2018,3:5,1:30),1,function(x)paste(x,collapse='-'))
+#' recode(x,groups=c('[2018-3-1,2018-3-31]','[2018-4-1,2018-4-30]','[2018-5-1,2018-5-31]'),Labels=c('march','april','may'),method='ranges',mode='datetime',tsFormat='ymd')
 #'
 #'@export
 
-recode<-function(x,groups,Labels=NULL,na.val='others',method=c('ranges','substrs','elements')[1],mode=c('numeric','character','datetime')[1]){
+recode<-function(x,
+                 groups,
+                 Labels=NULL,
+                 na.val='others',
+                 method=c('ranges','substrs','elements')[1],
+                 mode=c('numeric','character','datetime')[1],
+                 tsFormat='ymd'){
   stopifnot(method%in%c('elements','substrs','ranges')|mode%in%c('numeric','character','datetime'))
   require('stringi')
+  require('lubridate')
   
   ## numeric and datetime value within a given range
   if(method=='ranges'){
@@ -40,11 +51,11 @@ recode<-function(x,groups,Labels=NULL,na.val='others',method=c('ranges','substrs
         }
         
         if(mode=='datetime'){
-          as.POSIXct(x)->x
-          if(grepl("(",l[1],fixed=T)) {as.numeric(as.POSIXct(gsub("(^[[:punct:]]|[[:punct:]]$)","",l[1])))->range_l;x>range_l->ind.l}
-          if(grepl(")",l[2],fixed=T)) {as.numeric(as.POSIXct(gsub("(^[[:punct:]]|[[:punct:]]$)","",l[2])))->range_r;x<range_r->ind.r}
-          if(grepl("[",l[1],fixed=T)) {as.numeric(as.POSIXct(gsub("(^[[:punct:]]|[[:punct:]]$)","",l[1])))->range_l;x>=range_l->ind.l}
-          if(grepl("]",l[2],fixed=T)) {as.numeric(as.POSIXct(gsub("(^[[:punct:]]|[[:punct:]]$)","",l[2])))->range_r;x<=range_r->ind.r}
+          parse_date_time(x,orders=tsFormat)->x
+          if(grepl("(",l[1],fixed=T)) {as.numeric(parse_date_time(gsub("(^[[:punct:]]|[[:punct:]]$)","",l[1]),orders=tsFormat))->range_l;x>range_l->ind.l}
+          if(grepl(")",l[2],fixed=T)) {as.numeric(parse_date_time(gsub("(^[[:punct:]]|[[:punct:]]$)","",l[2]),orders=tsFormat))->range_r;x<range_r->ind.r}
+          if(grepl("[",l[1],fixed=T)) {as.numeric(parse_date_time(gsub("(^[[:punct:]]|[[:punct:]]$)","",l[1]),orders=tsFormat))->range_l;x>=range_l->ind.l}
+          if(grepl("]",l[2],fixed=T)) {as.numeric(parse_date_time(gsub("(^[[:punct:]]|[[:punct:]]$)","",l[2]),orders=tsFormat))->range_r;x<=range_r->ind.r}
         }
         ifelse(ind.l&ind.r,T,F)->res
       } else {
@@ -56,8 +67,8 @@ recode<-function(x,groups,Labels=NULL,na.val='others',method=c('ranges','substrs
         
         if(mode=='datetime'){
           gsub("(^[[:punct:]]|[[:punct:]]$)","",L[i])->l
-          as.POSIXct(x)->x
-          as.numeric(as.POSIXct(l))->range_p
+          parse_date_time(x,orders=tsFormat)->x
+          as.numeric(parse_date_time(l,orders=tsFormat))->range_p
         }
         
         ifelse(x==range_p,T,F)->res

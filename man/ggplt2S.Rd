@@ -13,6 +13,62 @@ ggplt2S(data, x, y = "NULL", size = "NULL", fill = "NULL",
   Fill = "NULL", Size = "NULL", Alpha = "NULL", Width = "NULL",
   Shape = "NULL")
 }
+\arguments{
+\item{data}{data.frame}
+
+\item{x}{x vars.}
+
+\item{y}{y vars, could be NULL}
+
+\item{size}{variable mapping to size aes.}
+
+\item{fill}{variable mapping to fill aes.}
+
+\item{color}{variable mapping to color aes.}
+
+\item{shape}{variable mapping to shape aes.}
+
+\item{alpha}{variable mapping to alpha aes.}
+
+\item{facetVar}{variables used in faceting.}
+
+\item{geom}{geoms for ploting, eg: geom=c('point','smooth')}
+
+\item{labx}{x lable.}
+
+\item{laby}{y lable.}
+
+\item{title}{plot title.}
+
+\item{theme}{could be "grey","bw","classic","dark",etc.}
+
+\item{smoothMethod}{smoothing method used in a smooth line.}
+
+\item{barPos}{used when geom including "bar",could be "stack","dodge".}
+
+\item{Bins}{numeric value to set binwidth in a histogram plot.}
+
+\item{Colour}{setting colour, eg:Colour='red'}
+
+\item{Fill}{setting Fill colour.}
+
+\item{Size}{setting size of point, line,etc.}
+
+\item{Alpha}{setting transparency.}
+
+\item{Width}{setting width of barplot or boxplot.}
+
+\item{Shape}{setting shape.}
+}
+\value{
+resGGplot  ggplot.
+
+resPlotly  plot that's generated with ggplotly.
+}
 \description{
-test
+use ggplot2S!
+}
+\examples{
+ggplt2S(data=mtcars,x='mpg',y='disp',size='wt',geom=c('point','smooth'),smoothMethod='lm',theme='bw',title='my plot')
+
 }

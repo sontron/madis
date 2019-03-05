@@ -58,6 +58,19 @@ assign('LstMedstats',LstMedstats,env=envMedstats)
 
 server<-function(input,output){
   
+  ###### 所有有可能引起数据变化的input ######
+  change_data<-reactive({
+    input$go_dataImpt
+    input$go_varName
+    input$go_varMnp
+    input$go_varClass
+    input$go_reshape
+    input$go_unique
+    input$go_dataMerge
+    input$go_naImpute
+    input$go_dataFilter
+  })
+  
   
   ###### 数据导入功能(data_Impt) ######
   data_dataImpt<-reactive({
@@ -185,21 +198,6 @@ server<-function(input,output){
   
   
   
-  
-  
-  
-  ###### 所有有可能引起数据变化的input ######
-  change_data<-reactive({
-    input$go_dataImpt
-    input$go_varName
-    input$go_varMnp
-    input$go_varClass
-    input$go_reshape
-    input$go_unique
-    input$go_dataMerge
-    input$go_naImpute
-    input$go_dataFilter
-  })
   
   
   
@@ -2515,7 +2513,7 @@ server<-function(input,output){
       resAll<-list()
       for(i in 1:length(input$varsy_hTest)){
         for (j in 1:length(input$varsx_hTest)){
-          resAll[[length(input$varsx_hTest)*(i-1)+j]]<-biVars(data=dat,xvars=input$varsx_hTest[j],yvars=input$varsy_hTest[i],alter=input$alter_hTest,paired=input$paired_hTest,nullHyp=input$nullHyp_hTest,confLevel=input$confLevel_hTest)
+          resAll[[length(input$varsx_hTest)*(i-1)+j]]<-hTest(data=dat,xvars=input$varsx_hTest[j],yvars=input$varsy_hTest[i],alter=input$alter_hTest,paired=input$paired_hTest,nullHyp=input$nullHyp_hTest,confLevel=input$confLevel_hTest)
         }
       }
       #biVar(data=dat,xvars=input$varsx_hTest,yvars=input$varsy_hTest,alter=input$alter_hTest,paired=input$paired_hTest,nullHyp=input$nullHyp_hTest,confLevel=input$confLevel_hTest)->res
@@ -3720,14 +3718,14 @@ server<-function(input,output){
     list(
       tabsetPanel(
         tabPanel(
-          '表格结果',
-          dataTableOutput(
-            'resTab_myProphet'
-          )
-        ),
-        tabPanel(
           '历史数据结果',
           tabsetPanel(
+            tabPanel(
+              '历史数据表格结果',
+              dataTableOutput(
+                'resTab_myProphet'
+              )
+            ),
             tabPanel(
               'ggplot结果',
               plotOutput('ggplotHis_myProphet',height='700px'),
@@ -3746,6 +3744,12 @@ server<-function(input,output){
         tabPanel(
           '预测结果',
           tabsetPanel(
+            tabPanel(
+              '预测数据表格结果',
+              dataTableOutput(
+                'predTab_myProphet'
+              )
+            ),
             tabPanel(
               'ggplot结果',
               plotOutput('ggplotPred_myProphet',height='700px'),
@@ -3875,6 +3879,15 @@ server<-function(input,output){
     isolate({
       res_myProphet()->resmyProphet
       resmyProphet$graphRes
+    })
+  })
+  
+  
+  output$predTab_myProphet<-renderDataTable({
+    input$go_myProphet
+    isolate({
+      res_myProphet()->resmyProphet
+      resmyProphet$tabPred
     })
   })
   
@@ -4215,24 +4228,69 @@ ui<-fluidPage(
     #   )
     # ),
     
-    ###### 分类统计表制作 ######
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    ###### 描述性分析 ######
     tabPanel(
-      '分类统计表',
+      '单变量描述性分析结果',
       sidebarLayout(
         sidebarPanel(
-          uiOutput('more1_myTable'),
-          uiOutput('more2_myTable'),
-          actionBttn('go_myTable','确定')
+          uiOutput('more1_desc'),
+          uiOutput('more2_desc'),
+          actionBttn('go_desc','确定')
         ),
         mainPanel(
-          uiOutput('more3_myTable')
+          uiOutput('more4_desc'),
+          uiOutput('more3_desc')
+          
         )
       )
     ),
     
     
+    ###### 统计检验和单因素分析表合并菜单 #####
     
-    
+    navbarMenu(
+      '统计检验',
+      ###### 单因素(统计检验)分析 ######
+      tabPanel(
+        '假设检验',
+        sidebarLayout(
+          sidebarPanel(
+            uiOutput('more1_hTest'),
+            uiOutput('more2_hTest'),
+            actionBttn('go_hTest','确定')
+          ),
+          mainPanel(
+            uiOutput('more4_hTest'),
+            uiOutput('more3_hTest')
+          )
+        )
+      ),
+      ###### 分类统计表制作 ######
+      tabPanel(
+        '描述性统计表',
+        sidebarLayout(
+          sidebarPanel(
+            uiOutput('more1_myTable'),
+            uiOutput('more2_myTable'),
+            actionBttn('go_myTable','确定')
+          ),
+          mainPanel(
+            uiOutput('more3_myTable')
+          )
+        )
+      )
+    ),
     
     ###### 统计图形制作 ######
     tabPanel(
@@ -4249,42 +4307,6 @@ ui<-fluidPage(
       )
     ),
     
-    
-    
-    
-    ###### 描述性分析 ######
-    tabPanel(
-      '描述性分析',
-      sidebarLayout(
-        sidebarPanel(
-          uiOutput('more1_desc'),
-          uiOutput('more2_desc'),
-          actionBttn('go_desc','确定')
-        ),
-        mainPanel(
-          uiOutput('more4_desc'),
-          uiOutput('more3_desc')
-          
-        )
-      )
-    ),
-    
-    
-    ###### 单因素(统计检验)分析 ######
-    tabPanel(
-      '单因素分析',
-      sidebarLayout(
-        sidebarPanel(
-          uiOutput('more1_hTest'),
-          uiOutput('more2_hTest'),
-          actionBttn('go_hTest','确定')
-        ),
-        mainPanel(
-          uiOutput('more4_hTest'),
-          uiOutput('more3_hTest')
-        )
-      )
-    ),
     
     
     

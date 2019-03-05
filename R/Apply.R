@@ -1,5 +1,6 @@
 #' Apply
-#' a little change to apply. avoid error for apply function to a data.frame that only contain one var.
+#' 
+#' based on apply function in base R.
 #'
 #' @author sontron
 #'

@@ -1,6 +1,11 @@
 #' descTab
 #' 
-#' is a function of Coxph models
+#' this function is a revised version of mytable in moonBook package.
+#' mytable(moonBook) can deal no more than two group variables. in descTab function, when there are more than two grouping 
+#' variables, they are pasted together as one single variable
+#' 
+#' @examples
+#' descTab(Formula='vs+gear+am~disp+mpg',data=mtcars)
 #' 
 #' @export
 
