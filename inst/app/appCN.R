@@ -3800,7 +3800,7 @@ server<-function(input,output,session){
         dat_myLme<-data.frame(formulaFixed=formFixed,
                               formulaRandom=formRandom,
                               Method=input$method_myLme,
-                              data=input$dataSel_myTree,
+                              data=input$dataSel_myLme,
                               subset=Subset
         )
         LstMadis$myLme<-unique(rbind(LstMadis$myLme,dat_myLme))
@@ -4095,7 +4095,7 @@ server<-function(input,output,session){
         ifelse(input$clusterName_kmeans=='','clusterKmeans',input$clusterName_kmeans)->clusterKmeans
         
         
-        data_kmeas()->dat
+        data_kmeans()->dat
         LstMadis<-get('LstMadis',envMadis)
         LstMadis$Data[[input$dataSel_kmeans]]<-dat
         dat_kmeans<-data.frame(data=input$dataSel_kmeans,

@@ -376,21 +376,21 @@ if(is.na(myKmeansParms$data)){
     Kmeans(
         data=LstMadis$Data[[myKmeansParms$data[i]]],
         vars=myKmeansParms$vars[i],
-        infgr=myKmeansParms$vars[i],
-        supgr=myKmeansParms$vars[i],
-        Centers=myKmeansParms$vars[i],
-        Criterion=myKmeansParms$vars[i],
-        Iter=myKmeansParms$vars[i],
-        iterMax=myKmeansParms$vars[i],
-        Algorithm=myKmeansParms$vars[i],
-        subset=myKmeansParms$vars[i],
-        clusterName=myKmeansParms$vars[i],
-        seed=myKmeansParms$vars[i])->res
+        infgr=myKmeansParms$infgr[i],
+        supgr=myKmeansParms$supgr[i],
+        Centers=myKmeansParms$Centers[i],
+        Criterion=myKmeansParms$Criterion[i],
+        Iter=myKmeansParms$Iter[i],
+        iterMax=myKmeansParms$iterMax[i],
+        Algorithm=myKmeansParms$Algorithm[i],
+        subset=myKmeansParms$subset[i],
+        clusterName=myKmeansParms$clusterName[i],
+        seed=myKmeansParms$seed[i])->res
     
     cat('\n')
     cat(paste0('#### 第',i,'聚类分析图形结果：'))
     cat('\n')
-    cat(pander(res$graphCrit))
+    plot(res$graphCrit)
     cat('\n')
     cat('\n')
     #cat(paste0('#### 第',i,'聚类分析结果：'))
