@@ -15,6 +15,8 @@ coxS<-function(Formula,
                 #na.action=na.rm,
                 lower='~1'
 ){
+  require('stringi')
+  stri_replace_all_regex(Formula,'[~+]{2,}','~')->Formula
   if(is.character(data)) data=eval(as.name(data))
   if(subset=='all'){
     data<-data

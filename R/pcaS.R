@@ -1,0 +1,41 @@
+#' pcaS
+#' 
+#' PCA analysis used in shiny app.
+#' 
+#' 
+#' @export
+
+
+pcaS<-function(
+  data,
+  vars,
+  nfcts=2,
+  Rotate=c('none','varimax','quartimax','promax','oblimin','simplimax','cluster')[1],
+  Scores=T,
+  subset='all',
+  pcaVarName=''
+){
+  require('psych')
+  
+  if(is.character(data)) data=eval(as.name(data))
+  if(subset=='all'){
+    data<-data
+  } else {
+    subset(data,eval(parse(text=subset)))->data
+  }
+  
+  # data[,vars]->dat
+  # na.omit(dat)->dat
+  unlist(stri_split_fixed(vars,','))->vars
+  principal(data[,vars],nfactors = nfcts,rotate=Rotate,scores=Scores)->res
+  if(pcaVarName==''){
+    cbind(data,res$scores)->data
+  } else {
+    colnames(res$scores)<-paste(colnames(res$scores),pcaVarName,sep='_')
+    cbind(data,res$scores)->data
+  }
+  
+  return(list(resPCA=res,dtPCA=data,dataScree=data[,vars],cumVar=res$Vaccounted))
+  
+  
+}

@@ -18,6 +18,8 @@ treeS<-function(Formula,
                  CP=0.01,
                  treeMethod=c('ctree','rpart')[1]
 ){
+  require('stringi')
+  stri_replace_all_regex(Formula,'[~+]{2,}','~')->Formula
   
   if(is.character(data)) data=eval(as.name(data))
   if(subset=='all'){

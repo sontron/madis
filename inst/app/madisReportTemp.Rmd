@@ -28,7 +28,7 @@ opts_chunk$set(echo=F,message=F,warning=F,results='asis',comment=NA,fig.showtext
 ```
 
 ```{r}
-load('LstMedstats.RData')
+load('LstMadis.RData')
 ```
 
 # 描述性结果
@@ -41,7 +41,7 @@ load('LstMedstats.RData')
 ## 结果部分
 
 ```{r}
-LstMedstats$desc->descParams
+LstMadis$desc->descParams
 
 if(is.na(descParams$xvars)) {
   cat('\n')
@@ -53,7 +53,7 @@ if(is.na(descParams$xvars)) {
     cat(paste0('### ',descParams$xvars[i],'的结果：'))
     cat('\n')
     #print(pander(resDesc[[i]]$resTabDesc))
-    uniVar(data=LstMedstats$Data[[descParams$dataName[i]]],xvars=descParams$xvars[i],Digits=descParams$Digits[i])->res
+    uniVar(data=LstMadis$Data[[descParams$dataName[i]]],xvars=descParams$xvars[i],Digits=descParams$Digits[i])->res
     cat(pander(res$resDesc))
     cat('\n')
     plot(res$graphDesc)
@@ -76,7 +76,7 @@ if(is.na(descParams$xvars)) {
 ## 结果部分
 
 ```{r}
-LstMedstats$hTest->hTestParams
+LstMadis$hTest->hTestParams
 
 if(is.na(hTestParams$xvars)){
   cat('\n')
@@ -88,7 +88,7 @@ if(is.na(hTestParams$xvars)){
     cat(paste0('### ',hTestParams$xvars[i],' & ',hTestParams$yvars[i],'的结果：'))
     cat('\n')
     #print(pander(resDesc[[i]]$resTabDesc))
-    hTest(data=LstMedstats$Data[[hTestParams$dataName[i]]],xvars=hTestParams$xvars[i],yvars=hTestParams$yvars[i],alter=hTestParams$alter[i],paired=hTestParams$paired[i],confLevel=hTestParams$confLevel[i],nullHyp=hTestParams$nullHyp[i])->res
+    hTest(data=LstMadis$Data[[hTestParams$dataName[i]]],xvars=hTestParams$xvars[i],yvars=hTestParams$yvars[i],alter=hTestParams$alter[i],paired=hTestParams$paired[i],confLevel=hTestParams$confLevel[i],nullHyp=hTestParams$nullHyp[i])->res
     cat(pander(res$hTestRes))
     cat('\n')
     plot(res$hTestGraph)
@@ -114,7 +114,7 @@ if(is.na(hTestParams$xvars)){
 ## 结果部分
 
 ```{r}
-LstMedstats$myGlm->myGlmParms
+LstMadis$myGlm->myGlmParms
 
 if(is.na(myGlmParms$data)){
   cat('\n')
@@ -127,7 +127,7 @@ if(is.na(myGlmParms$data)){
     cat('\n')
     
     glmS(Formula=myGlmParms$Formula[i],
-          data=LstMedstats$Data[[myGlmParms$data[i]]],
+          data=LstMadis$Data[[myGlmParms$data[i]]],
           weightsVar=myGlmParms$weightsVar[i],
           subset=myGlmParms$subset[i],
           Family=myGlmParms$Family[i],
@@ -202,7 +202,7 @@ if(is.na(myGlmParms$data)){
 ## 结果部分
 
 ```{r,fig.width=9,fig.height=9}
-LstMedstats$myTree->myTreeParms
+LstMadis$myTree->myTreeParms
 
 if(is.na(myTreeParms$data)){
   cat('\n')
@@ -215,7 +215,7 @@ if(is.na(myTreeParms$data)){
     cat('\n')
     
     treeS(Formula=myTreeParms$Formula[i],
-           data=LstMedstats$Data[[myTreeParms$data[i]]],
+           data=LstMadis$Data[[myTreeParms$data[i]]],
            subset=myTreeParms$subset[i],
            treeMethod=myTreeParms$treeMethod[i],
            Minsplit=myTreeParms$Minsplit[i],
@@ -247,7 +247,7 @@ cox模型的结果采用R中coxph函数进行分析，结果提供全模型以�
 ## 结果部分
 
 ```{r}
-LstMedstats$myCox->myCoxParms
+LstMadis$myCox->myCoxParms
 
 if(is.na(myCoxParms$data)){
   cat('\n')
@@ -260,7 +260,7 @@ if(is.na(myCoxParms$data)){
     cat('\n')
     
     coxS(Formula=myCoxParms$Formula[i],
-          data=LstMedstats$Data[[myCoxParms$data[i]]],
+          data=LstMadis$Data[[myCoxParms$data[i]]],
           weightsVar=myCoxParms$weightsVar[i],
           subset=myCoxParms$subset[i],
           strataVar=myCoxParms$strataVar[i],
@@ -302,6 +302,255 @@ if(is.na(myCoxParms$data)){
 
 
 
+
+
+
+
+# 混合效应模型结果
+
+混合效应模型的结果采用R中nlme包进行分析，结果提供全模型以及利用AIC进行变量筛选的逐步回归结果。
+
+## 结果部分
+
+```{r}
+LstMadis$myLme->myLmeParms
+
+if(is.na(myLmeParms$data)){
+  cat('\n')
+  cat('当前数据无模型分析结果')
+  cat('\n')
+} else {
+  for(i in 1:nrow(myLmeParms)){
+    cat('\n')
+    cat(paste0('### 第',i,'个模型的结果：'))
+    cat('\n')
+    
+    lmeS(formulaFixed=myLmeParms$formulaFixed[i],
+         formulaRandom=myLmeParms$formulaRandom[i],
+          data=LstMadis$Data[[myLmeParms$data[i]]],
+          Method=myLmeParms$Method[i],
+          subset=myLmeParms$subset[i])->res
+    
+    cat('\n')
+    cat(paste0('#### 第',i,'个模型的全模型结果：'))
+    cat('\n')
+    cat(pander(res$lmeResFull))
+    cat('\n')
+    cat('\n')
+    cat(paste0('#### 第',i,'个模型的逐步回归模型结果：'))
+    cat('\n')
+    cat(pander(res$lmeResStep))
+    cat('\n')
+    cat('\n')
+    cat('\n')
+  }
+  
+}
+
+
+
+
+```
+
+
+
+# 聚类分析
+
+聚类分析采用R中kmeans函数进行分析，同时，提供基于vegan包判断最佳的聚类数目。
+
+## 结果部分
+
+```{r}
+LstMadis$Kmeans->myKmeansParms
+
+if(is.na(myKmeansParms$data)){
+  cat('\n')
+  cat('当前数据无模型分析结果')
+  cat('\n')
+} else {
+  for(i in 1:nrow(myKmeansParms)){
+    cat('\n')
+    cat(paste0('### 第',i,'个模型的结果：'))
+    cat('\n')
+    
+    Kmeans(
+        data=LstMadis$Data[[myKmeansParms$data[i]]],
+        vars=myKmeansParms$vars[i],
+        infgr=myKmeansParms$vars[i],
+        supgr=myKmeansParms$vars[i],
+        Centers=myKmeansParms$vars[i],
+        Criterion=myKmeansParms$vars[i],
+        Iter=myKmeansParms$vars[i],
+        iterMax=myKmeansParms$vars[i],
+        Algorithm=myKmeansParms$vars[i],
+        subset=myKmeansParms$vars[i],
+        clusterName=myKmeansParms$vars[i],
+        seed=myKmeansParms$vars[i])->res
+    
+    cat('\n')
+    cat(paste0('#### 第',i,'聚类分析图形结果：'))
+    cat('\n')
+    cat(pander(res$graphCrit))
+    cat('\n')
+    cat('\n')
+    #cat(paste0('#### 第',i,'聚类分析结果：'))
+    cat('\n')
+    #cat(pander(res$resKmeans))
+    cat('\n')
+    cat('\n')
+    cat('\n')
+  }
+  
+}
+
+
+
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# 主成分分析
+
+主成分分析采用R psych包的principal函数进行分析。
+
+## 结果部分
+
+```{r}
+LstMadis$pca->mypcaParms
+
+if(is.na(mypcaParms$data)){
+  cat('\n')
+  cat('当前数据无模型分析结果')
+  cat('\n')
+} else {
+  for(i in 1:nrow(mypcaParms)){
+    cat('\n')
+    cat(paste0('### 第',i,'个模型的结果：'))
+    cat('\n')
+    
+    pcaS(
+      data=LstMadis$Data[[mypcaParms$data[i]]],
+      vars=mypcaParms$vars[i],
+      nfcts=mypcaParms$nfcts[i],
+      Rotate=mypcaParms$Rotate[i],
+      Scores=mypcaParms$Scores[i],
+      subset=mypcaParms$subset[i],
+      pcaVarName=mypcaParms$pcaVarName[i])->res
+    
+    cat('\n')
+    cat(paste0('#### 第',i,'主成分分析图形结果：'))
+    cat('\n')
+    plot(scree(res$dataScree))
+    cat('\n')
+    cat('\n')
+    cat(paste0('#### 第',i,'主成分分析因子载荷结果：'))
+    cat('\n')
+    cat(pander(res$resPCA$loadings[]))
+    cat('\n')
+    cat('\n')
+    cat(pander(res$cumVar))
+    cat('\n')
+  }
+  
+}
+
+
+
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# 因子分析
+
+主成分分析采用R psych包的fa函数进行分析。
+
+## 结果部分
+
+```{r}
+LstMadis$fa->myfaParms
+
+if(is.na(myfaParms$data)){
+  cat('\n')
+  cat('当前数据无模型分析结果')
+  cat('\n')
+} else {
+  for(i in 1:nrow(myfaParms)){
+    cat('\n')
+    cat(paste0('### 第',i,'个模型的结果：'))
+    cat('\n')
+    
+    faS(
+      data=LstMadis$Data[[myfaParms$data[i]]],
+      vars=myfaParms$vars[i],
+      nfcts=myfaParms$nfcts[i],
+      Rotate=myfaParms$Rotate[i],
+      Scores=myfaParms$Scores[i],
+      FM=myfaParms$FM[i],
+      subset=myfaParms$subset[i],
+      faVarName=myfaParms$faVarName[i])->res
+    
+    cat('\n')
+    cat(paste0('#### 第',i,'因子分析图形结果：'))
+    cat('\n')
+    plot(scree(res$dataScree))
+    cat('\n')
+    cat('\n')
+    cat(paste0('#### 第',i,'因子分析因子载荷结果：'))
+    cat('\n')
+    cat(pander(res$resFA$loadings[]))
+    cat('\n')
+    cat('\n')
+    cat(pander(res$cumVar))
+    cat('\n')
+  }
+  
+}
+
+
+
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 # 时间序列模型结果
 
 时间序列模型采用prophet包进行分析，结果提供历史数据的按时间段分析结果以及模型预测图形。
@@ -309,7 +558,7 @@ if(is.na(myCoxParms$data)){
 ## 结果部分
 
 ```{r}
-LstMedstats$myProphet->myProphetParms
+LstMadis$myProphet->myProphetParms
 
 if(is.na(myProphetParms$data)){
   cat('\n')
@@ -321,7 +570,7 @@ if(is.na(myProphetParms$data)){
     cat(paste0('### 第',i,'个时间序列模型的结果：'))
     cat('\n')
     
-    prophetS(data=LstMedstats$Data[[myProphetParms$data[i]]],
+    prophetS(data=LstMadis$Data[[myProphetParms$data[i]]],
               tsVar=myProphetParms$tsVar[i],
               tsFormat = myProphetParms$tsFormat[i],
               measureVars=myProphetParms$measureVars[i],
@@ -346,6 +595,12 @@ if(is.na(myProphetParms$data)){
     cat('\n')
     print(res$graphRes)
     cat('\n')
+    
+    cat(paste0('#### 第',i,'个时间序列预测数据结果：'))
+    cat('\n')
+    cat('\n')
+    print(res$tabPred)
+    cat('\n')
     cat('\n')
     cat(paste0('#### 第',i,'个时间序列预测图形结果：'))
     cat('\n')
@@ -369,7 +624,7 @@ if(is.na(myProphetParms$data)){
 ## 分类统计表
 
 ```{r}
-LstMedstats$myTable->myTableParms
+LstMadis$myTable->myTableParms
 if(is.na(myTableParms$data)){
   cat('\n')
   cat('当前数据无模型分析结果')
@@ -380,7 +635,7 @@ if(is.na(myTableParms$data)){
     cat('\n')
     cat(paste0('### 第',i,'个表格的结果：'))
     cat('\n')
-    cat(pander(descTab(Formula=myTableParms$Formula[i],data=LstMedstats$Data[[myTableParms$data[i]]])))
+    cat(pander(descTab(Formula=myTableParms$Formula[i],data=LstMadis$Data[[myTableParms$data[i]]])))
     cat('\n')
     cat('\n')
     
@@ -402,7 +657,7 @@ if(is.na(myTableParms$data)){
 ## 统计图形
 
 ```{r}
-LstMedstats$myGplt->myGpltParms
+LstMadis$myGplt->myGpltParms
 if(is.na(myGpltParms$data)){
   cat('\n')
   cat('当前数据无图形结果')
@@ -414,7 +669,7 @@ if(is.na(myGpltParms$data)){
     cat(paste0('### 第',i,'个图形的结果：'))
     cat('\n')
     print(ggplt2S(
-      data=LstMedstats$Data[[myGpltParms$data[i]]],
+      data=LstMadis$Data[[myGpltParms$data[i]]],
       x=myGpltParms$x[i],
       y=myGpltParms$y[i],
       size=myGpltParms$size[i],

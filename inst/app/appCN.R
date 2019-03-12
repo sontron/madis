@@ -38,25 +38,30 @@ file.copy(paste0(sd,'header.tex'),'header.tex')
 #source(paste0(sd,'script.R'))
 
 rm(list=c('seed','wd','wd2','sd'))
-environment()->envMedstats
-LstMedstats<-list()
-LstMedstats$desc<-data.frame(xvars=NA,Digits=NA,dataName=NA,stringsAsFactors = F)
-LstMedstats$hTest<-data.frame(xvars=NA,yvars=NA,alter=NA,paired=NA,nullHyp=NA,confLevel=NA,dataName=NA,stringsAsFactors = F)
-LstMedstats$myGlm<-data.frame(Formula=NA,data=NA,weightsVar=NA,subset=NA,Family=NA,lower=NA)
-LstMedstats$myTree<-data.frame(Formula=NA,data=NA,subset=NA,treeMethod=NA,Minsplit=NA,Minbucket=NA,Maxdepth=NA,CP=NA,Mincrit=NA)
-LstMedstats$myCox<-data.frame(Formula=NA,data=NA,weightsVar=NA,subset=NA,strataVar=NA,lower=NA)
-LstMedstats$myTable<-data.frame(Formula=NA,data=NA)
-LstMedstats$myGplt<-data.frame(data=NA,x=NA,y=NA,size=NA,fill=NA,color=NA,shape=NA,alpha=NA,facetVar=NA,
+environment()->envMadis
+LstMadis<-list()
+LstMadis$desc<-data.frame(xvars=NA,Digits=NA,dataName=NA,stringsAsFactors = F)
+LstMadis$hTest<-data.frame(xvars=NA,yvars=NA,alter=NA,paired=NA,nullHyp=NA,confLevel=NA,dataName=NA,stringsAsFactors = F)
+LstMadis$myGlm<-data.frame(Formula=NA,data=NA,weightsVar=NA,subset=NA,Family=NA,lower=NA)
+LstMadis$myTree<-data.frame(Formula=NA,data=NA,subset=NA,treeMethod=NA,Minsplit=NA,Minbucket=NA,Maxdepth=NA,CP=NA,Mincrit=NA)
+LstMadis$myCox<-data.frame(Formula=NA,data=NA,weightsVar=NA,subset=NA,strataVar=NA,lower=NA)
+LstMadis$myTable<-data.frame(Formula=NA,data=NA)
+LstMadis$myGplt<-data.frame(data=NA,x=NA,y=NA,size=NA,fill=NA,color=NA,shape=NA,alpha=NA,facetVar=NA,
                                geom=NA,smoothMethod=NA,barPos=NA,labx=NA,laby=NA,title=NA,Bins=NA,theme=NA,Width=NA,
                                Colour=NA,Fill=NA,Size=NA,Alpha=NA,Shape=NA)
-LstMedstats$myProphet<-data.frame(data=NA,tsVar=NA, tsFormat=NA,measureVars=NA, groupVars = NA,Period = NA,FN=NA,
+LstMadis$myProphet<-data.frame(data=NA,tsVar=NA, tsFormat=NA,measureVars=NA, groupVars = NA,Period = NA,FN=NA,
                                   Cap=NA,Floor=NA, Growth=NA,H=NA,yearlyS = NA,dailyS = NA,weeklyS = NA)
-assign('LstMedstats',LstMedstats,env=envMedstats)
+LstMadis$myLme<-data.frame(formulaFixed=NA,formulaRandom=NA,Method=NA,data=NA,subset=NA)
+LstMadis$Kmeans<-data.frame(data=NA,vars=NA,infgr=NA,supgr=NA,Centers=NA,Criterion=NA,Iter=NA,
+                            iterMax=NA,Algorithm=NA,subset=NA,clusterName=NA,seed=NA)
+LstMadis$pca<-data.frame(data=NA,vars=NA,nfcts=NA,Rotate=NA,Scores=NA,subset=NA,pcaVarName=NA)
+LstMadis$fa<-data.frame(data=NA,vars=NA,nfcts=2,Rotate=NA,Scores=NA,FM=NA,subset=NA,faVarName=NA)
+assign('LstMadis',LstMadis,env=envMadis)
 
 
 
 
-server<-function(input,output){
+server<-function(input,output,session){
   
   ###### 所有有可能引起数据变化的input ######
   change_data<-reactive({
@@ -69,6 +74,9 @@ server<-function(input,output){
     input$go_dataMerge
     input$go_naImpute
     input$go_dataFilter
+    input$go_kmeans
+    input$go_pca
+    input$go_fa
   })
   
   
@@ -167,7 +175,7 @@ server<-function(input,output){
     isolate({
       data_dataImpt()->dat
       dat[,input$varsKeep_dataImpt]->dat
-      assign(input$dataName_dataImpt,dat,envMedstats)
+      assign(input$dataName_dataImpt,dat,envMadis)
     })
     
   })
@@ -190,7 +198,7 @@ server<-function(input,output){
     input$go_dataImpt
     req(input$go_dataImpt)
     isolate({
-      # get(input$dataName_dataImpt,envir=envMedstats)->DatSel_dataImpt
+      # get(input$dataName_dataImpt,envir=envMadis)->DatSel_dataImpt
       # head(DatSel_dataImpt,n=max(nrow(DatSel_dataImpt),10))
       skim(data_dataImpt())
     })
@@ -214,8 +222,8 @@ server<-function(input,output){
             pickerInput(
               inputId = "dataSel_varName",
               label = "选择数据集",
-              choices = ls(envMedstats)[-which(ls(envMedstats)%in%c('envMedstats','server','ui','LstMedstats'))],
-              selected =ls(envMedstats)[-which(ls(envMedstats)%in%c('envMedstats','server','ui','LstMedstats'))][1],
+              choices = ls(envMadis)[-which(ls(envMadis)%in%c('envMadis','server','ui','LstMadis'))],
+              selected =ls(envMadis)[-which(ls(envMadis)%in%c('envMadis','server','ui','LstMadis'))][1],
               multiple = FALSE,
               options = list(`actions-box` = FALSE)
             )
@@ -226,13 +234,12 @@ server<-function(input,output){
   
   data_varName<-reactive({
     change_data()
-    get(input$dataSel_varName,envMedstats)->dat_varName
+    get(input$dataSel_varName,envMadis)->dat_varName
     return(dat_varName)
   })
   
   
   output$more2_varName<-renderUI({
-
     
     list(
       panel(heading='变量名修改',
@@ -258,9 +265,13 @@ server<-function(input,output){
       data_varName()->dat
       ifelse(input$new_varName=='',input$var_varName,input$new_varName)->newName
       names(dat)[which(names(dat)==input$var_varName)]<-newName
-      assign(input$dataSel_varName,dat,envMedstats)
+      assign(input$dataSel_varName,dat,envMadis)
       return(dat)
     })
+  })
+  
+  observeEvent(input$go_varName,{  #### newly added for update picker input values.
+    updatePickerInput(session,inputId = 'var_varName',choices = names(rename_varName()))
   })
   
   output$summary_varName<-renderPrint({
@@ -282,12 +293,12 @@ server<-function(input,output){
         pickerInput(
           inputId = "dataSel_varMnp",
           label = "选择数据集",
-          choices = ls(envMedstats)[-which(ls(envMedstats)%in%c('envMedstats','server','ui','LstMedstats'))],
-          selected =ls(envMedstats)[-which(ls(envMedstats)%in%c('envMedstats','server','ui','LstMedstats'))][1],
+          choices = ls(envMadis)[-which(ls(envMadis)%in%c('envMadis','server','ui','LstMadis'))],
+          selected =ls(envMadis)[-which(ls(envMadis)%in%c('envMadis','server','ui','LstMadis'))][1],
           multiple = FALSE,
           options = list(`actions-box` = FALSE)
         )
-        #selectInput('dataSel_varMnp','选择数据集',ls(envMedstats)[-which(ls(envMedstats)%in%c('envMedstats','server','ui'))])
+        #selectInput('dataSel_varMnp','选择数据集',ls(envMadis)[-which(ls(envMadis)%in%c('envMadis','server','ui'))])
       )
     )
   })
@@ -295,7 +306,7 @@ server<-function(input,output){
   data_varMnp<-reactive({
     change_data()
     
-    get(input$dataSel_varMnp,envMedstats)->data_varMnp
+    get(input$dataSel_varMnp,envMadis)->data_varMnp
     return(data_varMnp)
     
   })
@@ -645,20 +656,28 @@ server<-function(input,output){
       
     })
     if(input$dataName_varMnp==''){
-      assign(input$dataSel_varMnp,dat,env=envMedstats)
+      assign(input$dataSel_varMnp,dat,env=envMadis)
     } else {
-      assign(input$dataName_varMnp,dat,env=envMedstats)
+      assign(input$dataName_varMnp,dat,env=envMadis)
     }
     
-    #assign(input$dataSel_varMnp,dat,envMedstats)
+    #assign(input$dataSel_varMnp,dat,envMadis)
     return(dat)
   })
   
-  
+  observeEvent(input$go_varMnp,{  #### newly added for update picker input values.
+    updatePickerInput(session,inputId = 'varsSel_varMnp',choices = names(res_varMnp()))
+    # if(input$dataName_varMnp==''){
+    #   NULL
+    # } else {
+    #   updatePickerInput(session,inputId = 'datSel_varMnp',choices = ls(envMadis)[-which(ls(envMadis)%in%c('envMadis','server','ui','LstMadis'))])
+    # }
+    
+  })
   
   output$summary_varMnp<-renderPrint({
     res_varMnp()->dt
-    print(head(dt))
+    print(pander(head(dt)))
     #print(summary(dt))
     
   })
@@ -680,12 +699,12 @@ server<-function(input,output){
         pickerInput(
           inputId = "dataSel_varClass",
           label = "选择数据集",
-          choices = ls(envMedstats)[-which(ls(envMedstats)%in%c('envMedstats','server','ui','LstMedstats'))],
-          selected =ls(envMedstats)[-which(ls(envMedstats)%in%c('envMedstats','server','ui','LstMedstats'))][1],
+          choices = ls(envMadis)[-which(ls(envMadis)%in%c('envMadis','server','ui','LstMadis'))],
+          selected =ls(envMadis)[-which(ls(envMadis)%in%c('envMadis','server','ui','LstMadis'))][1],
           multiple = FALSE,
           options = list(`actions-box` = FALSE)
         )
-        #selectInput('dataSel_varClass','选择数据集',ls(envMedstats)[-which(ls(envMedstats)%in%c('envMedstats','server','ui','LstMedstats'))])
+        #selectInput('dataSel_varClass','选择数据集',ls(envMadis)[-which(ls(envMadis)%in%c('envMadis','server','ui','LstMadis'))])
       )
     )
   })
@@ -694,7 +713,7 @@ server<-function(input,output){
     
     change_data()
     #?#
-    get(input$dataSel_varClass,envMedstats)->data_varClass
+    get(input$dataSel_varClass,envMadis)->data_varClass
     return(data_varClass)
   })
   
@@ -849,9 +868,9 @@ server<-function(input,output){
         if(all(is.null(c(input$varsNum_varClass,input$varsDate_varClass,input$varsDate_varClass)))) {dat->dat}
       }
       if(input$dataName_varClass==''){
-        assign(input$dataSel_varClass,dat,env=envMedstats)
+        assign(input$dataSel_varClass,dat,env=envMadis)
       } else {
-        assign(input$dataName_varClass,dat,env=envMedstats)
+        assign(input$dataName_varClass,dat,env=envMadis)
       }
       
       return(dat)
@@ -863,11 +882,11 @@ server<-function(input,output){
     isolate({
       res_varClass()->dt
       sapply(dt,class)
-      print(head(dt))
+      print(pander(head(dt)))
       sapply(dt,class)->y
       unique(y)->x
       sapply(x,function(i)names(y)[which(y==i)])->res
-      print(res)
+      print(pander(res))
       
       skim(dt)
     })
@@ -888,12 +907,12 @@ server<-function(input,output){
         pickerInput(
           inputId = "dataSel_reshape",
           label = "选择数据集",
-          choices = ls(envMedstats)[-which(ls(envMedstats)%in%c('envMedstats','server','ui','LstMedstats'))],
-          selected =ls(envMedstats)[-which(ls(envMedstats)%in%c('envMedstats','server','ui','LstMedstats'))][1],
+          choices = ls(envMadis)[-which(ls(envMadis)%in%c('envMadis','server','ui','LstMadis'))],
+          selected =ls(envMadis)[-which(ls(envMadis)%in%c('envMadis','server','ui','LstMadis'))][1],
           multiple = FALSE,
           options = list(`actions-box` = FALSE)
         )
-        #selectInput('dataSel_reshape','选择数据集',ls(envMedstats)[-which(ls(envMedstats)%in%c('envMedstats','server','ui','LstMedstats'))])
+        #selectInput('dataSel_reshape','选择数据集',ls(envMadis)[-which(ls(envMadis)%in%c('envMadis','server','ui','LstMadis'))])
       )
     )
   })
@@ -902,7 +921,7 @@ server<-function(input,output){
     
     change_data()
     #?#
-    get(input$dataSel_reshape,envMedstats)->dataReshape
+    get(input$dataSel_reshape,envMadis)->dataReshape
     return(dataReshape)
   })
   
@@ -1053,9 +1072,9 @@ server<-function(input,output){
       }
       
       if(input$dataName_reshape==''){
-        assign(paste0(input$dataSel_reshape,'reshaped'),dat_reshape,env=envMedstats)
+        assign(paste0(input$dataSel_reshape,'reshaped'),dat_reshape,env=envMadis)
       } else {
-        assign(input$dataName_reshape,dat_reshape,env=envMedstats)
+        assign(input$dataName_reshape,dat_reshape,env=envMadis)
       }
       
       return(dat_reshape)
@@ -1066,7 +1085,7 @@ server<-function(input,output){
   output$summary_reshape<-renderPrint({
     input$go_reshape
     #?#input$dataSel_reshape
-    get(input$dataSel_reshape,envMedstats)->dataReshape
+    get(input$dataSel_reshape,envMadis)->dataReshape
     res_reshape()->dt
     print(head(dt,n=10))
     print(summary(dt))
@@ -1088,12 +1107,12 @@ server<-function(input,output){
         pickerInput(
           inputId = "dataSel_unique",
           label = "选择数据集",
-          choices = ls(envMedstats)[-which(ls(envMedstats)%in%c('envMedstats','server','ui','LstMedstats'))],
-          selected =ls(envMedstats)[-which(ls(envMedstats)%in%c('envMedstats','server','ui','LstMedstats'))][1],
+          choices = ls(envMadis)[-which(ls(envMadis)%in%c('envMadis','server','ui','LstMadis'))],
+          selected =ls(envMadis)[-which(ls(envMadis)%in%c('envMadis','server','ui','LstMadis'))][1],
           multiple = FALSE,
           options = list(`actions-box` = FALSE)
         )
-        #selectInput('dataSel_naImpute','选择数据集',ls(envMedstats)[-which(ls(envMedstats)%in%c('envMedstats','server','ui','LstMedstats'))])
+        #selectInput('dataSel_naImpute','选择数据集',ls(envMadis)[-which(ls(envMadis)%in%c('envMadis','server','ui','LstMadis'))])
       )
     )
   })
@@ -1102,7 +1121,7 @@ server<-function(input,output){
     
     change_data()
     #?#
-    get(input$dataSel_unique,envMedstats)->datanaImpute
+    get(input$dataSel_unique,envMadis)->datanaImpute
     return(datanaImpute)
   })
   
@@ -1121,9 +1140,9 @@ server<-function(input,output){
       data_unique()->dat
       unique(dat)->dataUnique
       if(input$dataName_unique==''){
-        assign(paste0(input$dataSel_unique,'Unique'),dataUnique,envMedstats)
+        assign(paste0(input$dataSel_unique,'Unique'),dataUnique,envMadis)
       } else {
-        assign(input$dataName_unique,dataUnique,envMedstats)
+        assign(input$dataName_unique,dataUnique,envMadis)
       }
       return(dataUnique)
     })
@@ -1148,21 +1167,21 @@ server<-function(input,output){
         pickerInput(
           inputId = "dataSel1_dataMerge",
           label = "选择数据集1",
-          choices = ls(envMedstats)[-which(ls(envMedstats)%in%c('envMedstats','server','ui','LstMedstats'))],
-          selected =ls(envMedstats)[-which(ls(envMedstats)%in%c('envMedstats','server','ui','LstMedstats'))][1],
+          choices = ls(envMadis)[-which(ls(envMadis)%in%c('envMadis','server','ui','LstMadis'))],
+          selected =ls(envMadis)[-which(ls(envMadis)%in%c('envMadis','server','ui','LstMadis'))][1],
           multiple = FALSE,
           options = list(`actions-box` = FALSE)
         ),
         pickerInput(
           inputId = "dataSel2_dataMerge",
           label = "选择数据集2",
-          choices = ls(envMedstats)[-which(ls(envMedstats)%in%c('envMedstats','server','ui','LstMedstats'))],
-          selected =ls(envMedstats)[-which(ls(envMedstats)%in%c('envMedstats','server','ui','LstMedstats'))][1],
+          choices = ls(envMadis)[-which(ls(envMadis)%in%c('envMadis','server','ui','LstMadis'))],
+          selected =ls(envMadis)[-which(ls(envMadis)%in%c('envMadis','server','ui','LstMadis'))][1],
           multiple = FALSE,
           options = list(`actions-box` = FALSE)
         )
-        #selectInput('dataSel1_dataMerge','选择数据集1',ls(envMedstats)[-which(ls(envMedstats)%in%c('envMedstats','server','ui','LstMedstats'))]),
-        #selectInput('dataSel2_dataMerge','选择数据集2',ls(envMedstats)[-which(ls(envMedstats)%in%c('envMedstats','server','ui','LstMedstats'))])
+        #selectInput('dataSel1_dataMerge','选择数据集1',ls(envMadis)[-which(ls(envMadis)%in%c('envMadis','server','ui','LstMadis'))]),
+        #selectInput('dataSel2_dataMerge','选择数据集2',ls(envMadis)[-which(ls(envMadis)%in%c('envMadis','server','ui','LstMadis'))])
       )
     )
   })
@@ -1171,8 +1190,8 @@ server<-function(input,output){
     
     change_data()
     #?#
-    get(input$dataSel1_dataMerge,envMedstats)->dataMerge1
-    get(input$dataSel2_dataMerge,envMedstats)->dataMerge2
+    get(input$dataSel1_dataMerge,envMadis)->dataMerge1
+    get(input$dataSel2_dataMerge,envMadis)->dataMerge2
     return(list(dat1=dataMerge1,dat2=dataMerge2))
   })
   
@@ -1289,9 +1308,9 @@ server<-function(input,output){
       }
       
       if(input$dataName_dataMerge==''){
-        assign(paste0(input$dataSel1_dataMerge,input$dataSel2_dataMerge),datMerge,envMedstats)
+        assign(paste0(input$dataSel1_dataMerge,input$dataSel2_dataMerge),datMerge,envMadis)
       } else {
-        assign(input$dataName_dataMerge,datMerge,envMedstats)
+        assign(input$dataName_dataMerge,datMerge,envMadis)
       }
       return(datMerge)
     })
@@ -1317,12 +1336,12 @@ server<-function(input,output){
         pickerInput(
           inputId = "dataSel_naImpute",
           label = "选择数据集",
-          choices = ls(envMedstats)[-which(ls(envMedstats)%in%c('envMedstats','server','ui','LstMedstats'))],
-          selected =ls(envMedstats)[-which(ls(envMedstats)%in%c('envMedstats','server','ui','LstMedstats'))][1],
+          choices = ls(envMadis)[-which(ls(envMadis)%in%c('envMadis','server','ui','LstMadis'))],
+          selected =ls(envMadis)[-which(ls(envMadis)%in%c('envMadis','server','ui','LstMadis'))][1],
           multiple = FALSE,
           options = list(`actions-box` = FALSE)
         )
-        #selectInput('dataSel_naImpute','选择数据集',ls(envMedstats)[-which(ls(envMedstats)%in%c('envMedstats','server','ui','LstMedstats'))])
+        #selectInput('dataSel_naImpute','选择数据集',ls(envMadis)[-which(ls(envMadis)%in%c('envMadis','server','ui','LstMadis'))])
       )
     )
   })
@@ -1331,7 +1350,7 @@ server<-function(input,output){
     
     change_data()
     #?#
-    get(input$dataSel_naImpute,envMedstats)->datanaImpute
+    get(input$dataSel_naImpute,envMadis)->datanaImpute
     return(datanaImpute)
   })
   
@@ -1472,10 +1491,21 @@ server<-function(input,output){
         }
       }
       
-      assign(input$dataSel_naImpute,dat,envMedstats)
+      assign(input$dataSel_naImpute,dat,envMadis)
       return(dat)
     })
   })
+  
+  observeEvent(input$go_naImpute,{  #### newly added for update picker input values.
+    updatePickerInput(session,inputId = 'var_naImpute',choices = names(res_naImpute()))
+    # if(input$dataName_varMnp==''){
+    #   NULL
+    # } else {
+    #   updatePickerInput(session,inputId = 'datSel_varMnp',choices = ls(envMadis)[-which(ls(envMadis)%in%c('envMadis','server','ui','LstMadis'))])
+    # }
+    
+  })
+  
   
   output$summary_naImpute<-renderPrint({
     input$go_naImpute
@@ -1497,12 +1527,12 @@ server<-function(input,output){
         pickerInput(
           inputId = "dataSel_dataFilter",
           label = "选择数据集",
-          choices = ls(envMedstats)[-which(ls(envMedstats)%in%c('envMedstats','server','ui','LstMedstats'))],
-          selected =ls(envMedstats)[-which(ls(envMedstats)%in%c('envMedstats','server','ui','LstMedstats'))][1],
+          choices = ls(envMadis)[-which(ls(envMadis)%in%c('envMadis','server','ui','LstMadis'))],
+          selected =ls(envMadis)[-which(ls(envMadis)%in%c('envMadis','server','ui','LstMadis'))][1],
           multiple = FALSE,
           options = list(`actions-box` = FALSE)
         )
-        #selectInput('dataSel_dataFilter','选择数据集',ls(envMedstats)[-which(ls(envMedstats)%in%c('envMedstats','server','ui','LstMedstats'))])
+        #selectInput('dataSel_dataFilter','选择数据集',ls(envMadis)[-which(ls(envMadis)%in%c('envMadis','server','ui','LstMadis'))])
       )
     )
   })
@@ -1511,7 +1541,7 @@ server<-function(input,output){
     
     change_data()
     #?#
-    get(input$dataSel_dataFilter,envMedstats)->dataFilter
+    get(input$dataSel_dataFilter,envMadis)->dataFilter
     return(dataFilter)
   })
   
@@ -1595,9 +1625,9 @@ server<-function(input,output){
       }
       
       if(input$dataName_dataFilter==''){
-        assign(input$dataSel_dataFilter,dat,envMedstats)
+        assign(input$dataSel_dataFilter,dat,envMadis)
       } else {
-        assign(input$dataName_dataFilter,dat,envMedstats)
+        assign(input$dataName_dataFilter,dat,envMadis)
       }
       return(dat)
     })
@@ -1624,12 +1654,12 @@ server<-function(input,output){
         pickerInput(
           inputId = "dataSel_dataExpt",
           label = "选择数据集",
-          choices = ls(envMedstats)[-which(ls(envMedstats)%in%c('envMedstats','server','ui','LstMedstats'))],
-          selected =ls(envMedstats)[-which(ls(envMedstats)%in%c('envMedstats','server','ui','LstMedstats'))][1],
+          choices = ls(envMadis)[-which(ls(envMadis)%in%c('envMadis','server','ui','LstMadis'))],
+          selected =ls(envMadis)[-which(ls(envMadis)%in%c('envMadis','server','ui','LstMadis'))][1],
           multiple = FALSE,
           options = list(`actions-box` = FALSE)
         )
-        #selectInput('dataSel_dataExpt','选择数据集',ls(envMedstats)[-which(ls(envMedstats)%in%c('envMedstats','server','ui','LstMedstats'))])
+        #selectInput('dataSel_dataExpt','选择数据集',ls(envMadis)[-which(ls(envMadis)%in%c('envMadis','server','ui','LstMadis'))])
       )
     )
   })
@@ -1638,7 +1668,7 @@ server<-function(input,output){
     
     change_data()
     #?#
-    get(input$dataSel_dataExpt,envMedstats)->dataExpt
+    get(input$dataSel_dataExpt,envMadis)->dataExpt
     return(dataExpt)
   })
   
@@ -1765,7 +1795,7 @@ server<-function(input,output){
   
   
   
-  ###### 写入LstMedstats的变化input ######
+  ###### 写入LstMadis的变化input ######
   change_report<-reactive({
     input$go_myTable
     input$go_desc
@@ -1775,6 +1805,10 @@ server<-function(input,output){
     input$go_myCox
     input$go_myGplt
     input$go_myProphet
+    input$go_myLme
+    input$go_kmeans
+    input$go_pca
+    input$go_fa
   })
   
   
@@ -1790,19 +1824,19 @@ server<-function(input,output){
         pickerInput(
           inputId = "dataSel_myTable",
           label = "选择数据集",
-          choices = ls(envMedstats)[-which(ls(envMedstats)%in%c('envMedstats','server','ui','LstMedstats'))],
-          selected =ls(envMedstats)[-which(ls(envMedstats)%in%c('envMedstats','server','ui','LstMedstats'))][1],
+          choices = ls(envMadis)[-which(ls(envMadis)%in%c('envMadis','server','ui','LstMadis'))],
+          selected =ls(envMadis)[-which(ls(envMadis)%in%c('envMadis','server','ui','LstMadis'))][1],
           multiple = FALSE,
           options = list(`actions-box` = FALSE)
         )
-        #selectInput('dataSel_dataExpt','选择数据集',ls(envMedstats)[-which(ls(envMedstats)%in%c('envMedstats','server','ui','LstMedstats'))])
+        #selectInput('dataSel_dataExpt','选择数据集',ls(envMadis)[-which(ls(envMadis)%in%c('envMadis','server','ui','LstMadis'))])
       )
     )
   })
   
   data_myTable<-reactive({
     change_data()
-    get(input$dataSel_myTable,envMedstats)->datamyTable
+    get(input$dataSel_myTable,envMadis)->datamyTable
     return(datamyTable)
     
   })
@@ -1863,15 +1897,15 @@ server<-function(input,output){
     isolate({
       if(input$export_myTable){
         data_myTable()->dat
-        LstMedstats<-get('LstMedstats',envMedstats)
-        LstMedstats$Data[[input$dataSel_myTable]]<-dat
+        LstMadis<-get('LstMadis',envMadis)
+        LstMadis$Data[[input$dataSel_myTable]]<-dat
         paste(input$lht_myTable,collapse='+')->lhtV
         paste(input$rht_myTable,collapse='+')->rhtV
         paste(lhtV,rhtV,sep='~')->Formula
         dat_myTable<-data.frame(Formula=Formula,data=input$dataSel_myTable)
-        LstMedstats$myTable<-unique(rbind(LstMedstats$myTable,dat_myTable))
-        subset(LstMedstats$myTable,!is.na(data))->LstMedstats$myTable
-        assign('LstMedstats',LstMedstats,envir=envMedstats)
+        LstMadis$myTable<-unique(rbind(LstMadis$myTable,dat_myTable))
+        subset(LstMadis$myTable,!is.na(data))->LstMadis$myTable
+        assign('LstMadis',LstMadis,envir=envMadis)
       } else {
         NULL
       }
@@ -1903,19 +1937,19 @@ server<-function(input,output){
         pickerInput(
           inputId = "dataSel_myGplt",
           label = "选择数据集",
-          choices = ls(envMedstats)[-which(ls(envMedstats)%in%c('envMedstats','server','ui','LstMedstats'))],
-          selected =ls(envMedstats)[-which(ls(envMedstats)%in%c('envMedstats','server','ui','LstMedstats'))][1],
+          choices = ls(envMadis)[-which(ls(envMadis)%in%c('envMadis','server','ui','LstMadis'))],
+          selected =ls(envMadis)[-which(ls(envMadis)%in%c('envMadis','server','ui','LstMadis'))][1],
           multiple = FALSE,
           options = list(`actions-box` = FALSE)
         )
-        #selectInput('dataSel_dataExpt','选择数据集',ls(envMedstats)[-which(ls(envMedstats)%in%c('envMedstats','server','ui','LstMedstats'))])
+        #selectInput('dataSel_dataExpt','选择数据集',ls(envMadis)[-which(ls(envMadis)%in%c('envMadis','server','ui','LstMadis'))])
       )
     )
   })
   
   data_myGplt<-reactive({
     change_data()
-    get(input$dataSel_myGplt,envMedstats)->datamyGplt
+    get(input$dataSel_myGplt,envMadis)->datamyGplt
     return(datamyGplt)
     
   })
@@ -2192,8 +2226,8 @@ server<-function(input,output){
     isolate({
       if(input$export_myGplt){
         data_myGplt()->dat
-        LstMedstats<-get('LstMedstats',envMedstats)
-        LstMedstats$Data[[input$dataSel_myGplt]]<-dat
+        LstMadis<-get('LstMadis',envMadis)
+        LstMadis$Data[[input$dataSel_myGplt]]<-dat
         dat_myGplt<-data.frame(data=input$dataSel_myGplt,
                                x=input$xvar_myGplt,
                                y=input$yvar_myGplt,
@@ -2218,9 +2252,9 @@ server<-function(input,output){
                                Alpha=input$Alpha_myGplt,
                                Shape=input$Shape_myGplt
                                )
-        LstMedstats$myGplt<-unique(rbind(LstMedstats$myGplt,dat_myGplt))
-        subset(LstMedstats$myGplt,!is.na(data))->LstMedstats$myGplt
-        assign('LstMedstats',LstMedstats,envir=envMedstats)
+        LstMadis$myGplt<-unique(rbind(LstMadis$myGplt,dat_myGplt))
+        subset(LstMadis$myGplt,!is.na(data))->LstMadis$myGplt
+        assign('LstMadis',LstMadis,envir=envMadis)
       } else {
         NULL
       }
@@ -2262,12 +2296,12 @@ server<-function(input,output){
         pickerInput(
           inputId = "dataSel_desc",
           label = "选择数据集",
-          choices = ls(envMedstats)[-which(ls(envMedstats)%in%c('envMedstats','server','ui','LstMedstats'))],
-          selected =ls(envMedstats)[-which(ls(envMedstats)%in%c('envMedstats','server','ui','LstMedstats'))][1],
+          choices = ls(envMadis)[-which(ls(envMadis)%in%c('envMadis','server','ui','LstMadis'))],
+          selected =ls(envMadis)[-which(ls(envMadis)%in%c('envMadis','server','ui','LstMadis'))][1],
           multiple = FALSE,
           options = list(`actions-box` = FALSE)
         )
-        #selectInput('dataSel_dataExpt','选择数据集',ls(envMedstats)[-which(ls(envMedstats)%in%c('envMedstats','server','ui','LstMedstats'))])
+        #selectInput('dataSel_dataExpt','选择数据集',ls(envMadis)[-which(ls(envMadis)%in%c('envMadis','server','ui','LstMadis'))])
       )
     )
   })
@@ -2276,7 +2310,7 @@ server<-function(input,output){
     
     change_data()
     #?#
-    get(input$dataSel_desc,envMedstats)->dataDesc
+    get(input$dataSel_desc,envMadis)->dataDesc
     return(dataDesc)
     
   })
@@ -2374,14 +2408,14 @@ server<-function(input,output){
     isolate({
       if(input$export_desc){
         data_desc()->dat
-        LstMedstats<-get('LstMedstats',envMedstats)
-        LstMedstats$Data[[input$dataSel_desc]]<-dat
+        LstMadis<-get('LstMadis',envMadis)
+        LstMadis$Data[[input$dataSel_desc]]<-dat
         dat_desc<-data.frame(xvars=input$vars_desc,Digits=input$digits_desc,dataName=input$dataSel_desc,stringsAsFactors = F)
-        LstMedstats$desc<-unique(rbind(LstMedstats$desc,dat_desc))
-        #LstMedstats$desc[!is.na(xvars),]
-        subset(LstMedstats$desc,!is.na(xvars))->LstMedstats$desc
-        assign('LstMedstats',LstMedstats,envir=envMedstats)
-        #return(LstMedstats)
+        LstMadis$desc<-unique(rbind(LstMadis$desc,dat_desc))
+        #LstMadis$desc[!is.na(xvars),]
+        subset(LstMadis$desc,!is.na(xvars))->LstMadis$desc
+        assign('LstMadis',LstMadis,envir=envMadis)
+        #return(LstMadis)
       } else {
         NULL
       }
@@ -2393,7 +2427,7 @@ server<-function(input,output){
     res_desc()->resDesc
     which(input$vars_desc==input$Res_desc)->ind
     if(input$myFun_desc){
-      print(resDesc[[i]])
+      print(pander(resDesc[[i]]))
     } else {
       print(pander(resDesc[[ind]]$resDesc))
     }
@@ -2419,19 +2453,19 @@ server<-function(input,output){
         pickerInput(
           inputId = "dataSel_hTest",
           label = "选择数据集",
-          choices = ls(envMedstats)[-which(ls(envMedstats)%in%c('envMedstats','server','ui','LstMedstats'))],
-          selected =ls(envMedstats)[-which(ls(envMedstats)%in%c('envMedstats','server','ui','LstMedstats'))][1],
+          choices = ls(envMadis)[-which(ls(envMadis)%in%c('envMadis','server','ui','LstMadis'))],
+          selected =ls(envMadis)[-which(ls(envMadis)%in%c('envMadis','server','ui','LstMadis'))][1],
           multiple = FALSE,
           options = list(`actions-box` = FALSE)
         )
-        #selectInput('dataSel_dataExpt','选择数据集',ls(envMedstats)[-which(ls(envMedstats)%in%c('envMedstats','server','ui','LstMedstats'))])
+        #selectInput('dataSel_dataExpt','选择数据集',ls(envMadis)[-which(ls(envMadis)%in%c('envMadis','server','ui','LstMadis'))])
       )
     )
   })
   
   data_hTest<-reactive({
     change_data()
-    get(input$dataSel_hTest,envMedstats)->dataHtest
+    get(input$dataSel_hTest,envMadis)->dataHtest
     return(dataHtest)
   })
   
@@ -2527,17 +2561,17 @@ server<-function(input,output){
     isolate({
       if(input$export_hTest){
         data_hTest()->dat
-        LstMedstats<-get('LstMedstats',envMedstats)
-        LstMedstats$Data[[input$dataSel_hTest]]<-dat
+        LstMadis<-get('LstMadis',envMadis)
+        LstMadis$Data[[input$dataSel_hTest]]<-dat
         expand.grid(input$varsx_hTest,input$varsy_hTest)->varsInput
         names(varsInput)<-c('xvars','yvars')
         dat_hTest<-data.frame(varsInput,alter=input$alter_hTest,
                               paired=input$paired_hTest,nullHyp=input$nullHyp_hTest,confLevel=input$confLevel_hTest,dataName=input$dataSel_hTest,stringsAsFactors = F)
-        LstMedstats$hTest<-unique(rbind(LstMedstats$hTest,dat_hTest))
-        subset(LstMedstats$hTest,!is.na(xvars))->LstMedstats$hTest
-        as.logical(LstMedstats$hTest$paired)->LstMedstats$hTest$paired
-        assign('LstMedstats',LstMedstats,envir=envMedstats)
-        #return(LstMedstats)
+        LstMadis$hTest<-unique(rbind(LstMadis$hTest,dat_hTest))
+        subset(LstMadis$hTest,!is.na(xvars))->LstMadis$hTest
+        as.logical(LstMadis$hTest$paired)->LstMadis$hTest$paired
+        assign('LstMadis',LstMadis,envir=envMadis)
+        #return(LstMadis)
       } else {
         NULL
       }
@@ -2604,19 +2638,19 @@ server<-function(input,output){
         pickerInput(
           inputId = "dataSel_myGlm",
           label = "选择数据集",
-          choices = ls(envMedstats)[-which(ls(envMedstats)%in%c('envMedstats','server','ui','LstMedstats'))],
-          selected =ls(envMedstats)[-which(ls(envMedstats)%in%c('envMedstats','server','ui','LstMedstats'))][1],
+          choices = ls(envMadis)[-which(ls(envMadis)%in%c('envMadis','server','ui','LstMadis'))],
+          selected =ls(envMadis)[-which(ls(envMadis)%in%c('envMadis','server','ui','LstMadis'))][1],
           multiple = FALSE,
           options = list(`actions-box` = FALSE)
         )
-        #selectInput('dataSel_dataExpt','选择数据集',ls(envMedstats)[-which(ls(envMedstats)%in%c('envMedstats','server','ui','LstMedstats'))])
+        #selectInput('dataSel_dataExpt','选择数据集',ls(envMadis)[-which(ls(envMadis)%in%c('envMadis','server','ui','LstMadis'))])
       )
     )
   })
   
   data_myGlm<-reactive({
     change_data()
-    get(input$dataSel_myGlm,envMedstats)->datamyGlm
+    get(input$dataSel_myGlm,envMadis)->datamyGlm
     return(datamyGlm)
   })
   
@@ -2820,13 +2854,13 @@ server<-function(input,output){
 
 
         data_myGlm()->dat
-        LstMedstats<-get('LstMedstats',envMedstats)
-        LstMedstats$Data[[input$dataSel_myGlm]]<-dat
+        LstMadis<-get('LstMadis',envMadis)
+        LstMadis$Data[[input$dataSel_myGlm]]<-dat
         dat_myGlm<-data.frame(Formula=Formula,data=input$dataSel_myGlm,weightsVar=weightsVar,subset=Subset,Family=input$family_myGlm,lower=lowerForm)
-        LstMedstats$myGlm<-unique(rbind(LstMedstats$myGlm,dat_myGlm))
-        subset(LstMedstats$myGlm,!is.na(data))->LstMedstats$myGlm
-        assign('LstMedstats',LstMedstats,envir=envMedstats)
-        #return(LstMedstats)
+        LstMadis$myGlm<-unique(rbind(LstMadis$myGlm,dat_myGlm))
+        subset(LstMadis$myGlm,!is.na(data))->LstMadis$myGlm
+        assign('LstMadis',LstMadis,envir=envMadis)
+        #return(LstMadis)
       } else {
         NULL
       }
@@ -2939,19 +2973,19 @@ server<-function(input,output){
         pickerInput(
           inputId = "dataSel_myTree",
           label = "选择数据集",
-          choices = ls(envMedstats)[-which(ls(envMedstats)%in%c('envMedstats','server','ui','LstMedstats'))],
-          selected =ls(envMedstats)[-which(ls(envMedstats)%in%c('envMedstats','server','ui','LstMedstats'))][1],
+          choices = ls(envMadis)[-which(ls(envMadis)%in%c('envMadis','server','ui','LstMadis'))],
+          selected =ls(envMadis)[-which(ls(envMadis)%in%c('envMadis','server','ui','LstMadis'))][1],
           multiple = FALSE,
           options = list(`actions-box` = FALSE)
         )
-        #selectInput('dataSel_dataExpt','选择数据集',ls(envMedstats)[-which(ls(envMedstats)%in%c('envMedstats','server','ui','LstMedstats'))])
+        #selectInput('dataSel_dataExpt','选择数据集',ls(envMadis)[-which(ls(envMadis)%in%c('envMadis','server','ui','LstMadis'))])
       )
     )
   })
   
   data_myTree<-reactive({
     change_data()
-    get(input$dataSel_myTree,envMedstats)->datamyTree
+    get(input$dataSel_myTree,envMadis)->datamyTree
     return(datamyTree)
   })
   
@@ -3013,7 +3047,7 @@ server<-function(input,output){
         ),
         pickerInput(
           inputId='method_myTree',
-          label='设定数模型算法',
+          label='设定树模型算法',
           choices = c('RPART'='rpart','CTREE'='ctree'),
           selected='rpart',
           multiple=FALSE,
@@ -3181,8 +3215,8 @@ server<-function(input,output){
 
 
         data_myTree()->dat
-        LstMedstats<-get('LstMedstats',envMedstats)
-        LstMedstats$Data[[input$dataSel_myTree]]<-dat
+        LstMadis<-get('LstMadis',envMadis)
+        LstMadis$Data[[input$dataSel_myTree]]<-dat
         dat_myTree<-data.frame(Formula=Formula,
                               data=input$dataSel_myTree,
                               subset=Subset,
@@ -3192,9 +3226,9 @@ server<-function(input,output){
                               Maxdepth = input$maxDepth_myTree,
                               CP=input$param_myTree,
                               Mincrit=input$param_myTree)
-        LstMedstats$myTree<-unique(rbind(LstMedstats$myTree,dat_myTree))
-        subset(LstMedstats$myTree,!is.na(data))->LstMedstats$myTree
-        assign('LstMedstats',LstMedstats,envir=envMedstats)
+        LstMadis$myTree<-unique(rbind(LstMadis$myTree,dat_myTree))
+        subset(LstMadis$myTree,!is.na(data))->LstMadis$myTree
+        assign('LstMadis',LstMadis,envir=envMadis)
       } else {
         NULL
       }
@@ -3252,19 +3286,19 @@ server<-function(input,output){
         pickerInput(
           inputId = "dataSel_myCox",
           label = "选择数据集",
-          choices = ls(envMedstats)[-which(ls(envMedstats)%in%c('envMedstats','server','ui','LstMedstats'))],
-          selected =ls(envMedstats)[-which(ls(envMedstats)%in%c('envMedstats','server','ui','LstMedstats'))][1],
+          choices = ls(envMadis)[-which(ls(envMadis)%in%c('envMadis','server','ui','LstMadis'))],
+          selected =ls(envMadis)[-which(ls(envMadis)%in%c('envMadis','server','ui','LstMadis'))][1],
           multiple = FALSE,
           options = list(`actions-box` = FALSE)
         )
-        #selectInput('dataSel_dataExpt','选择数据集',ls(envMedstats)[-which(ls(envMedstats)%in%c('envMedstats','server','ui','LstMedstats'))])
+        #selectInput('dataSel_dataExpt','选择数据集',ls(envMadis)[-which(ls(envMadis)%in%c('envMadis','server','ui','LstMadis'))])
       )
     )
   })
   
   data_myCox<-reactive({
     change_data()
-    get(input$dataSel_myCox,envMedstats)->datamyCox
+    get(input$dataSel_myCox,envMadis)->datamyCox
     return(datamyCox)
   })
   
@@ -3494,18 +3528,18 @@ server<-function(input,output){
 
 
         data_myCox()->dat
-        LstMedstats<-get('LstMedstats',envMedstats)
-        LstMedstats$Data[[input$dataSel_myCox]]<-dat
+        LstMadis<-get('LstMadis',envMadis)
+        LstMadis$Data[[input$dataSel_myCox]]<-dat
         dat_myCox<-data.frame(Formula=Formula,
                               data=input$dataSel_myCox,
                               weightsVar=weightsVar,
                               subset=Subset,
                               strataVar=input$strataVar_myCox,
                               lower=lowerForm)
-        LstMedstats$myCox<-unique(rbind(LstMedstats$myCox,dat_myCox))
-        subset(LstMedstats$myCox,!is.na(data))->LstMedstats$myCox
-        assign('LstMedstats',LstMedstats,envir=envMedstats)
-        #return(LstMedstats)
+        LstMadis$myCox<-unique(rbind(LstMadis$myCox,dat_myCox))
+        subset(LstMadis$myCox,!is.na(data))->LstMadis$myCox
+        assign('LstMadis',LstMadis,envir=envMadis)
+        #return(LstMadis)
       } else {
         NULL
       }
@@ -3572,6 +3606,1046 @@ server<-function(input,output){
   
   
   
+  
+  ###### 混合效应模型(myLme) ######
+  
+  
+  output$more1_myLme<-renderUI({
+    change_data()
+    list(
+      panel(
+        heading='选择处理的数据集',
+        pickerInput(
+          inputId = "dataSel_myLme",
+          label = "选择数据集",
+          choices = ls(envMadis)[-which(ls(envMadis)%in%c('envMadis','server','ui','LstMadis'))],
+          selected =ls(envMadis)[-which(ls(envMadis)%in%c('envMadis','server','ui','LstMadis'))][1],
+          multiple = FALSE,
+          options = list(`actions-box` = FALSE)
+        )
+        #selectInput('dataSel_dataExpt','选择数据集',ls(envMadis)[-which(ls(envMadis)%in%c('envMadis','server','ui','LstMadis'))])
+      )
+    )
+  })
+  
+  data_myLme<-reactive({
+    change_data()
+    get(input$dataSel_myLme,envMadis)->datamyLme
+    return(datamyLme)
+  })
+  
+  output$more2_myLme<-renderUI({
+    list(
+      panel(
+        heading='设定模型参数',
+        pickerInput(
+          inputId='varsy_fixed',
+          label='选择固定效应因变量y',
+          choices = names(data_myLme()),
+          selected=names(data_myLme())[1],
+          multiple = FALSE,
+          options = list(`actions-box` = FALSE)
+        ),
+        
+        pickerInput(
+          inputId='varsx_fixed',
+          label='选择固定效应自变量x',
+          choices = c('无'='',names(data_myLme())),
+          selected='',
+          multiple = TRUE,
+          options = list(`actions-box` = TRUE)
+        ),
+        
+        awesomeCheckbox(
+          inputId = 'reviseVarsx_myLme',
+          label='调整固定效应自变量',
+          value = FALSE
+        ),
+        conditionalPanel(
+          condition = "input['reviseVarsx_myLme']",
+          list(
+            textInputAddon(
+              inputId = 'newVarsx_myLme',
+              label = '自变量调整',
+              placeholder = 'eg: log(age)',
+              value='',
+              addon = 'pencil'
+            )
+          )
+        ),
+        
+        textInputAddon(
+          inputId = 'random_myLme',
+          label = '固定效应设置',
+          placeholder = 'eg: 1|g1/g2',
+          value='',
+          addon = 'pencil'
+        ),
+        
+        pickerInput(
+          inputId='method_myLme',
+          label='设定模型算法',
+          choices = c('ML method'='ML','RMLE method'='RMLE'),
+          selected='ML',
+          multiple=FALSE,
+          options = list(`actions-box` = FALSE)
+        ),
+        
+        awesomeCheckbox(
+          inputId = 'subsetSet_myLme',
+          label='设定子集',
+          value = FALSE
+        ),
+        
+        conditionalPanel(
+          condition = "input['subsetSet_myLme']",
+          list(
+            textInputAddon(
+              inputId = 'subsets_myLme',
+              label = '设定子集表达式',
+              placeholder = 'eg: sex==1',
+              value='',
+              addon = 'pencil'
+            )
+          )
+        )
+      ),
+      awesomeCheckbox('export_myLme','是否导出到报告中?',FALSE)
+    )
+  })
+  
+  
+  
+  
+  output$more3_myLme<-renderUI({
+    list(
+      tabsetPanel(
+        tabPanel(
+          '模型结果',
+          heading='模型结果',
+          verbatimTextOutput('summary_myLme'),
+          status='primary'
+        )#,
+        # tabPanel(
+        #   '模型图形结果',
+        #   plotOutput('graph_myTree',height='720px')
+        # )
+      )
+    )
+  })
+  
+  res_myLme<-reactive({
+    input$go_myLme
+    req(input$go_myLme)
+    isolate({
+      data_myLme()->dat
+      
+      
+      if(input$reviseVarsx_myLme){
+        
+        paste(input$varsy_fixed,paste(input$newVarsx_myLme,paste(input$varsx_fixed,collapse='+'),sep='+'),sep='~')->formFixed
+        
+      } else {
+        paste(input$varsy_fixed,paste(input$varsx_fixed,collapse='+'),sep='~')->formFixed
+        
+      }
+      
+      
+      paste('~',input$random_myLme,sep='')->formRandom
+      
+      
+      
+      if(input$subsetSet_myLme){
+        Subset=input$subsets_myLme
+      } else {Subset='all'}
+      
+      
+      lmeS(formulaFixed = formFixed,
+           formulaRandom = formRandom,
+            data=dat,
+            subset=Subset,
+            Method=input$method_myLme
+      )->resmyLme
+      return(resmyLme)
+    })
+  })
+  
+  
+  observeEvent(input$go_myLme,{
+    change_report()
+    isolate({
+      if(input$export_myLme){
+        
+        
+        if(input$subsetSet_myLme){
+          Subset=input$subsets_myLme
+        } else {Subset='all'}
+        
+        if(input$reviseVarsx_myLme){
+          
+          paste(input$varsy_fixed,paste(input$newVarsx_myLme,paste(input$varsx_fixed,collapse='+'),sep='+'),sep='~')->formFixed
+          
+        } else {
+          paste(input$varsy_fixed,paste(input$varsx_fixed,collapse='+'),sep='~')->formFixed
+          
+        }
+        
+        
+        paste('~',input$random_myLme,sep='')->formRandom
+        
+        
+        data_myLme()->dat
+        LstMadis<-get('LstMadis',envMadis)
+        LstMadis$Data[[input$dataSel_myLme]]<-dat
+        dat_myLme<-data.frame(formulaFixed=formFixed,
+                              formulaRandom=formRandom,
+                              Method=input$method_myLme,
+                              data=input$dataSel_myTree,
+                              subset=Subset
+        )
+        LstMadis$myLme<-unique(rbind(LstMadis$myLme,dat_myLme))
+        subset(LstMadis$myLme,!is.na(data))->LstMadis$myLme
+        assign('LstMadis',LstMadis,envir=envMadis)
+      } else {
+        NULL
+      }
+    })
+  })
+  
+  
+  output$summary_myLme<-renderPrint({
+    input$go_myLme
+    isolate({
+      
+      
+       cat('\n')
+      
+       cat('######全模型结果########')
+       cat('\n')
+
+       print(pander(summary(res_myLme()$lmeResFull)))
+
+       cat('\n')
+       cat('######全模型结果########')
+       cat('\n')
+       
+       print(pander(summary(res_myLme()$lmeResStep)))
+       cat('\n')
+    })
+    
+    
+  })
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  ###### 聚类分析(Kmeans) ######
+  
+  
+  output$more1_kmeans<-renderUI({
+    change_data()
+    list(
+      panel(
+        heading='选择处理的数据集',
+        pickerInput(
+          inputId = "dataSel_kmeans",
+          label = "选择数据集",
+          choices = ls(envMadis)[-which(ls(envMadis)%in%c('envMadis','server','ui','LstMadis'))],
+          selected =ls(envMadis)[-which(ls(envMadis)%in%c('envMadis','server','ui','LstMadis'))][1],
+          multiple = FALSE,
+          options = list(`actions-box` = FALSE)
+        )
+        #selectInput('dataSel_dataExpt','选择数据集',ls(envMadis)[-which(ls(envMadis)%in%c('envMadis','server','ui','LstMadis'))])
+      )
+    )
+  })
+  
+  data_kmeans<-reactive({
+    change_data()
+    get(input$dataSel_kmeans,envMadis)->datakmeans
+    return(datakmeans)
+  })
+  
+  output$more2_kmeans<-renderUI({
+    list(
+      panel(
+        heading='设定聚类分析的相关参数',
+        pickerInput(
+          inputId='vars_kmeans',
+          label='选择聚类需要的变量',
+          choices = names(data_kmeans()),
+          selected=names(data_kmeans())[1],
+          multiple = TRUE,
+          options = list(`actions-box` = TRUE)
+        ),
+        panel(
+          heading='设置聚类数目判断相关参数(cascadeKM)',
+          numericInput(
+            inputId = 'infgr_kmeans',
+            label='设定最小聚类数目',
+            value = 1,
+            min=1,
+            max=10
+            
+          ),
+          numericInput(
+            inputId = 'supgr_kmeans',
+            label='设定最大聚类数目',
+            value = 3,
+            min=1,
+            max=10
+            
+          ),
+          
+          pickerInput(
+            inputId='crit_kmeans',
+            label='设定判别标准',
+            choices = c('calinski','ssi'),
+            selected='calinski',
+            multiple=FALSE,
+            options = list(`actions-box` = FALSE)
+          ),
+          numericInput(
+            inputId = 'iter_kmeans',
+            label='设定迭代次数',
+            value = 100,
+            min=1,
+            max=10
+            
+          )
+        ),
+        
+        panel(
+          heading='设置kmeans相关参数',
+          numericInput(
+            inputId = 'centers_kmeans',
+            label='设定实际聚类数目',
+            value = 1,
+            min=1,
+            max=10
+            
+          ),
+          
+          numericInput(
+            inputId = 'iterMax_kmeans',
+            label='设定最大迭代次数',
+            value = 100,
+            min=1,
+            max=10
+            
+          ),
+          
+          
+          pickerInput(
+            inputId='method_kmeans',
+            label='设定聚类算法',
+            choices = c('Hartigan-Wong','Lloyd','Forgy'),
+            selected='Hartigan-Wong',
+            multiple=FALSE,
+            options = list(`actions-box` = FALSE)
+          ),
+          awesomeCheckbox(
+            inputId = 'subsetSet_kmeans',
+            label='设定子集',
+            value = FALSE
+          ),
+          
+          conditionalPanel(
+            condition = "input['subsetSet_kmeans']",
+            list(
+              textInputAddon(
+                inputId = 'subsets_kmeans',
+                label = '设定子集表达式',
+                placeholder = 'eg: sex==1',
+                value='',
+                addon = 'pencil'
+              )
+            )
+          ),
+          numericInput(
+            inputId = 'seed_kmeans',
+            label='设定随机数种子',
+            value = 1234,
+            min=1,
+            max=100000
+            
+          )
+        ),
+        
+        panel(
+          heading='设置数据集相关参数',
+          textInputAddon(
+            inputId = 'clusterName_kmeans',
+            label = '设定聚类新变量名',
+            placeholder = 'eg: clusterKmeans',
+            value='',
+            addon = 'pencil'
+          )#,
+          
+          # textInputAddon(
+          #   inputId = 'dataName_kmeans',
+          #   label = '设定保存的对象名',
+          #   placeholder = 'eg: dataKmeans',
+          #   value='',
+          #   addon = 'pencil'
+          # )
+          
+        )
+        
+        
+      ),
+      awesomeCheckbox('export_kmeans','是否导出到报告中?',FALSE)
+    )
+  })
+  
+  
+  
+  
+  output$more3_kmeans<-renderUI({
+    list(
+      tabsetPanel(
+        tabPanel(
+          '聚类汇总结果',
+          heading='模型结果',
+          verbatimTextOutput('summary_kmeans'),
+          status='primary'
+        ),
+        tabPanel(
+          '聚类数量图形结果',
+          plotOutput('graph_kmeans',height='720px')
+        )
+      )
+    )
+  })
+  
+  res_kmeans<-reactive({
+    input$go_kmeans
+    req(input$go_kmeans)
+    isolate({
+      data_kmeans()->dat
+      
+      if(input$subsetSet_kmeans){
+        Subset=input$subsets_kmeans
+      } else {Subset='all'}
+      
+      ifelse(input$clusterName_kmeans=='','clusterKmeans',input$clusterName_kmeans)->clusterKmeans
+      
+      Kmeans(
+        data=dat,
+        vars=input$vars_kmeans,
+        infgr=input$infgr_kmeans,
+        supgr=input$supgr_kmeans,
+        Centers=input$centers_kmeans,
+        Criterion=input$crit_kmeans,
+        Iter=input$iter_kmeans,
+        iterMax=input$iterMax_kmeans,
+        Algorithm=input$method_kmeans,
+        subset=Subset,
+        clusterName=clusterKmeans,
+        seed=input$seed_kmeans
+      )->resKmeans
+      
+      
+      assign(input$dataSel_kmeans,resKmeans$resKmeans,envMadis)
+      
+      return(resKmeans)
+    })
+    
+    
+  })
+  
+  
+  observeEvent(input$go_kmeans,{  #### newly added for update picker input values.
+    updatePickerInput(session,inputId = 'vars_kmeans',choices = names(res_kmeans()$resKmeans))
+    # if(input$dataName_varMnp==''){
+    #   NULL
+    # } else {
+    #   updatePickerInput(session,inputId = 'datSel_varMnp',choices = ls(envMadis)[-which(ls(envMadis)%in%c('envMadis','server','ui','LstMadis'))])
+    # }
+    
+  })
+  
+  observeEvent(input$go_kmeans,{
+    change_report()
+    isolate({
+      if(input$export_kmeans){
+
+
+        if(input$subsetSet_kmeans){
+          Subset=input$subsets_kmeans
+        } else {Subset='all'}
+        
+        ifelse(input$clusterName_kmeans=='','clusterKmeans',input$clusterName_kmeans)->clusterKmeans
+        
+        
+        data_kmeas()->dat
+        LstMadis<-get('LstMadis',envMadis)
+        LstMadis$Data[[input$dataSel_kmeans]]<-dat
+        dat_kmeans<-data.frame(data=input$dataSel_kmeans,
+                               vars=paste(input$vars_kmeans,collapse=','),
+                               infgr=input$infgr_kmeans,
+                               supgr=input$supgr_kmeans,
+                               Centers=input$centers_kmeans,
+                               Criterion=input$crit_kmeans,
+                               Iter=input$iter_kmeans,
+                               iterMax=input$iterMax_kmeans,
+                               Algorithm=input$method_kmeans,
+                               subset=Subset,
+                               clusterName=clusterKmeans,
+                               seed=input$seed_kmeans
+        )
+        LstMadis$Kmeans<-unique(rbind(LstMadis$Kmeans,dat_kmeans))
+        subset(LstMadis$Kmeans,!is.na(data))->LstMadis$Kmeans
+        assign('LstMadis',LstMadis,envir=envMadis)
+      } else {
+        NULL
+      }
+    })
+  })
+
+  
+  output$summary_kmeans<-renderPrint({
+    input$go_kmeans
+    isolate({
+      
+      
+      cat('\n')
+      
+      cat('######聚类结果########')
+      cat('\n')
+      
+      print(pander(head(res_kmeans()$resKmeans)))
+      
+      cat('\n')
+      cat('\n')
+    })
+  })
+  
+  
+  output$graph_kmeans<-renderPlot({
+    input$go_kmeans
+    isolate({
+      plot(res_kmeans()$graphCrit)
+      
+      
+    })
+  })
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  ###### 主成分分析(pcaS) ######
+  
+  
+  output$more1_pca<-renderUI({
+    change_data()
+    list(
+      panel(
+        heading='选择处理的数据集',
+        pickerInput(
+          inputId = "dataSel_pca",
+          label = "选择数据集",
+          choices = ls(envMadis)[-which(ls(envMadis)%in%c('envMadis','server','ui','LstMadis'))],
+          selected =ls(envMadis)[-which(ls(envMadis)%in%c('envMadis','server','ui','LstMadis'))][1],
+          multiple = FALSE,
+          options = list(`actions-box` = FALSE)
+        )
+        #selectInput('dataSel_dataExpt','选择数据集',ls(envMadis)[-which(ls(envMadis)%in%c('envMadis','server','ui','LstMadis'))])
+      )
+    )
+  })
+  
+  data_pca<-reactive({
+    change_data()
+    get(input$dataSel_pca,envMadis)->datapca
+    return(datapca)
+  })
+  
+  output$more2_pca<-renderUI({
+    list(
+      panel(
+        heading='设定主成分分析的相关参数',
+        pickerInput(
+          inputId='vars_pca',
+          label='选择分析的变量',
+          choices = names(data_pca()),
+          selected=names(data_pca())[1],
+          multiple = TRUE,
+          options = list(`actions-box` = TRUE)
+        ),
+        
+          numericInput(
+            inputId = 'nfcts_pca',
+            label='设定主成分数量',
+            value = 1,
+            min=1,
+            max=10
+            
+          ),
+          
+          
+          pickerInput(
+            inputId='rotate_pca',
+            label='设定因子旋转方法',
+            choices = c('none','varimax','quartimax','promax','oblimin','simplimax','cluster'),
+            selected='varimax',
+            multiple=FALSE,
+            options = list(`actions-box` = FALSE)
+          ),
+          awesomeCheckbox(
+            inputId = 'subsetSet_pca',
+            label='设定子集',
+            value = FALSE
+          ),
+          
+          conditionalPanel(
+            condition = "input['subsetSet_pca']",
+            list(
+              textInputAddon(
+                inputId = 'subsets_pca',
+                label = '设定子集表达式',
+                placeholder = 'eg: sex==1',
+                value='',
+                addon = 'pencil'
+              )
+            )
+          ),
+        textInputAddon(
+          inputId = 'varName_pca',
+          label = '设定主成分变量名称',
+          placeholder = 'eg: PCAVar',
+          value='',
+          addon='pencil'
+          
+        )
+      ),
+      awesomeCheckbox('export_pca','是否导出到报告中?',FALSE)
+    )
+  })
+  
+  
+  
+  
+  output$more3_pca<-renderUI({
+    list(
+      tabsetPanel(
+        tabPanel(
+          '主成分分析汇总结果',
+          heading='模型结果',
+          verbatimTextOutput('summary_pca'),
+          status='primary'
+        ),
+        tabPanel(
+          '主成分分析图形结果',
+          plotOutput('graph_pca',height='720px')
+        )
+      )
+    )
+  })
+  
+  res_pca<-reactive({
+    input$go_pca
+    req(input$go_pca)
+    isolate({
+      data_pca()->dat
+      
+      if(input$subsetSet_pca){
+        Subset=input$subsets_pca
+      } else {Subset='all'}
+      
+      pcaS(
+        data=dat,
+        vars=input$vars_pca,
+        nfcts=input$nfcts_pca,
+        Rotate=input$rotate_pca,
+        Scores=T,
+        subset=Subset,
+        pcaVarName=input$varName_pca
+      )->respca
+      assign(input$dataSel_pca,respca$dtPCA,envMadis)
+      return(respca)
+    })
+    
+    
+  })
+  
+  
+  observeEvent(input$go_pca,{  #### newly added for update picker input values.
+    updatePickerInput(session,inputId = 'vars_pca',choices = names(res_pca()$dtPCA))
+    # if(input$dataName_varMnp==''){
+    #   NULL
+    # } else {
+    #   updatePickerInput(session,inputId = 'datSel_varMnp',choices = ls(envMadis)[-which(ls(envMadis)%in%c('envMadis','server','ui','LstMadis'))])
+    # }
+    
+  })
+  
+  observeEvent(input$go_pca,{
+    change_report()
+    isolate({
+      if(input$export_pca){
+        
+        
+        if(input$subsetSet_pca){
+          Subset=input$subsets_pca
+        } else {Subset='all'}
+        
+        
+        data_pca()->dat
+        LstMadis<-get('LstMadis',envMadis)
+        LstMadis$Data[[input$dataSel_pca]]<-dat
+        dat_pca<-data.frame(data=input$dataSel_pca,
+                               vars=paste(input$vars_pca,collapse=','),
+                               nfcts=input$nfcts_pca,
+                               Rotate=input$rotate_pca,
+                               Scores=T,
+                               subset=Subset,
+                               pcaVarName=input$varName_pca
+                               )
+        LstMadis$pca<-unique(rbind(LstMadis$pca,dat_pca))
+        subset(LstMadis$pca,!is.na(data))->LstMadis$pca
+        assign('LstMadis',LstMadis,envir=envMadis)
+      } else {
+        NULL
+      }
+    })
+  })
+  
+  
+  output$summary_pca<-renderPrint({
+    input$go_pca
+    isolate({
+      
+      
+      cat('\n')
+      
+      cat('######主成分分析结果########')
+      cat('\n')
+      
+      cat('######因子载荷########')
+      cat('\n')
+      print(pander(res_pca()$resPCA$loadings[]))
+      
+      cat('\n')
+      cat('\n')
+      cat('######累积贡献率########')
+      cat('\n')
+      print(pander(res_pca()$cumVar))
+      
+      cat('\n')
+      cat('\n')
+      
+    })
+  })
+  
+  
+  output$graph_pca<-renderPlot({
+    input$go_pca
+    isolate({
+      plot(scree(res_pca()$dataScree))
+      
+      
+    })
+  })
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  ###### 因子分析(faS) ######
+  
+  
+  output$more1_fa<-renderUI({
+    change_data()
+    list(
+      panel(
+        heading='选择处理的数据集',
+        pickerInput(
+          inputId = "dataSel_fa",
+          label = "选择数据集",
+          choices = ls(envMadis)[-which(ls(envMadis)%in%c('envMadis','server','ui','LstMadis'))],
+          selected =ls(envMadis)[-which(ls(envMadis)%in%c('envMadis','server','ui','LstMadis'))][1],
+          multiple = FALSE,
+          options = list(`actions-box` = FALSE)
+        )
+        #selectInput('dataSel_dataExpt','选择数据集',ls(envMadis)[-which(ls(envMadis)%in%c('envMadis','server','ui','LstMadis'))])
+      )
+    )
+  })
+  
+  data_fa<-reactive({
+    change_data()
+    get(input$dataSel_fa,envMadis)->datafa
+    return(datafa)
+  })
+  
+  output$more2_fa<-renderUI({
+    list(
+      panel(
+        heading='设定因子分析的相关参数',
+        pickerInput(
+          inputId='vars_fa',
+          label='选择分析的变量',
+          choices = names(data_fa()),
+          selected=names(data_fa())[1],
+          multiple = TRUE,
+          options = list(`actions-box` = TRUE)
+        ),
+        
+        numericInput(
+          inputId = 'nfcts_fa',
+          label='设定因子数量',
+          value = 1,
+          min=1,
+          max=10
+          
+        ),
+        
+        
+        pickerInput(
+          inputId='rotate_fa',
+          label='设定因子旋转方法',
+          choices = c('none','varimax','quartimax','bentlerT',
+                      'varmin','equamax','geominT','bifactor','promax','oblimin',
+                      'simplimax','bentlerQ','geominQ','biquartimin','cluster'),
+          selected='varimax',
+          multiple=FALSE,
+          options = list(`actions-box` = FALSE)
+        ),
+        pickerInput(
+          inputId='scores_fa',
+          label='设定因子分值',
+          choices = c('regression','Thurstone','tenBerge','Anderson','Barlett'),
+          selected='regression',
+          multiple=FALSE,
+          options = list(`actions-box` = FALSE)
+        ),
+        pickerInput(
+          inputId='fm_fa',
+          label='设定因子得分方式',
+          choices = c('minres','uls','ols','wls','gls','pa','ml','minchi','minrank'),
+          selected='minres',
+          multiple=FALSE,
+          options = list(`actions-box` = FALSE)
+        ),
+        awesomeCheckbox(
+          inputId = 'subsetSet_fa',
+          label='设定子集',
+          value = FALSE
+        ),
+        
+        conditionalPanel(
+          condition = "input['subsetSet_fa']",
+          list(
+            textInputAddon(
+              inputId = 'subsets_fa',
+              label = '设定子集表达式',
+              placeholder = 'eg: sex==1',
+              value='',
+              addon = 'pencil'
+            )
+          )
+        ),
+        textInputAddon(
+          inputId = 'varName_fa',
+          label = '设定因子得分变量名称',
+          placeholder = 'eg: FAVar',
+          value='',
+          addon='pencil'
+          
+        )
+      ),
+      awesomeCheckbox('export_fa','是否导出到报告中?',FALSE)
+    )
+  })
+  
+  
+  
+  
+  output$more3_fa<-renderUI({
+    list(
+      tabsetPanel(
+        tabPanel(
+          '因子分析汇总结果',
+          heading='模型结果',
+          verbatimTextOutput('summary_fa'),
+          status='primary'
+        ),
+        tabPanel(
+          '因子分析图形结果',
+          plotOutput('graph_fa',height='720px')
+        )
+      )
+    )
+  })
+  
+  res_fa<-reactive({
+    input$go_fa
+    req(input$go_fa)
+    isolate({
+      data_fa()->dat
+      
+      if(input$subsetSet_fa){
+        Subset=input$subsets_fa
+      } else {Subset='all'}
+      
+      faS(
+        data=dat,
+        vars=input$vars_fa,
+        nfcts=input$nfcts_fa,
+        Rotate=input$rotate_fa,
+        Scores=input$scores_fa,
+        FM=input$fm_fa,
+        subset=Subset,
+        faVarName=input$varName_fa
+      )->resfa
+      assign(input$dataSel_fa,resfa$dtFA,envMadis)
+      return(resfa)
+    })
+    
+    
+  })
+  
+  
+  observeEvent(input$go_fa,{  #### newly added for update picker input values.
+    updatePickerInput(session,inputId = 'vars_fa',choices = names(res_fa()$dtFA))
+    # if(input$dataName_varMnp==''){
+    #   NULL
+    # } else {
+    #   updatePickerInput(session,inputId = 'datSel_varMnp',choices = ls(envMadis)[-which(ls(envMadis)%in%c('envMadis','server','ui','LstMadis'))])
+    # }
+    
+  })
+  
+  observeEvent(input$go_fa,{
+    change_report()
+    isolate({
+      if(input$export_fa){
+
+
+        if(input$subsetSet_fa){
+          Subset=input$subsets_fa
+        } else {Subset='all'}
+
+        data_fa()->dat
+        LstMadis<-get('LstMadis',envMadis)
+        LstMadis$Data[[input$dataSel_fa]]<-dat
+        dat_fa<-data.frame(data=input$dataSel_fa,
+                           vars=paste(input$vars_fa,collapse=','),
+                           nfcts=input$nfcts_fa,
+                           Rotate=input$rotate_fa,
+                           Scores=input$scores_fa,
+                           FM=input$fm_fa,
+                           subset=Subset,
+                           faVarName=input$varName_fa
+        )
+        LstMadis$fa<-unique(rbind(LstMadis$fa,dat_fa))
+        subset(LstMadis$fa,!is.na(data))->LstMadis$fa
+        assign('LstMadis',LstMadis,envir=envMadis)
+      } else {
+        NULL
+      }
+    })
+  })
+
+  
+  output$summary_fa<-renderPrint({
+    input$go_fa
+    isolate({
+      
+      
+      cat('\n')
+      
+      cat('######主成分分析结果########')
+      cat('\n')
+      
+      cat('######因子载荷########')
+      cat('\n')
+      print(pander(res_fa()$resFA$loadings[]))
+      
+      cat('\n')
+      cat('\n')
+      cat('######累积贡献率########')
+      cat('\n')
+      print(pander(res_fa()$cumVar))
+      
+      cat('\n')
+      cat('\n')
+      
+    })
+  })
+  
+  
+  output$graph_fa<-renderPlot({
+    input$go_fa
+    isolate({
+      plot(scree(res_fa()$dataScree))
+      
+      
+    })
+  })
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
   ###### 时间序列分析(myProphet) ######
   
   output$more1_myProphet<-renderUI({
@@ -3583,19 +4657,19 @@ server<-function(input,output){
         pickerInput(
           inputId = "dataSel_myProphet",
           label = "选择数据集",
-          choices = ls(envMedstats)[-which(ls(envMedstats)%in%c('envMedstats','server','ui','LstMedstats'))],
-          selected =ls(envMedstats)[-which(ls(envMedstats)%in%c('envMedstats','server','ui','LstMedstats'))][1],
+          choices = ls(envMadis)[-which(ls(envMadis)%in%c('envMadis','server','ui','LstMadis'))],
+          selected =ls(envMadis)[-which(ls(envMadis)%in%c('envMadis','server','ui','LstMadis'))][1],
           multiple = FALSE,
           options = list(`actions-box` = FALSE)
         )
-        #selectInput('dataSel_dataExpt','选择数据集',ls(envMedstats)[-which(ls(envMedstats)%in%c('envMedstats','server','ui','LstMedstats'))])
+        #selectInput('dataSel_dataExpt','选择数据集',ls(envMadis)[-which(ls(envMadis)%in%c('envMadis','server','ui','LstMadis'))])
       )
     )
   })
   
   data_myProphet<-reactive({
     change_data()
-    get(input$dataSel_myProphet,envMedstats)->datamyProphet
+    get(input$dataSel_myProphet,envMadis)->datamyProphet
     return(datamyProphet)
     
   })
@@ -3830,8 +4904,8 @@ server<-function(input,output){
     isolate({
       if(input$export_myProphet){
         data_myProphet()->dat
-        LstMedstats<-get('LstMedstats',envMedstats)
-        LstMedstats$Data[[input$dataSel_myProphet]]<-dat
+        LstMadis<-get('LstMadis',envMadis)
+        LstMadis$Data[[input$dataSel_myProphet]]<-dat
         
         dat_myProphet<-data.frame(data=input$dataSel_myProphet,
                                   tsVar=input$tsvar_myProphet,
@@ -3849,9 +4923,9 @@ server<-function(input,output){
                                   weeklyS = input$weeklyS_myProphet
         )
         
-        LstMedstats$myProphet<-unique(rbind(LstMedstats$myProphet,dat_myProphet))
-        subset(LstMedstats$myProphet,!is.na(data))->LstMedstats$myProphet
-        assign('LstMedstats',LstMedstats,envir=envMedstats)
+        LstMadis$myProphet<-unique(rbind(LstMadis$myProphet,dat_myProphet))
+        subset(LstMadis$myProphet,!is.na(data))->LstMadis$myProphet
+        assign('LstMadis',LstMadis,envir=envMadis)
       } else {
         NULL
       }
@@ -3917,8 +4991,8 @@ server<-function(input,output){
   observe({
     change_report()
     isolate({
-      get('LstMedstats',envMedstats)->LstMedstats
-      save(LstMedstats,file='LstMedstats.RData')
+      get('LstMadis',envMadis)->LstMadis
+      save(LstMadis,file='LstMadis.RData')
     })
     
   })
@@ -4205,7 +5279,7 @@ ui<-fluidPage(
     #     sidebarPanel(
     #       panel(
     #         heading='代码输入区',
-    #         aceEditor("code_Ace", mode="r", height='400px',value="#The environment is envMedstats",theme='github')
+    #         aceEditor("code_Ace", mode="r", height='400px',value="#The environment is envMadis",theme='github')
     #       ),
     #       actionBttn("go_Ace", "运行代码")
     #     ),
@@ -4311,7 +5385,7 @@ ui<-fluidPage(
     
     
     
-    ###### 线性模型(glm) ######
+    ###### 模型 ######
     navbarMenu(
       '模型分析',
       tabPanel(
@@ -4353,10 +5427,73 @@ ui<-fluidPage(
             uiOutput('more3_myTree')
           )
         )
+      ),
+      tabPanel(
+        '混合效应模型',
+        sidebarLayout(
+          sidebarPanel(
+            uiOutput('more1_myLme'),
+            uiOutput('more2_myLme'),
+            actionBttn('go_myLme','确定')
+          ),
+          mainPanel(
+            uiOutput('more3_myLme')
+          )
+        )
       )
       
       
     ),
+    
+    
+    
+    ###### 探索性数据分析 ######
+    
+    navbarMenu(
+      '数据挖掘',
+      tabPanel(
+        '聚类分析',
+        sidebarLayout(
+          sidebarPanel(
+            uiOutput('more1_kmeans'),
+            uiOutput('more2_kmeans'),
+            actionBttn('go_kmeans','确定')
+          ),
+          mainPanel(
+            uiOutput('more3_kmeans')
+          )
+        )
+      ),
+      
+      tabPanel(
+        '主成分分析',
+        sidebarLayout(
+          sidebarPanel(
+            uiOutput('more1_pca'),
+            uiOutput('more2_pca'),
+            actionBttn('go_pca','确定')
+          ),
+          mainPanel(
+            uiOutput('more3_pca')
+          )
+        )
+      ),
+      
+      tabPanel(
+        '因子分析',
+        sidebarLayout(
+          sidebarPanel(
+            uiOutput('more1_fa'),
+            uiOutput('more2_fa'),
+            actionBttn('go_fa','确定')
+          ),
+          mainPanel(
+            uiOutput('more3_fa')
+          )
+        )
+      )
+    ),
+    
     
     
     ###### 时间序列分析及预测 ######

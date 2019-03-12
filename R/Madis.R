@@ -4,7 +4,7 @@
 #' is a launcher function
 #'
 #' @export
-Madis <- function(wd='~/',lang=c('ch','eng')[1],Encod='utf8') {
+Madis <- function(wd=paste0(getwd(),'/'),lang=c('ch','eng')[1],Encod='utf8') {
   #setwd(wd)
   #dir.create('app')
   sd=paste(path.package('madis'),'/app/',sep='')

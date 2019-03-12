@@ -4,7 +4,7 @@
 \alias{Madis}
 \title{Madis}
 \usage{
-Madis(wd = "~/", lang = c("ch", "eng")[1], Encod = "utf8")
+Madis(wd = paste0(getwd(), "/"), lang = c("ch", "eng")[1], Encod = "utf8")
 }
 \description{
 is a launcher function
