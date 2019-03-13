@@ -53,9 +53,9 @@ LstMadis$myProphet<-data.frame(data=NA,tsVar=NA, tsFormat=NA,measureVars=NA, gro
                                   Cap=NA,Floor=NA, Growth=NA,H=NA,yearlyS = NA,dailyS = NA,weeklyS = NA)
 LstMadis$myLme<-data.frame(formulaFixed=NA,formulaRandom=NA,Method=NA,data=NA,subset=NA)
 LstMadis$Kmeans<-data.frame(data=NA,vars=NA,infgr=NA,supgr=NA,Centers=NA,Criterion=NA,Iter=NA,
-                            iterMax=NA,Algorithm=NA,subset=NA,clusterName=NA,seed=NA)
-LstMadis$pca<-data.frame(data=NA,vars=NA,nfcts=NA,Rotate=NA,Scores=NA,subset=NA,pcaVarName=NA)
-LstMadis$fa<-data.frame(data=NA,vars=NA,nfcts=2,Rotate=NA,Scores=NA,FM=NA,subset=NA,faVarName=NA)
+                            iterMax=NA,Algorithm=NA,subset=NA,clusterName=NA,seed=NA,addVar=NA)
+LstMadis$pca<-data.frame(data=NA,vars=NA,nfcts=NA,Rotate=NA,Scores=NA,subset=NA,pcaVarName=NA,addVar=NA)
+LstMadis$fa<-data.frame(data=NA,vars=NA,nfcts=2,Rotate=NA,Scores=NA,FM=NA,subset=NA,faVarName=NA,addVar=NA)
 assign('LstMadis',LstMadis,env=envMadis)
 
 
@@ -201,6 +201,7 @@ server<-function(input,output,session){
       # get(input$dataName_dataImpt,envir=envMadis)->DatSel_dataImpt
       # head(DatSel_dataImpt,n=max(nrow(DatSel_dataImpt),10))
       skim(data_dataImpt())
+      
     })
   })
   
@@ -3989,25 +3990,44 @@ server<-function(input,output,session){
           )
         ),
         
-        panel(
-          heading='设置数据集相关参数',
-          textInputAddon(
-            inputId = 'clusterName_kmeans',
-            label = '设定聚类新变量名',
-            placeholder = 'eg: clusterKmeans',
-            value='',
-            addon = 'pencil'
-          )#,
-          
-          # textInputAddon(
-          #   inputId = 'dataName_kmeans',
-          #   label = '设定保存的对象名',
-          #   placeholder = 'eg: dataKmeans',
-          #   value='',
-          #   addon = 'pencil'
-          # )
-          
+        textInputAddon(
+          inputId = 'clusterName_kmeans',
+          label = '设定聚类新变量名',
+          placeholder = 'eg: clusterKmeans',
+          value='',
+          addon = 'pencil'
+        ),
+        
+        awesomeCheckbox(
+          inputId = 'addVar_kmeans',
+          label='将聚类结果合并至数据中',
+          value = FALSE
         )
+        
+        
+        
+
+        
+        
+        # panel(
+        #   heading='设置数据集相关参数',
+        #   textInputAddon(
+        #     inputId = 'clusterName_kmeans',
+        #     label = '设定聚类新变量名',
+        #     placeholder = 'eg: clusterKmeans',
+        #     value='',
+        #     addon = 'pencil'
+        #   )#,
+        #   
+        #   # textInputAddon(
+        #   #   inputId = 'dataName_kmeans',
+        #   #   label = '设定保存的对象名',
+        #   #   placeholder = 'eg: dataKmeans',
+        #   #   value='',
+        #   #   addon = 'pencil'
+        #   # )
+        #   
+        # )
         
         
       ),
@@ -4047,6 +4067,7 @@ server<-function(input,output,session){
       
       ifelse(input$clusterName_kmeans=='','clusterKmeans',input$clusterName_kmeans)->clusterKmeans
       
+      
       Kmeans(
         data=dat,
         vars=input$vars_kmeans,
@@ -4059,7 +4080,8 @@ server<-function(input,output,session){
         Algorithm=input$method_kmeans,
         subset=Subset,
         clusterName=clusterKmeans,
-        seed=input$seed_kmeans
+        seed=input$seed_kmeans,
+        addVar=input$addVar_kmeans
       )->resKmeans
       
       
@@ -4072,7 +4094,9 @@ server<-function(input,output,session){
   })
   
   
-  observeEvent(input$go_kmeans,{  #### newly added for update picker input values.
+  observeEvent(c(input$go_kmeans),{  #### newly added for update picker input values.
+    #req(input$addVar_kmeans)
+    req(input$go_kmeans)
     updatePickerInput(session,inputId = 'vars_kmeans',choices = names(res_kmeans()$resKmeans))
     # if(input$dataName_varMnp==''){
     #   NULL
@@ -4109,7 +4133,8 @@ server<-function(input,output,session){
                                Algorithm=input$method_kmeans,
                                subset=Subset,
                                clusterName=clusterKmeans,
-                               seed=input$seed_kmeans
+                               seed=input$seed_kmeans,
+                               addVar=input$addVar_kmeans
         )
         LstMadis$Kmeans<-unique(rbind(LstMadis$Kmeans,dat_kmeans))
         subset(LstMadis$Kmeans,!is.na(data))->LstMadis$Kmeans
@@ -4132,6 +4157,7 @@ server<-function(input,output,session){
       cat('\n')
       
       print(pander(head(res_kmeans()$resKmeans)))
+      
       
       cat('\n')
       cat('\n')
@@ -4247,6 +4273,11 @@ server<-function(input,output,session){
           value='',
           addon='pencil'
           
+        ),
+        awesomeCheckbox(
+          inputId = 'addVar_pca',
+          label='将主成分变量添加至数据',
+          value = FALSE
         )
       ),
       awesomeCheckbox('export_pca','是否导出到报告中?',FALSE)
@@ -4290,7 +4321,8 @@ server<-function(input,output,session){
         Rotate=input$rotate_pca,
         Scores=T,
         subset=Subset,
-        pcaVarName=input$varName_pca
+        pcaVarName=input$varName_pca,
+        addVar=input$addVar_pca
       )->respca
       assign(input$dataSel_pca,respca$dtPCA,envMadis)
       return(respca)
@@ -4325,13 +4357,14 @@ server<-function(input,output,session){
         LstMadis<-get('LstMadis',envMadis)
         LstMadis$Data[[input$dataSel_pca]]<-dat
         dat_pca<-data.frame(data=input$dataSel_pca,
-                               vars=paste(input$vars_pca,collapse=','),
-                               nfcts=input$nfcts_pca,
-                               Rotate=input$rotate_pca,
-                               Scores=T,
-                               subset=Subset,
-                               pcaVarName=input$varName_pca
-                               )
+                            vars=paste(input$vars_pca,collapse=','),
+                            nfcts=input$nfcts_pca,
+                            Rotate=input$rotate_pca,
+                            Scores=T,
+                            subset=Subset,
+                            pcaVarName=input$varName_pca,
+                            addVar=input$addVar_pca
+        )
         LstMadis$pca<-unique(rbind(LstMadis$pca,dat_pca))
         subset(LstMadis$pca,!is.na(data))->LstMadis$pca
         assign('LstMadis',LstMadis,envir=envMadis)
@@ -4496,6 +4529,11 @@ server<-function(input,output,session){
           value='',
           addon='pencil'
           
+        ),
+        awesomeCheckbox(
+          inputId = 'addVar_fa',
+          label='将因子得分合并至数据中',
+          value = FALSE
         )
       ),
       awesomeCheckbox('export_fa','是否导出到报告中?',FALSE)
@@ -4540,7 +4578,8 @@ server<-function(input,output,session){
         Scores=input$scores_fa,
         FM=input$fm_fa,
         subset=Subset,
-        faVarName=input$varName_fa
+        faVarName=input$varName_fa,
+        addVar=input$addVar_fa
       )->resfa
       assign(input$dataSel_fa,resfa$dtFA,envMadis)
       return(resfa)
@@ -4580,7 +4619,8 @@ server<-function(input,output,session){
                            Scores=input$scores_fa,
                            FM=input$fm_fa,
                            subset=Subset,
-                           faVarName=input$varName_fa
+                           faVarName=input$varName_fa,
+                           addVar=input$addVar_fa
         )
         LstMadis$fa<-unique(rbind(LstMadis$fa,dat_fa))
         subset(LstMadis$fa,!is.na(data))->LstMadis$fa

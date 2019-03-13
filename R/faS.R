@@ -15,7 +15,8 @@ faS<-function(
   Scores=c('regression','Thurstone','tenBerge','Anderson','Barlett')[1],
   FM=c('minres','uls','ols','wls','gls','pa','ml','minchi','minrank')[1],
   subset='all',
-  faVarName=''
+  faVarName='',
+  addVar=T
 ){
   require('psych')
   require('stringi')
@@ -30,14 +31,23 @@ faS<-function(
   # data[,vars]->dat
   # na.omit(dat)->dat
   unlist(stri_split_fixed(vars,','))->vars
-  fa(data[,vars],nfactors = nfcts,rotate=Rotate,scores=Scores,fm=FM)->res
-  if(faVarName==''){
-    cbind(data,res$scores)->data
+  data[,vars]->dt
+  which(sapply(dt,class)%in%c('numeric','integer'))->indVar
+  dt[,indVar]->dt2
+  fa(dt2,nfactors = nfcts,rotate=Rotate,scores=Scores,fm=FM)->res
+  
+  if(addVar){
+    if(faVarName==''){
+      cbind(data,res$scores)->data
+    } else {
+      colnames(res$scores)<-paste(colnames(res$scores),faVarName,sep='_')
+      cbind(data,res$scores)->data
+    }
   } else {
-    colnames(res$scores)<-paste(colnames(res$scores),faVarName,sep='_')
-    cbind(data,res$scores)->data
+    NULL
   }
-  return(list(resFA=res,dtFA=data,dataScree=data[,vars],cumVar=res$Vaccounted))
+  
+  return(list(resFA=res,dtFA=data,dataScree=dt2,cumVar=res$Vaccounted))
   
   
 }

@@ -6,7 +6,7 @@
 \usage{
 pcaS(data, vars, nfcts = 2, Rotate = c("none", "varimax", "quartimax",
   "promax", "oblimin", "simplimax", "cluster")[1], Scores = T,
-  subset = "all", pcaVarName = "")
+  subset = "all", pcaVarName = "", addVar = T)
 }
 \description{
 PCA analysis used in shiny app.

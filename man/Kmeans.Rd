@@ -7,7 +7,7 @@
 Kmeans(data, vars, infgr = 1, supgr = 10, Centers = 5,
   Criterion = c("calinski", "ssi")[1], Iter = 100, iterMax = 10,
   Algorithm = c("Hartigan-Wong", "Lloyd", "Forgy")[1], subset = "all",
-  clusterName = "kmeansCluster", seed = 123)
+  clusterName = "kmeansCluster", seed = 123, addVar = T)
 }
 \description{
 kmeans analysis used in shiny app.

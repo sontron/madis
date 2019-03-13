@@ -15,7 +15,8 @@ Kmeans<-function(
   Algorithm=c('Hartigan-Wong','Lloyd','Forgy')[1],
   subset='all',
   clusterName='kmeansCluster',
-  seed=123
+  seed=123,
+  addVar=T
 ){
   require('vegan')
   require('stringi')
@@ -32,11 +33,22 @@ Kmeans<-function(
   #   as.data.frame(t(data))->data
   # }
   unlist(stri_split_fixed(vars,','))->vars
+  data[,vars]->dt
+  which(sapply(dt,class)%in%c('numeric','integer'))->indVar
+  dt[,indVar]->dt2
+  if(any(sapply(dt2,anyNA))){
+    imputeData(dt2,impVars=names(dt2),modelVars=names(dt2),method='sample',treeParams = list(maxdepth=5,minbucket=7,minbucket=20))->dt2
+  }
   
-  graphCrit<-cascadeKM(data[,vars],inf.gr=infgr,sup.gr=supgr,criterion=Criterion,iter=Iter)
+  graphCrit<-cascadeKM(dt2,inf.gr=infgr,sup.gr=supgr,criterion=Criterion,iter=Iter)
   set.seed(seed)
-  kmeans(data[,vars],centers=Centers,iter.max=iterMax,algorithm = Algorithm)->resKmeans
-  data[,clusterName]<-resKmeans$cluster
+  kmeans(dt2,centers=Centers,iter.max=iterMax,algorithm = Algorithm)->resKmeans
+  if(addVar){
+    data[,clusterName]<-resKmeans$cluster
+  } else {
+    NULL
+  }
+  
   
   return(list(graphCrit=graphCrit,resKmeans=data))
   

@@ -9,7 +9,7 @@ faS(data, vars, nfcts = 2, Rotate = c("none", "varimax", "quartimax",
   "simplimax", "bentlerQ", "geominQ", "biquartimin", "cluster")[1],
   Scores = c("regression", "Thurstone", "tenBerge", "Anderson", "Barlett")[1],
   FM = c("minres", "uls", "ols", "wls", "gls", "pa", "ml", "minchi",
-  "minrank")[1], subset = "all", faVarName = "")
+  "minrank")[1], subset = "all", faVarName = "", addVar = T)
 }
 \description{
 factor analysis used in shiny app.
