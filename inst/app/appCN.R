@@ -678,7 +678,7 @@ server<-function(input,output,session){
   
   output$summary_varMnp<-renderPrint({
     res_varMnp()->dt
-    print(pander(head(dt)))
+    tryCatch(print(pander(head(dt))),error=function(e)print(head(dt)))
     #print(summary(dt))
     
   })
@@ -883,11 +883,11 @@ server<-function(input,output,session){
     isolate({
       res_varClass()->dt
       sapply(dt,class)
-      print(pander(head(dt)))
+      tryCatch(print(pander(head(dt))),error=function(e)print(head(dt)))
       sapply(dt,class)->y
       unique(y)->x
       sapply(x,function(i)names(y)[which(y==i)])->res
-      print(pander(res))
+      tryCatch(print(pander(res)),error=function(e)print(res))
       
       skim(dt)
     })
@@ -2428,9 +2428,9 @@ server<-function(input,output,session){
     res_desc()->resDesc
     which(input$vars_desc==input$Res_desc)->ind
     if(input$myFun_desc){
-      print(pander(resDesc[[i]]))
+      tryCatch(print(pander(resDesc[[i]])),error=function(e)print(resDesc[[i]]))
     } else {
-      print(pander(resDesc[[ind]]$resDesc))
+      tryCatch(print(pander(resDesc[[ind]]$resDesc)),error=function(e)print(resDesc[[ind]]$resDesc))
     }
   })
   
@@ -2600,7 +2600,7 @@ server<-function(input,output,session){
     apply(expand.grid(input$varsx_hTest,input$varsy_hTest),1,function(x)paste(x,collapse=','))->namesRes
     
     which(namesRes==input$Res_hTest)->ind
-    print(pander(res_hTest()[[ind]]$hTestRes))
+    tryCatch(print(pander(res_hTest()[[ind]]$hTestRes)),error=function(e)print(res_hTest()[[ind]]$hTestRes))
 
   })
   
@@ -2878,10 +2878,10 @@ server<-function(input,output,session){
       cat('######模型分析结果如下########')
       cat('\n')
       cat('######全模型分析结果如下########')
-      print(pander(summary(res_myGlm()$glmResFull)))
+      tryCatch(print(pander(summary(res_myGlm()$glmResFull))),error=function(e)print(summary(res_myGlm()$glmResFull)))
       cat('\n')
       cat('######逐步回归模型分析结果如下########')
-      print(pander(summary(res_myGlm()$glmResStep)))
+      tryCatch(print(pander(summary(res_myGlm()$glmResStep))),error=function(e)print(summary(res_myGlm()$glmResStep)))
       cat('\n')
       
     })
@@ -3557,10 +3557,10 @@ server<-function(input,output,session){
       cat('######模型分析结果如下########')
       cat('\n')
       cat('######全模型分析结果如下########')
-      print(pander(res_myCox()$coxResFull))
+      tryCatch(print(pander(res_myCox()$coxResFull)),error=function(e)print(res_myCox()$coxResFull))
       cat('\n')
       cat('######逐步回归模型分析结果如下########')
-      print(pander(res_myCox()$coxResStep))
+      tryCatch(print(pander(res_myCox()$coxResStep)),error=function(e)print(res_myCox()$coxResStep))
       cat('\n')
       
       
@@ -3677,7 +3677,7 @@ server<-function(input,output,session){
         
         textInputAddon(
           inputId = 'random_myLme',
-          label = '固定效应设置',
+          label = '随机效应设置',
           placeholder = 'eg: 1|g1/g2',
           value='',
           addon = 'pencil'
@@ -3824,13 +3824,13 @@ server<-function(input,output,session){
        cat('######全模型结果########')
        cat('\n')
 
-       print(pander(summary(res_myLme()$lmeResFull)))
+       tryCatch(print(pander(summary(res_myLme()$lmeResFull))),error=function(e)print(summary(res_myLme()$lmeResFull)))
 
        cat('\n')
        cat('######全模型结果########')
        cat('\n')
        
-       print(pander(summary(res_myLme()$lmeResStep)))
+       tryCatch(print(pander(summary(res_myLme()$lmeResStep))),error=function(e)print(summary(res_myLme()$lmeResStep)))
        cat('\n')
     })
     
@@ -4156,7 +4156,7 @@ server<-function(input,output,session){
       cat('######聚类结果########')
       cat('\n')
       
-      print(pander(head(res_kmeans()$resKmeans)))
+      tryCatch(print(pander(head(res_kmeans()$resKmeans))),error=function(e)print(head(res_kmeans()$resKmeans)))
       
       
       cat('\n')
@@ -4387,13 +4387,13 @@ server<-function(input,output,session){
       
       cat('######因子载荷########')
       cat('\n')
-      print(pander(res_pca()$resPCA$loadings[]))
+      tryCatch(print(pander(res_pca()$resPCA$loadings[])),error=function(e)print(res_pca()$resPCA$loadings[]))
       
       cat('\n')
       cat('\n')
       cat('######累积贡献率########')
       cat('\n')
-      print(pander(res_pca()$cumVar))
+      tryCatch(print(pander(res_pca()$cumVar)),error=function(e)print(res_pca()$cumVar))
       
       cat('\n')
       cat('\n')
@@ -4644,13 +4644,13 @@ server<-function(input,output,session){
       
       cat('######因子载荷########')
       cat('\n')
-      print(pander(res_fa()$resFA$loadings[]))
+      tryCatch(print(pander(res_fa()$resFA$loadings[])),error=function(e)print(res_fa()$resFA$loadings[]))
       
       cat('\n')
       cat('\n')
       cat('######累积贡献率########')
       cat('\n')
-      print(pander(res_fa()$cumVar))
+      tryCatch(print(pander(res_fa()$cumVar)),error=function(e)print(res_fa()$cumVar))
       
       cat('\n')
       cat('\n')
