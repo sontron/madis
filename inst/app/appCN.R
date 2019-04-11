@@ -19,11 +19,12 @@ library(prophet)
 library(reshape2)
 library(skimr)
 library(madis)
+library(rio)
 
-options(shiny.maxRequestSize = 500*1024^2)
 
-#rm(list=ls())
-#gc()
+
+options(shiny.maxRequestSize = 50000*1024^2)
+
 
 
 as.numeric(Sys.time())->seed
@@ -88,10 +89,30 @@ server<-function(input,output,session){
     
     
     if(is.null(input$file_dataImpt)) {
-      Data<-read.csv(text=input$text_dataImpt,sep="\t",na.strings=input$nastr_dataImpt,stringsAsFactors = input$strAsFac_dataImpt,header=input$header_dataImpt,fileEncoding = input$encod_dataImpt)} else {
+      Data<-read.table(text=input$text_dataImpt,
+                     sep="\t",
+                     na.strings=input$nastr_dataImpt,
+                     stringsAsFactors = input$strAsFac_dataImpt,
+                     header=input$header_dataImpt,
+                     fileEncoding = input$encod_dataImpt)
+      # Data<-import(input$text_dataImpt)
+      } else {
         inFile<-input$file_dataImpt
         if(input$argsMore_dataImpt=='') {
-          Data<-read.table(file=inFile$datapath,na.strings=input$nastr_dataImpt,stringsAsFactors = input$strAsFac_dataImpt,header=input$header_dataImpt,fileEncoding = input$encod_dataImpt,sep=input$sep_dataImpt)
+          
+          # tt <- readLines(inFile$datapath)
+          # tt <- gsub("([^\\]|^)'","\\1\"",tt)
+          # tt <- gsub("\\\\","\\",tt)
+          # zz <- textConnection(tt)
+          
+          Data<-read.table(inFile$datapath,
+                           na.strings=input$nastr_dataImpt,
+                           stringsAsFactors = input$strAsFac_dataImpt,
+                           header=input$header_dataImpt,
+                           fileEncoding = input$encod_dataImpt,
+                           sep=input$sep_dataImpt)
+          # Data<-import(inFile$datapath)
+           # close(zz)
         } else {
           textfun_dataImpt<-paste("read.table(",paste("file=inFile$datapath","header=input$header_dataImpt","na.strings=input$nastr_dataImpt","stringsAsFactors = input$strAsFac_dataImpt","sep=input$sep_dataImpt","fileEncoding=input$encod_dataImpt",input$argsMore_dataImpt,sep=','),")",sep='')
           eval(parse(text=textfun_dataImpt))->Data
@@ -131,18 +152,19 @@ server<-function(input,output,session){
             multiple = TRUE,
             options = list(`actions-box` = TRUE)
           ),
-          pickerInput(
-            inputId='encod_dataImpt',
-            label='文件编码格式',
-            choices=c(
-              'UTF8编码'='UTF8',
-              'GB18030编码'='GB18030'
-            ),
-            selected='GB18030',
-            multiple = FALSE,
-            options = list(`actions-box` = FALSE)
-          ),
-          awesomeCheckbox('header_dataImpt','数据第一行为变量名',TRUE),
+          # pickerInput(
+          #   inputId='encod_dataImpt',
+          #   label='文件编码格式',
+          #   choices=c(
+          #     'UTF8编码'='UTF8',
+          #     'GB18030编码'='GB18030'
+          #   ),
+          #   selected='GB18030',
+          #   multiple = FALSE,
+          #   options = list(`actions-box` = FALSE)
+          # ),
+          textInputAddon(inputId = 'encod_dataImpt',label = '文件编码格式',value = 'gb18030',placeholder = 'eg:utf8',addon = icon("pencil")),
+          awesomeCheckbox('header_dataImpt','数据包含变量名',TRUE),
           awesomeCheckbox('strAsFac_dataImpt','是否将字符串转换成因子',FALSE)
         ),
         textInputAddon(inputId = "argsMore_dataImpt", label = "更多参数设定", placeholder = "eg:nrows=10",value='',addon = icon("pencil")),
@@ -1122,8 +1144,8 @@ server<-function(input,output,session){
     
     change_data()
     #?#
-    get(input$dataSel_unique,envMadis)->datanaImpute
-    return(datanaImpute)
+    get(input$dataSel_unique,envMadis)->datanaunique
+    return(datanaunique)
   })
   
   output$more2_unique<-renderUI({
@@ -1469,7 +1491,7 @@ server<-function(input,output,session){
       
       if(input$method_impute=='treeImpute'){
         #xImpute[is.na(xImpute)]<-sample(xImpute[!is.na(xImpute)],sum(is.na(xImpute)),rep=input$rep_naImpute)
-        imputeData(data=dat,impVars=input$var_naImpute,modelVars=input$var_treeModel)->dat
+        imputeData(data=dat,impVars=input$var_naImpute,modelVars=input$var_treeModel,method=input$method_impute)->dat
       }
       
       if(input$method_impute=='myFun'){
@@ -2618,16 +2640,6 @@ server<-function(input,output,session){
   
   
   
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
   ###### 线性模型(myGlm) ######
   
   
@@ -2958,11 +2970,6 @@ server<-function(input,output,session){
   
   
   
-  
-  
-  
-  
-  
   ###### 决策树模型(myTree) ######
   
   
@@ -3262,14 +3269,6 @@ server<-function(input,output,session){
       
     })
   })
-  
-  
-  
-  
-  
-  
-  
-  
   
   
   
@@ -3599,15 +3598,6 @@ server<-function(input,output,session){
   
   
   
-  
-  
-  
-  
-  
-  
-  
-  
-  
   ###### 混合效应模型(myLme) ######
   
   
@@ -3841,22 +3831,6 @@ server<-function(input,output,session){
   
   
   
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
   ###### 聚类分析(Kmeans) ######
   
   
@@ -4004,32 +3978,7 @@ server<-function(input,output,session){
           value = FALSE
         )
         
-        
-        
-
-        
-        
-        # panel(
-        #   heading='设置数据集相关参数',
-        #   textInputAddon(
-        #     inputId = 'clusterName_kmeans',
-        #     label = '设定聚类新变量名',
-        #     placeholder = 'eg: clusterKmeans',
-        #     value='',
-        #     addon = 'pencil'
-        #   )#,
-        #   
-        #   # textInputAddon(
-        #   #   inputId = 'dataName_kmeans',
-        #   #   label = '设定保存的对象名',
-        #   #   placeholder = 'eg: dataKmeans',
-        #   #   value='',
-        #   #   addon = 'pencil'
-        #   # )
-        #   
-        # )
-        
-        
+     
       ),
       awesomeCheckbox('export_kmeans','是否导出到报告中?',FALSE)
     )
@@ -4173,18 +4122,6 @@ server<-function(input,output,session){
       
     })
   })
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
   
   
   
@@ -4410,18 +4347,6 @@ server<-function(input,output,session){
       
     })
   })
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
   
   
   
@@ -4667,22 +4592,6 @@ server<-function(input,output,session){
       
     })
   })
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
   
   
   
