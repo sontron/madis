@@ -102,7 +102,8 @@ hTest<-function(data,xvars,yvars='',alter=c('two.sided','less','greater')[1],pai
         chisq.test(tab)->chisqTest
         as.vector(chisqTest$expected)->chisqExp
         if(any(chisqExp<1)||(sum(chisqExp<5)/length(chisqExp))>0.2) {
-          fisher.test(tab)->fisherTest
+          
+          tryCatch(fisher.test(tab,alternative = alter,conf.level = confLevel),error=function(e)fisher.test(tab,simulate.p.value = T,B=1e+7,alternative = alter,conf.level = confLevel))->fisherTest
           if(any(c(class(dt$x)[1],class(dt$y)[1])=='ordered')){
             hTestRes<-list(DescResult=tab,chisqTest=chisq.test(tab),fisherTest=fisherTest,CMHtest=CMHtest(tab))
           } else {
