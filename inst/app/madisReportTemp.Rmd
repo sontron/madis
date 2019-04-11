@@ -156,6 +156,10 @@ if(is.na(myGlmParms$data)){
       abline(c(0,0),c(1,1))
       text(0.8,0.2,paste('auc=',round(unlist(perf2@y.values),3),sep=''))
       text(0.8,0.1,paste('cutoff=',round(cutoffVal,3),sep=''))
+      
+      cat('\n')
+      #plot(res$nomogramFull)
+      cat('\n')
     }
     cat('\n')
     cat(paste0('#### 第',i,'个模型的逐步回归模型结果：'))
@@ -181,6 +185,9 @@ if(is.na(myGlmParms$data)){
       abline(c(0,0),c(1,1))
       text(0.8,0.2,paste('auc=',round(unlist(perf2@y.values),3),sep=''))
       text(0.8,0.1,paste('cutoff=',round(cutoffVal,3),sep=''))
+      cat('\n')
+      #plot(res$nomogramStep)
+      cat('\n')
     }
     cat('\n')
     cat('\n')
