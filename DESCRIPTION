@@ -1,7 +1,7 @@
 Package: madis
 Type: Package
 Title: Manipulating and Analyzing Data Interactively with Shiny 
-Version: 1.1.6
+Version: 1.1.11
 Author: son tron
 Maintainer: son tron <sontron@foxmail.com>
 Description: This pakcage is mainly used for statistical analysis.
@@ -31,6 +31,7 @@ Collate:
    "Kmeans.R"
    "faS.R"
    "pcaS.R"
+   "dataMnp.R"
 RoxygenNote: 6.0.1
 Imports:
   compiler,

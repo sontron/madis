@@ -36,20 +36,24 @@ imputeData<-function(data,impVars,modelVars,seed=1,treeParams=list(),method=c('s
   
   set.seed(seed)
   unique(c(impVars,modelVars))->Vars
-  data[,Vars]->dat
+  data[,Vars]->>dat
+  # assign('dat',dat,envir = .GlobalEnv)
   for(i in impVars){
     if(any(is.na(dat[,i]))) {
       paste(i,'~',paste(names(dat)[-which(names(dat)==i)],collapse='+'),sep='')->formula
-      rpart(formula,data=dat,control=treeParams)->fit
+      rpart:::rpart(formula,data=dat,control=treeParams)->fit
+      as.party(fit)->fit
       #as.party(fit)->fitParty
-      if(length(unique(fit$where))==1){
+      if(length(unique(partykit:::predict.party(fit,type='node')))==1){
         dat[is.na(dat[,i]),i]<-sample(dat[!is.na(dat[,i]),i],length(dat[is.na(dat[,i]),i]),rep=T)
       } else {
         #fitted(fitParty)[,1]->nodeRaw
-        as.numeric(row.names(fit$frame)[fit$where])->nodeRaw
+        #as.numeric(row.names(fit$frame)[fit$where])->nodeRaw
+        partykit:::predict.party(fit,type='node')->nodeRaw
         dat[!is.na(dat[,i]),i]->iRaw
         if(method=='sample'){
-          predictNodes(fit,newdata=dat[is.na(dat[,i]),])->nodePred
+          #predictNodes(fit,newdata=dat[is.na(dat[,i]),])->nodePred
+          partykit:::predict.party(fit,newdata=dat[is.na(dat[,i]),],type='node')->nodePred
           iImp<-numeric(length(nodePred))
           for(j in unique(nodePred)){
             which(nodePred==j)->ind
@@ -58,11 +62,12 @@ imputeData<-function(data,impVars,modelVars,seed=1,treeParams=list(),method=c('s
           dat[is.na(dat[,i]),i]<-iImp
         }
         if(method=='pred'){
-          if(class(dat[,i])[1]%in%c('character','factor','ordered')){
-            as.vector(predict(fit,dat[is.na(dat[,i]),],type='class'))->responsePred
-          } else {
-            predict(fit,dat[is.na(dat[,i]),],type='vector')->responsePred
-          }
+          # if(class(dat[,i])[1]%in%c('character','factor','ordered')){
+          #   as.vector(predict(fit,dat[is.na(dat[,i]),],type='class'))->responsePred
+          # } else {
+          #   predict(fit,dat[is.na(dat[,i]),],type='vector')->responsePred
+          # }
+          partykit:::predict.party(fit,neadata=dat[is.na(dat[,i]),])->responsePred
           
           dat[is.na(dat[,i]),i]<-responsePred
         }
@@ -74,5 +79,6 @@ imputeData<-function(data,impVars,modelVars,seed=1,treeParams=list(),method=c('s
   }
   
   data[,Vars]<-dat
+  rm(dat,envir = .GlobalEnv)
   return(data)
 }

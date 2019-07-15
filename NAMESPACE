@@ -1,2 +1,4 @@
 exportPattern("^[[:alpha:]]+")
 import(rms)
+import(partykit)
+import(data.table)

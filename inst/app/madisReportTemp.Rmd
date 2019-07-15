@@ -29,6 +29,7 @@ opts_chunk$set(echo=F,message=F,warning=F,results='asis',comment=NA,fig.showtext
 
 ```{r}
 load('LstMadis.RData')
+reportFormat<-read.csv('formatReport.csv',stringsAsFactors = F)
 ```
 
 # 描述性结果
@@ -56,7 +57,12 @@ if(is.na(descParams$xvars)) {
     uniVar(data=LstMadis$Data[[descParams$dataName[i]]],xvars=descParams$xvars[i],Digits=descParams$Digits[i])->res
     cat(pander(res$resDesc))
     cat('\n')
-    plot(res$graphDesc)
+    # if(reportFormat$format=='HTML'){
+    #   ggplotly(res$graphDesc)
+    # } else {
+      plot(res$graphDesc)
+    # }
+    
     cat('\n')
   }
 }

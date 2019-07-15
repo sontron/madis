@@ -20,6 +20,7 @@ library(reshape2)
 library(skimr)
 library(madis)
 library(rio)
+library(rhandsontable)
 
 
 
@@ -1403,7 +1404,7 @@ server<-function(input,output,session){
             '最大值{数值型}'='max',
             '众数{数值型或字符型}'='most',
             '随机抽取{数值型或字符型}'='random',
-            '树模型填补'='treeImpute',
+            # '树模型填补'='treeImpute',
             'MICE模型填补'='MICE',
             '自定义方法'='myFun'
           ),
@@ -1437,7 +1438,44 @@ server<-function(input,output,session){
             options = list(`actions-box` = FALSE)
           )
           #textInputAddon(inputId='funImpute',label='自定义填补函数',value='',placeholder = 'eg:function(x)mean(x)',addon = icon('pencil'))
+        ),
+        
+        conditionalPanel(
+          condition = "input['method_impute']=='MICE'",
+          pickerInput(
+            inputId='method_MICE',
+            label='选择MICE方法',
+            choices = c(
+              'pmm',
+              'cart',
+              'midastouch',
+              'sample',
+              'mean',
+              'logreg',
+              'polr',
+              'polyreg',
+              'lda'
+              
+            ),
+            selected ='cart',
+            multiple=FALSE,
+            options = list(`actions-box` = TRUE)
+          )
+          # ,
+          # pickerInput(
+          #   inputId='method_impute',
+          #   label='选择填补方法',
+          #   choices = c(
+          #     '随机抽样'='sample',
+          #     '模型预测'='pred'
+          #   ),
+          #   selected ='sample',
+          #   multiple=FALSE,
+          #   options = list(`actions-box` = FALSE)
+          # )
+          #textInputAddon(inputId='funImpute',label='自定义填补函数',value='',placeholder = 'eg:function(x)mean(x)',addon = icon('pencil'))
         )
+        
       ),
       conditionalPanel(
         condition = "input['method_impute']=='random'",
@@ -1502,7 +1540,7 @@ server<-function(input,output,session){
       if(input$method_impute=='MICE'){
         A<-is.na(dat)
         A[,-which(names(dat)%in%input$var_naImpute)]<-F
-        mice(dat,where=A)->res
+        mice(dat,where=A,method=input$method_MICE)->res
         complete(res)->dat
       }
       
@@ -4967,12 +5005,111 @@ server<-function(input,output,session){
     })
   })
   
+  observeEvent(input$format_report,{
+    write.csv(data.frame(format=input$format_report),'formatReport.csv')
+  })
+  
   output$down_report<-renderUI({
     req(input$go_report)
     list(
       downloadButton('downloadReport','下载报告',class='fa-3x')
     )
     
+  })
+  
+  
+  ##### datatable ####
+  output$more1_DT<-renderUI({
+    change_data()
+    list(
+      panel(
+        heading='选择处理的数据集',
+        pickerInput(
+          inputId = "dataSel_DT",
+          label = "选择数据集",
+          choices = ls(envMadis)[-which(ls(envMadis)%in%c('envMadis','server','ui','LstMadis'))],
+          selected =ls(envMadis)[-which(ls(envMadis)%in%c('envMadis','server','ui','LstMadis'))][1],
+          multiple = FALSE,
+          options = list(`actions-box` = FALSE)
+        )
+      ),
+      
+      panel(
+        heading = '设置参数个数',
+        numericInput(
+          inputId = 'nrow_DT',
+          label = '设定配置参数个数',
+          value = 10,
+          min=1,
+          max=100
+        )
+      )
+    )
+  })
+  
+  
+  data_DT<-reactive({
+    change_data()
+    get(input$dataSel_DT,envMadis)->dataDT
+    return(dataDT)
+    
+  })
+  
+  output$handsonTB<-renderRHandsontable({
+    rhandsontable(data.frame(
+      指标名称=rep('',input$nrow_DT),
+      指标公式=rep('',input$nrow_DT),
+      维度变量=rep('',input$nrow_DT),
+      维度名称=rep('',input$nrow_DT),
+      日期变量=rep('',input$nrow_DT),
+      日期格式=rep('',input$nrow_DT),
+      边际汇总=rep(0L,input$nrow_DT),  
+      调整边际汇总=rep(0L,input$nrow_DT),  
+      调整结果名称=rep('',input$nrow_DT),  
+      调整公式=rep('',input$nrow_DT),  
+      行排序变量=rep('',input$nrow_DT),   
+      行排序顺序=rep('',input$nrow_DT),   
+      小数点=rep(0L,input$nrow_DT),      
+      同比指标=rep('',input$nrow_DT),         
+      环比指标=rep('',input$nrow_DT),          
+      列排序=rep('',input$nrow_DT)
+    ),readOnly=F)
+  })
+  
+  dtCfg <- reactive({
+    hot_to_r(req(input$handsonTB))
+  })
+  
+  res_DT<-eventReactive(input$go_DT,{
+    data_DT()->dt
+    dtCfg()->cfg
+    cfg[cfg=='']<-NA
+    dataMnp(
+      data=dt,
+      indexNames=cfg$指标名称,
+      Formulas=cfg$指标公式,
+      dimVars=cfg$维度变量,
+      dimNames=cfg$维度名称,
+      dateVar=cfg$日期变量,
+      dtOrders=cfg$日期格式,
+      margin=cfg$边际汇总,  
+      revisedMargin=cfg$调整边际汇总,  
+      revisedNames=cfg$调整结果名称,  
+      revisedFormulas=cfg$调整公式,  
+      orderVars=cfg$行排序变量,   
+      orders=cfg$行排序顺序,   
+      Digits=cfg$小数点,      
+      tbVars=cfg$同比指标,         
+      hbVars=cfg$环比指标,          
+      colOrder=cfg$列排序
+      
+    )->res
+    return(res)
+  })
+  
+  
+  output$resMnp<-DT:::renderDataTable({
+    res_DT()$tabRes
   })
   
   
@@ -5027,7 +5164,7 @@ ui<-fluidPage(
               )
             ),
             helpText('注意：数据需为txt或csv格式文件，或复制表格数据(excel，csv等文件)到下面的窗口中'),
-            aceEditor("text_dataImpt", value="Sex\tEffect\nM\tNo\nW\tNo\nW\tNo\nM\tNo\nM\tYes\nM\tYes\nM\tYes\nM\tNo\nW\tYes", mode="r", theme="chrome",height="150px")
+            aceEditor("text_dataImpt", value=readr:::format_tsv(mtcars), mode="r", theme="chrome",height="150px")
             
           ),
           
@@ -5478,6 +5615,31 @@ ui<-fluidPage(
         ),
         mainPanel(
           tabPanel('button',htmlOutput('down_report'))
+          
+        )
+      )
+    )
+    ,
+    
+    
+    #### datatable ### 
+    
+    tabPanel(
+      '统计表格',
+      sidebarLayout(
+        sidebarPanel(
+          uiOutput('more1_DT'),
+          actionBttn('go_DT','确定')
+        ),
+        mainPanel(
+          panel(
+            heading = '设置表格参数',
+            rHandsontableOutput("handsonTB")
+          ),
+          panel(heading = '表格结果',
+                DT:::dataTableOutput('resMnp')
+                )
+          
           
         )
       )
