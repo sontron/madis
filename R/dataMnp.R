@@ -18,6 +18,11 @@
 
 
 dataMnp<-function(data,
+                  subset=NA,
+                  newVars=NA,
+                  newVarsFormulas=NA,
+                  newVarsBy=NA,
+                  newVarsMargin=NA,
                   indexNames,
                   Formulas,
                   dimVars,
@@ -41,6 +46,31 @@ dataMnp<-function(data,
   require('data.table')
   require('lubridate')
   require('stringi')
+  if(is.character(data)){eval(as.name(data))->data}
+  as.data.table(data)->data
+  if(!all(newVars%in%c(NA,NULL,''))){
+    setdiff(unlist(stri_split_fixed(newVars,';')),c(NA,'NULL',''))->newVars
+    setdiff(unlist(stri_split_fixed(newVarsFormulas,';')),c(NA,'NULL',''))->newVarsFormulas
+    if(!all(newVarsBy%in%c(NA,NULL,'')))setdiff(newVarsBy,c(NA,'NULL',''))->newVarsBy
+    
+    if(all(newVarsBy%in%c(NA,NULL,''))){
+      data[,c(newVars):=lapply(newVarsFormulas,function(i)eval(parse(text=i)))]
+    } else {
+      data[,c(newVars):=lapply(newVarsFormulas,function(i)eval(parse(text=i))),
+         by=as.data.table(data[,newVarsBy,with=F])
+         ]
+    }
+    
+  }
+  
+  
+  if(!all(subset%in%c(NA,NULL,''))){
+    setdiff(unlist(stri_split_fixed(subset,';')),c(NA,'','NULL'))->subset
+    subset(data,eval(parse(text=subset)))->data
+  }
+  
+  
+  
   as.data.frame(data)->data
   if(!all(dateVar%in%c(NA,NULL,'')))setdiff(dateVar,NA)->dateVar
   if(!all(dtOrders%in%c(NA,NULL,'')))setdiff(dtOrders,NA)->dtOrders
@@ -63,6 +93,8 @@ dataMnp<-function(data,
   
   
   as.data.table(data)->dt
+  
+  
   
   if(!all(Formulas%in%c(NA,NULL,'')))setdiff(unlist(stri_split_fixed(Formulas,';')),NA)->Formulas
   if(!all(dimVars%in%c(NA,NULL,'')))setdiff(unlist(stri_split_fixed(dimVars,';')),NA)->dimVars

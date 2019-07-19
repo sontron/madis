@@ -58,6 +58,11 @@ LstMadis$Kmeans<-data.frame(data=NA,vars=NA,infgr=NA,supgr=NA,Centers=NA,Criteri
                             iterMax=NA,Algorithm=NA,subset=NA,clusterName=NA,seed=NA,addVar=NA)
 LstMadis$pca<-data.frame(data=NA,vars=NA,nfcts=NA,Rotate=NA,Scores=NA,subset=NA,pcaVarName=NA,addVar=NA)
 LstMadis$fa<-data.frame(data=NA,vars=NA,nfcts=2,Rotate=NA,Scores=NA,FM=NA,subset=NA,faVarName=NA,addVar=NA)
+LstMadis$dataMnp<-data.frame(data=NA,subset=NA,newVars=NA,newVarsFormulas=NA,newVarsBy=NA,indexNames=NA,Formulas=NA,
+                             dimVars=NA,dimNames=NA,dateVar=NA,dtOrders=NA,margin=NA, revisedMargin=NA,revisedNames=NA,  
+                             revisedFormulas=NA,orderVars=NA,orders=NA,Digits=NA,tbVars=NA,hbVars=NA,colOrder=NA)
+
+
 assign('LstMadis',LstMadis,env=envMadis)
 
 
@@ -1870,6 +1875,7 @@ server<-function(input,output,session){
     input$go_kmeans
     input$go_pca
     input$go_fa
+    input$go_DT
   })
   
   
@@ -4969,6 +4975,154 @@ server<-function(input,output,session){
   })
   
   
+  ##### datatable ####
+  output$more1_DT<-renderUI({
+    change_data()
+    list(
+      panel(
+        heading='选择处理的数据集',
+        pickerInput(
+          inputId = "dataSel_DT",
+          label = "选择数据集",
+          choices = ls(envMadis)[-which(ls(envMadis)%in%c('envMadis','server','ui','LstMadis'))],
+          selected =ls(envMadis)[-which(ls(envMadis)%in%c('envMadis','server','ui','LstMadis'))][1],
+          multiple = FALSE,
+          options = list(`actions-box` = FALSE)
+        )
+      ),
+      
+      panel(
+        heading = '设置参数个数',
+        numericInput(
+          inputId = 'nrow_DT',
+          label = '设定配置参数个数',
+          value = 1,
+          min=1,
+          max=100
+        )
+      ),
+      awesomeCheckbox('export_dataMnp','是否导出报告中?',FALSE)
+    )
+  })
+  
+  
+  data_DT<-reactive({
+    change_data()
+    get(input$dataSel_DT,envMadis)->dataDT
+    return(dataDT)
+    
+  })
+  
+  output$handsonTB<-renderRHandsontable({
+    rhandsontable(data.frame(
+      子集=rep('',input$nrow_DT),
+      新变量名称=rep('',input$nrow_DT),
+      新变量计算公式=rep('',input$nrow_DT),
+      新变量维度汇总=rep('',input$nrow_DT),
+      指标名称=rep('',input$nrow_DT),
+      指标公式=rep('',input$nrow_DT),
+      维度变量=rep('',input$nrow_DT),
+      维度名称=rep('',input$nrow_DT),
+      日期变量=rep('',input$nrow_DT),
+      日期格式=rep('',input$nrow_DT),
+      边际汇总=rep(0L,input$nrow_DT),  
+      调整边际汇总=rep(0L,input$nrow_DT),  
+      调整结果名称=rep('',input$nrow_DT),  
+      调整公式=rep('',input$nrow_DT),  
+      行排序变量=rep('',input$nrow_DT),   
+      行排序顺序=rep('',input$nrow_DT),   
+      小数点=rep(0L,input$nrow_DT),      
+      同比指标=rep('',input$nrow_DT),         
+      环比指标=rep('',input$nrow_DT),          
+      列排序=rep('',input$nrow_DT)
+    ),readOnly=F)
+  })
+  
+  dtCfg <- reactive({
+    hot_to_r(req(input$handsonTB))
+  })
+  
+  res_DT<-eventReactive(input$go_DT,{
+      
+    data_DT()->dt
+    dtCfg()->cfg
+    cfg[cfg=='']<-NA
+    dataMnp(
+      data=dt,
+      subset=cfg$子集,
+      newVars=cfg$新变量名称,
+      newVarsFormulas=cfg$新变量计算公式,
+      newVarsBy=cfg$新变量维度汇总,
+      indexNames=cfg$指标名称,
+      Formulas=cfg$指标公式,
+      dimVars=cfg$维度变量,
+      dimNames=cfg$维度名称,
+      dateVar=cfg$日期变量,
+      dtOrders=cfg$日期格式,
+      margin=cfg$边际汇总,  
+      revisedMargin=cfg$调整边际汇总,  
+      revisedNames=cfg$调整结果名称,  
+      revisedFormulas=cfg$调整公式,  
+      orderVars=cfg$行排序变量,   
+      orders=cfg$行排序顺序,   
+      Digits=cfg$小数点,      
+      tbVars=cfg$同比指标,         
+      hbVars=cfg$环比指标,          
+      colOrder=cfg$列排序
+      
+    )->res
+    return(res)
+  })
+  
+  observeEvent(input$go_DT,{
+    change_report()
+    dtCfg()->cfg
+    cfg[cfg=='']<-NA
+    isolate({
+      if(input$export_dataMnp){
+        data_DT()->dt
+        LstMadis<-get('LstMadis',envMadis)
+        LstMadis$Data[[input$dataSel_DT]]<-dt
+        
+        dat_DT<-data.frame(data=input$dataSel_DT,
+                           subset=cfg$子集,
+                           newVars=cfg$新变量名称,
+                           newVarsFormulas=cfg$新变量计算公式,
+                           newVarsBy=cfg$新变量维度汇总,
+                           indexNames=cfg$指标名称,
+                           Formulas=cfg$指标公式,
+                           dimVars=cfg$维度变量,
+                           dimNames=cfg$维度名称,
+                           dateVar=cfg$日期变量,
+                           dtOrders=cfg$日期格式,
+                           margin=cfg$边际汇总,  
+                           revisedMargin=cfg$调整边际汇总,  
+                           revisedNames=cfg$调整结果名称,  
+                           revisedFormulas=cfg$调整公式,  
+                           orderVars=cfg$行排序变量,   
+                           orders=cfg$行排序顺序,   
+                           Digits=cfg$小数点,      
+                           tbVars=cfg$同比指标,         
+                           hbVars=cfg$环比指标,          
+                           colOrder=cfg$列排序
+        )
+        
+        LstMadis$dataMnp<-unique(rbind(LstMadis$dataMnp,dat_DT))
+        subset(LstMadis$dataMnp,!is.na(data))->LstMadis$dataMnp
+        assign('LstMadis',LstMadis,envir=envMadis)
+      } else {
+        NULL
+      }
+    })
+  })
+  
+  
+  
+  output$resMnp<-DT:::renderDataTable({
+    res_DT()$tabRes
+  })
+  
+  
   
   
   
@@ -5017,100 +5171,6 @@ server<-function(input,output,session){
     
   })
   
-  
-  ##### datatable ####
-  output$more1_DT<-renderUI({
-    change_data()
-    list(
-      panel(
-        heading='选择处理的数据集',
-        pickerInput(
-          inputId = "dataSel_DT",
-          label = "选择数据集",
-          choices = ls(envMadis)[-which(ls(envMadis)%in%c('envMadis','server','ui','LstMadis'))],
-          selected =ls(envMadis)[-which(ls(envMadis)%in%c('envMadis','server','ui','LstMadis'))][1],
-          multiple = FALSE,
-          options = list(`actions-box` = FALSE)
-        )
-      ),
-      
-      panel(
-        heading = '设置参数个数',
-        numericInput(
-          inputId = 'nrow_DT',
-          label = '设定配置参数个数',
-          value = 10,
-          min=1,
-          max=100
-        )
-      )
-    )
-  })
-  
-  
-  data_DT<-reactive({
-    change_data()
-    get(input$dataSel_DT,envMadis)->dataDT
-    return(dataDT)
-    
-  })
-  
-  output$handsonTB<-renderRHandsontable({
-    rhandsontable(data.frame(
-      指标名称=rep('',input$nrow_DT),
-      指标公式=rep('',input$nrow_DT),
-      维度变量=rep('',input$nrow_DT),
-      维度名称=rep('',input$nrow_DT),
-      日期变量=rep('',input$nrow_DT),
-      日期格式=rep('',input$nrow_DT),
-      边际汇总=rep(0L,input$nrow_DT),  
-      调整边际汇总=rep(0L,input$nrow_DT),  
-      调整结果名称=rep('',input$nrow_DT),  
-      调整公式=rep('',input$nrow_DT),  
-      行排序变量=rep('',input$nrow_DT),   
-      行排序顺序=rep('',input$nrow_DT),   
-      小数点=rep(0L,input$nrow_DT),      
-      同比指标=rep('',input$nrow_DT),         
-      环比指标=rep('',input$nrow_DT),          
-      列排序=rep('',input$nrow_DT)
-    ),readOnly=F)
-  })
-  
-  dtCfg <- reactive({
-    hot_to_r(req(input$handsonTB))
-  })
-  
-  res_DT<-eventReactive(input$go_DT,{
-    data_DT()->dt
-    dtCfg()->cfg
-    cfg[cfg=='']<-NA
-    dataMnp(
-      data=dt,
-      indexNames=cfg$指标名称,
-      Formulas=cfg$指标公式,
-      dimVars=cfg$维度变量,
-      dimNames=cfg$维度名称,
-      dateVar=cfg$日期变量,
-      dtOrders=cfg$日期格式,
-      margin=cfg$边际汇总,  
-      revisedMargin=cfg$调整边际汇总,  
-      revisedNames=cfg$调整结果名称,  
-      revisedFormulas=cfg$调整公式,  
-      orderVars=cfg$行排序变量,   
-      orders=cfg$行排序顺序,   
-      Digits=cfg$小数点,      
-      tbVars=cfg$同比指标,         
-      hbVars=cfg$环比指标,          
-      colOrder=cfg$列排序
-      
-    )->res
-    return(res)
-  })
-  
-  
-  output$resMnp<-DT:::renderDataTable({
-    res_DT()$tabRes
-  })
   
   
 }
@@ -5600,6 +5660,32 @@ ui<-fluidPage(
     
     
     
+    ####### datatable ###### 
+    
+    tabPanel(
+      '统计表格',
+      sidebarLayout(
+        sidebarPanel(
+          uiOutput('more1_DT'),
+          actionBttn('go_DT','确定')
+        ),
+        mainPanel(
+          panel(
+            heading = '设置表格参数',
+            rHandsontableOutput("handsonTB")
+          ),
+          panel(heading = '表格结果',
+                DT:::dataTableOutput('resMnp')
+          )
+          
+          
+        )
+      )
+    ),
+    
+    
+    
+    
     
     
     
@@ -5619,33 +5705,6 @@ ui<-fluidPage(
         )
       )
     )
-    ,
-    
-    
-    #### datatable ### 
-    
-    tabPanel(
-      '统计表格',
-      sidebarLayout(
-        sidebarPanel(
-          uiOutput('more1_DT'),
-          actionBttn('go_DT','确定')
-        ),
-        mainPanel(
-          panel(
-            heading = '设置表格参数',
-            rHandsontableOutput("handsonTB")
-          ),
-          panel(heading = '表格结果',
-                DT:::dataTableOutput('resMnp')
-                )
-          
-          
-        )
-      )
-    )
-    
-    
     
     
     

@@ -667,6 +667,58 @@ if(is.na(myTableParms$data)){
 ```
 
 
+## 统计报表
+
+```{r}
+LstMadis$dataMnp->dataMnpParms
+if(is.na(dataMnpParms$data)){
+  cat('\n')
+  cat('当前数据无分析结果')
+  cat('\n')
+} else {
+  
+  for(i in 1:nrow(dataMnpParms)){
+    cat('\n')
+    cat(paste0('### 第',i,'个表格的结果：'))
+    cat('\n')
+    cat(pander(dataMnp(data=LstMadis$Data[[dataMnpParms$data[i]]],
+                       subset=dataMnpParms$subset[i],
+                           newVars=dataMnpParms$newVars[i],
+                           newVarsFormulas=dataMnpParms$newVarsFormulas[i],
+                           newVarsBy=dataMnpParms$newVarsBy[i],
+                           indexNames=dataMnpParms$indexNames[i],
+                           Formulas=dataMnpParms$Formulas[i],
+                           dimVars=dataMnpParms$dimVars[i],
+                           dimNames=dataMnpParms$dimNames[i],
+                           dateVar=dataMnpParms$dateVar[i],
+                           dtOrders=dataMnpParms$dtOrders[i],
+                           margin=dataMnpParms$margin[i],  
+                           revisedMargin=dataMnpParms$revisedMargin[i],  
+                           revisedNames=dataMnpParms$revisedNames[i],  
+                           revisedFormulas=dataMnpParms$revisedFormulas[i],  
+                           orderVars=dataMnpParms$orderVars[i],   
+                           orders=dataMnpParms$orders[i],   
+                           Digits=dataMnpParms$Digits[i],      
+                           tbVars=dataMnpParms$tbVars[i],         
+                           hbVars=dataMnpParms$hbVars[i],          
+                           colOrder=dataMnpParms$colOrder[i])$tabRes))
+    cat('\n')
+    cat('\n')
+    
+    
+    
+  }
+  
+  
+  
+  
+}
+
+
+
+
+```
+
 ## 统计图形
 
 ```{r}

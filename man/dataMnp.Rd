@@ -4,10 +4,12 @@
 \alias{dataMnp}
 \title{dataMnp}
 \usage{
-dataMnp(data, indexNames, Formulas, dimVars, dimNames = NA, dateVar = NA,
-  dtOrders = "ymd", margin = 0, revisedMargin = 0, revisedNames = NA,
-  revisedFormulas = NA, orderVars = NA, orders = NA, Digits = 2,
-  tbVars = NA, hbVars = NA, colOrder = NA)
+dataMnp(data, subset = NA, newVars = NA, newVarsFormulas = NA,
+  newVarsBy = NA, newVarsMargin = NA, indexNames, Formulas, dimVars,
+  dimNames = NA, dateVar = NA, dtOrders = "ymd", margin = 0,
+  revisedMargin = 0, revisedNames = NA, revisedFormulas = NA,
+  orderVars = NA, orders = NA, Digits = 2, tbVars = NA, hbVars = NA,
+  colOrder = NA)
 }
 \description{
 a function provides data manipulating procedures
