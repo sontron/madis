@@ -204,6 +204,8 @@ server<-function(input,output,session){
       data_dataImpt()->dat
       dat[,input$varsKeep_dataImpt]->dat
       assign(input$dataName_dataImpt,dat,envMadis)
+      LstMadis$Data[[input$dataName_dataImpt]]<-dat
+      assign('LstMadis',LstMadis,envir=envMadis)
     })
     
   })
@@ -295,6 +297,8 @@ server<-function(input,output,session){
       ifelse(input$new_varName=='',input$var_varName,input$new_varName)->newName
       names(dat)[which(names(dat)==input$var_varName)]<-newName
       assign(input$dataSel_varName,dat,envMadis)
+      LstMadis$Data[[input$dataSel_varName]]<-dat
+      assign('LstMadis',LstMadis,envir=envMadis)
       return(dat)
     })
   })
@@ -686,9 +690,13 @@ server<-function(input,output,session){
     })
     if(input$dataName_varMnp==''){
       assign(input$dataSel_varMnp,dat,env=envMadis)
+      LstMadis$Data[[input$dataSel_varMnp]]<-dat
     } else {
       assign(input$dataName_varMnp,dat,env=envMadis)
+      LstMadis$Data[[input$dataName_varMnp]]<-dat
     }
+    
+    assign('LstMadis',LstMadis,envir=envMadis)
     
     #assign(input$dataSel_varMnp,dat,envMadis)
     return(dat)
@@ -898,9 +906,14 @@ server<-function(input,output,session){
       }
       if(input$dataName_varClass==''){
         assign(input$dataSel_varClass,dat,env=envMadis)
+        LstMadis$Data[[input$dataSel_varClass]]<-dat
       } else {
         assign(input$dataName_varClass,dat,env=envMadis)
+        LstMadis$Data[[input$dataName_varClass]]<-dat
       }
+      
+      #LstMadis$Data[[input$dataName_varMnp]]<-dat
+      assign('LstMadis',LstMadis,envir=envMadis)
       
       return(dat)
     })
@@ -1102,10 +1115,14 @@ server<-function(input,output,session){
       
       if(input$dataName_reshape==''){
         assign(paste0(input$dataSel_reshape,'reshaped'),dat_reshape,env=envMadis)
+        LstMadis$Data[[paste0(input$dataSel_reshape,'reshaped')]]<-dat
       } else {
         assign(input$dataName_reshape,dat_reshape,env=envMadis)
+        LstMadis$Data[[input$dataName_reshape]]<-dat
       }
       
+      #LstMadis$Data[[input$dataName_varMnp]]<-dat
+      assign('LstMadis',LstMadis,envir=envMadis)
       return(dat_reshape)
     })
   })
@@ -1170,9 +1187,14 @@ server<-function(input,output,session){
       unique(dat)->dataUnique
       if(input$dataName_unique==''){
         assign(paste0(input$dataSel_unique,'Unique'),dataUnique,envMadis)
+        LstMadis$Data[[paste0(input$dataSel_unique,'Unique')]]<-dat
       } else {
         assign(input$dataName_unique,dataUnique,envMadis)
+        LstMadis$Data[[input$dataName_unique]]<-dat
       }
+      
+      #LstMadis$Data[[input$dataName_varMnp]]<-dat
+      assign('LstMadis',LstMadis,envir=envMadis)
       return(dataUnique)
     })
   })
@@ -1338,9 +1360,13 @@ server<-function(input,output,session){
       
       if(input$dataName_dataMerge==''){
         assign(paste0(input$dataSel1_dataMerge,input$dataSel2_dataMerge),datMerge,envMadis)
+        LstMadis$Data[[paste0(input$dataSel1_dataMerge,input$dataSel2_dataMerge)]]<-dat
       } else {
         assign(input$dataName_dataMerge,datMerge,envMadis)
+        LstMadis$Data[[input$dataName_dataMerge]]<-dat
       }
+      #LstMadis$Data[[input$dataName_varMnp]]<-dat
+      assign('LstMadis',LstMadis,envir=envMadis)
       return(datMerge)
     })
   })
@@ -1559,6 +1585,8 @@ server<-function(input,output,session){
       
       assign(input$dataSel_naImpute,dat,envMadis)
       return(dat)
+      LstMadis$Data[[input$dataSel_naImpute]]<-dat
+      assign('LstMadis',LstMadis,envir=envMadis)
     })
   })
   
@@ -1692,9 +1720,14 @@ server<-function(input,output,session){
       
       if(input$dataName_dataFilter==''){
         assign(input$dataSel_dataFilter,dat,envMadis)
+        LstMadis$Data[[input$dataSel_dataFilter]]<-dat
       } else {
         assign(input$dataName_dataFilter,dat,envMadis)
+        LstMadis$Data[[input$dataName_dataFilter]]<-dat
       }
+      
+      #LstMadis$Data[[input$dataSel_naImpute]]<-dat
+      assign('LstMadis',LstMadis,envir=envMadis)
       return(dat)
     })
   })
@@ -1930,7 +1963,7 @@ server<-function(input,output,session){
           options = list(`actions-box` = TRUE)
         )
       ),
-      awesomeCheckbox('export_myTable','是否导出报告中?',FALSE)
+      awesomeCheckbox('export_myTable','将该结果输出报告',FALSE)
     )
   })
   
@@ -1965,7 +1998,7 @@ server<-function(input,output,session){
       if(input$export_myTable){
         data_myTable()->dat
         LstMadis<-get('LstMadis',envMadis)
-        LstMadis$Data[[input$dataSel_myTable]]<-dat
+        #LstMadis$Data[[input$dataSel_myTable]]<-dat
         paste(input$lht_myTable,collapse='+')->lhtV
         paste(input$rht_myTable,collapse='+')->rhtV
         paste(lhtV,rhtV,sep='~')->Formula
@@ -2089,7 +2122,7 @@ server<-function(input,output,session){
             options = list(`actions-box` = FALSE)
           )
         ),
-        awesomeCheckbox('export_myGplt','是否导出报告中?',FALSE)
+        awesomeCheckbox('export_myGplt','将该结果输出报告',FALSE)
       )
     )
   })
@@ -2245,7 +2278,7 @@ server<-function(input,output,session){
       )#,
       # flowLayout(
       #   actionBttn('go_myGplt','确定'),
-      #   awesomeCheckbox('export_myGplt','是否导出报告中?',FALSE)
+      #   awesomeCheckbox('export_myGplt','将该结果输出报告',FALSE)
       # )
       
     )
@@ -2294,7 +2327,7 @@ server<-function(input,output,session){
       if(input$export_myGplt){
         data_myGplt()->dat
         LstMadis<-get('LstMadis',envMadis)
-        LstMadis$Data[[input$dataSel_myGplt]]<-dat
+        #LstMadis$Data[[input$dataSel_myGplt]]<-dat
         dat_myGplt<-data.frame(data=input$dataSel_myGplt,
                                x=input$xvar_myGplt,
                                y=input$yvar_myGplt,
@@ -2476,7 +2509,7 @@ server<-function(input,output,session){
       if(input$export_desc){
         data_desc()->dat
         LstMadis<-get('LstMadis',envMadis)
-        LstMadis$Data[[input$dataSel_desc]]<-dat
+        #LstMadis$Data[[input$dataSel_desc]]<-dat
         dat_desc<-data.frame(xvars=input$vars_desc,Digits=input$digits_desc,dataName=input$dataSel_desc,stringsAsFactors = F)
         LstMadis$desc<-unique(rbind(LstMadis$desc,dat_desc))
         #LstMadis$desc[!is.na(xvars),]
@@ -2580,7 +2613,7 @@ server<-function(input,output,session){
           condition = "input['myFun_hTest']",
           aceEditor("textFun_hTest", mode="r", value="#The data name is dat",height='100px')
         ),
-        awesomeCheckbox('export_hTest','是否导出报告中?',FALSE)
+        awesomeCheckbox('export_hTest','将该结果输出报告',FALSE)
       )
     )
   })
@@ -2629,7 +2662,7 @@ server<-function(input,output,session){
       if(input$export_hTest){
         data_hTest()->dat
         LstMadis<-get('LstMadis',envMadis)
-        LstMadis$Data[[input$dataSel_hTest]]<-dat
+        #LstMadis$Data[[input$dataSel_hTest]]<-dat
         expand.grid(input$varsx_hTest,input$varsy_hTest)->varsInput
         names(varsInput)<-c('xvars','yvars')
         dat_hTest<-data.frame(varsInput,alter=input$alter_hTest,
@@ -2912,7 +2945,7 @@ server<-function(input,output,session){
 
         data_myGlm()->dat
         LstMadis<-get('LstMadis',envMadis)
-        LstMadis$Data[[input$dataSel_myGlm]]<-dat
+        #LstMadis$Data[[input$dataSel_myGlm]]<-dat
         dat_myGlm<-data.frame(Formula=Formula,data=input$dataSel_myGlm,weightsVar=weightsVar,subset=Subset,Family=input$family_myGlm,lower=lowerForm)
         LstMadis$myGlm<-unique(rbind(LstMadis$myGlm,dat_myGlm))
         subset(LstMadis$myGlm,!is.na(data))->LstMadis$myGlm
@@ -3268,7 +3301,7 @@ server<-function(input,output,session){
 
         data_myTree()->dat
         LstMadis<-get('LstMadis',envMadis)
-        LstMadis$Data[[input$dataSel_myTree]]<-dat
+        #LstMadis$Data[[input$dataSel_myTree]]<-dat
         dat_myTree<-data.frame(Formula=Formula,
                               data=input$dataSel_myTree,
                               subset=Subset,
@@ -3573,7 +3606,7 @@ server<-function(input,output,session){
 
         data_myCox()->dat
         LstMadis<-get('LstMadis',envMadis)
-        LstMadis$Data[[input$dataSel_myCox]]<-dat
+        #LstMadis$Data[[input$dataSel_myCox]]<-dat
         dat_myCox<-data.frame(Formula=Formula,
                               data=input$dataSel_myCox,
                               weightsVar=weightsVar,
@@ -3831,7 +3864,7 @@ server<-function(input,output,session){
         
         data_myLme()->dat
         LstMadis<-get('LstMadis',envMadis)
-        LstMadis$Data[[input$dataSel_myLme]]<-dat
+        #LstMadis$Data[[input$dataSel_myLme]]<-dat
         dat_myLme<-data.frame(formulaFixed=formFixed,
                               formulaRandom=formRandom,
                               Method=input$method_myLme,
@@ -4114,7 +4147,7 @@ server<-function(input,output,session){
         
         data_kmeans()->dat
         LstMadis<-get('LstMadis',envMadis)
-        LstMadis$Data[[input$dataSel_kmeans]]<-dat
+        #LstMadis$Data[[input$dataSel_kmeans]]<-dat
         dat_kmeans<-data.frame(data=input$dataSel_kmeans,
                                vars=paste(input$vars_kmeans,collapse=','),
                                infgr=input$infgr_kmeans,
@@ -4336,7 +4369,7 @@ server<-function(input,output,session){
         
         data_pca()->dat
         LstMadis<-get('LstMadis',envMadis)
-        LstMadis$Data[[input$dataSel_pca]]<-dat
+        #LstMadis$Data[[input$dataSel_pca]]<-dat
         dat_pca<-data.frame(data=input$dataSel_pca,
                             vars=paste(input$vars_pca,collapse=','),
                             nfcts=input$nfcts_pca,
@@ -4580,7 +4613,7 @@ server<-function(input,output,session){
 
         data_fa()->dat
         LstMadis<-get('LstMadis',envMadis)
-        LstMadis$Data[[input$dataSel_fa]]<-dat
+        #LstMadis$Data[[input$dataSel_fa]]<-dat
         dat_fa<-data.frame(data=input$dataSel_fa,
                            vars=paste(input$vars_fa,collapse=','),
                            nfcts=input$nfcts_fa,
@@ -4775,7 +4808,7 @@ server<-function(input,output,session){
           awesomeCheckbox('weeklyS_myProphet','是否分析周趋势',TRUE),
           awesomeCheckbox('yearlyS_myProphet','是否分析年趋势',TRUE)
         ),
-        awesomeCheckbox('export_myProphet','是否导出报告中?',FALSE)
+        awesomeCheckbox('export_myProphet','将该结果输出报告',FALSE)
       )
     )
   })
@@ -4898,7 +4931,7 @@ server<-function(input,output,session){
       if(input$export_myProphet){
         data_myProphet()->dat
         LstMadis<-get('LstMadis',envMadis)
-        LstMadis$Data[[input$dataSel_myProphet]]<-dat
+        #LstMadis$Data[[input$dataSel_myProphet]]<-dat
         
         dat_myProphet<-data.frame(data=input$dataSel_myProphet,
                                   tsVar=input$tsvar_myProphet,
@@ -5001,7 +5034,7 @@ server<-function(input,output,session){
           max=100
         )
       ),
-      awesomeCheckbox('export_dataMnp','是否导出报告中?',FALSE)
+      awesomeCheckbox('export_dataMnp','将该结果输出报告',FALSE)
     )
   })
   
@@ -5082,7 +5115,7 @@ server<-function(input,output,session){
       if(input$export_dataMnp){
         data_DT()->dt
         LstMadis<-get('LstMadis',envMadis)
-        LstMadis$Data[[input$dataSel_DT]]<-dt
+        #LstMadis$Data[[input$dataSel_DT]]<-dt
         
         dat_DT<-data.frame(data=input$dataSel_DT,
                            subset=cfg$子集,
@@ -5135,7 +5168,7 @@ server<-function(input,output,session){
       get('LstMadis',envMadis)->LstMadis
       save(LstMadis,file='LstMadis.RData')
     })
-    
+
   })
   
   
