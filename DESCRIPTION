@@ -15,18 +15,18 @@ Collate:
    "hTest.R"
    "coxS.R"
    "descTab.R"
-   "ggplt.R"       
-   "glmS.R"         
-   "imputeData.R"   
-   "Madis.R"        
-   "predictNodes.R" 
-   "prophetS.R"     
-   "recode.R"       
-   "treeS.R"       
-   "uniVar.R"       
-   "uniVarVec.R"    
-   "validateData.R" 
-   "validateVec.R" 
+   "ggplt.R"
+   "glmS.R"
+   "imputeData.R"
+   "Madis.R"
+   "predictNodes.R"
+   "prophetS.R"
+   "recode.R"
+   "treeS.R"
+   "uniVar.R"
+   "uniVarVec.R"
+   "validateData.R"
+   "validateVec.R"
    "lmeS.R"
    "Kmeans.R"
    "faS.R"
@@ -64,5 +64,7 @@ Imports:
   ROCR,
   survival,
   pander,
-  vegan
+  vegan,
+  rhandsontable,
+  rio
 ByteCompile: true
