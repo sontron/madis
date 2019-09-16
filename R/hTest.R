@@ -125,7 +125,7 @@ hTest<-function(data,xvars,yvars='',alter=c('two.sided','less','greater')[1],pai
     
     if(all(c('numeric','character')%in%c(class(dt$x)[1],class(dt$y)[1]))||all(c('numeric','factor')%in%c(class(dt$x)[1],class(dt$y)[1]))||all(c('integer','factor')%in%c(class(dt$x)[1],class(dt$y)[1]))||all(c('integer','character')%in%c(class(dt$x)[1],class(dt$y)[1]))){
       which(c(class(dt$x)[1],class(dt$y)[1])%in%c('numeric','integer'))->indNum
-      which(c(class(dt$x)[1],class(dt$y)[1])==c('character','factor'))->indChar
+      which(c(class(dt$x)[1],class(dt$y)[1])%in%c('character','factor'))->indChar
       dt[,c(indNum,indChar)]->dt
       names(dt)<-c('x','grp')
       tapply(dt$x,dt$grp,function(i)uniVar(data=dt,xvars='x',varType='numeric')$resDesc$resTabDesc)->X
