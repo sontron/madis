@@ -66,5 +66,6 @@ Imports:
   pander,
   vegan,
   rhandsontable,
-  rio
+  rio,
+  DT
 ByteCompile: true
