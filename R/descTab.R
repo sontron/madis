@@ -10,6 +10,8 @@
 #' @export
 
 descTab<-function(Formula,data){
+  
+  
   if(is.character(data)) data=eval(as.name(data))
   
   stri_split_fixed(Formula,'~')[[1]][1]->lht
@@ -18,19 +20,32 @@ descTab<-function(Formula,data){
   unlist(stri_split_fixed(lht,'+'))->lhtVars
   unlist(stri_split_fixed(rht,'+'))->rhtVars
   
+  sapply(data[,rhtVars],function(i){
+    if(class(i)%in%c('factor','character','ordered')){
+      len=1000
+    } 
+    if(class(i)%in%c('integer','numeric')){
+      len=length(unique(i))
+    }
+    return(len)
+  })->lenRht
+  
+  min(lenRht,na.rm=T)->maxYlevel
+  
+  
   if(length(lhtVars)>1){
     apply(data[,lhtVars],1,function(i)paste(i,collapse='_'))->data[,paste(lhtVars,collapse='_')]
     as.formula(paste(paste(lhtVars,collapse='_'),rht,sep='~'))->Formula
-    mytable(Formula,data,method = 1)->res
+    mytable(Formula,data,method = 1,max.ylevel=maxYlevel)->res
   } else {
     if(lhtVars==''){
       data$noGroupVar=1
       as.formula(paste('noGroupVar',rht,sep='~'))->Formula
-      mytable(Formula,data,method = 1)->res
+      mytable(Formula,data,method = 1,max.ylevel=maxYlevel)->res
     } else {
       data[,lhtVars]->data[,paste(lhtVars,collapse='_')]
       as.formula(paste(paste(lhtVars,collapse='_'),rht,sep='~'))->Formula
-      mytable(Formula,data,method = 1)->res
+      mytable(Formula,data,method = 1,max.ylevel=maxYlevel)->res
     }
     
   }
