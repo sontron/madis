@@ -4,7 +4,8 @@
 \alias{Aggregate}
 \title{Aggregate}
 \usage{
-Aggregate(data = NA, group = NA, val = NA, fun = "mean", subsets = NA)
+Aggregate(data = NA, group = NA, val = NA, fun = "mean",
+  subsets = NA)
 }
 \arguments{
 \item{data}{is a data.frame object that need to be processed}

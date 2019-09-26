@@ -4,8 +4,9 @@
 \alias{hTest}
 \title{hTest}
 \usage{
-hTest(data, xvars, yvars = "", alter = c("two.sided", "less", "greater")[1],
-  paired = FALSE, confLevel = 0.95, nullHyp = 0, normalSampleSize = 100)
+hTest(data, xvars, yvars = "", alter = c("two.sided", "less",
+  "greater")[1], paired = FALSE, confLevel = 0.95, nullHyp = 0,
+  normalSampleSize = 100)
 }
 \arguments{
 \item{data}{data.frame}

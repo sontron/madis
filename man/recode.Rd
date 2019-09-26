@@ -4,9 +4,9 @@
 \alias{recode}
 \title{recode}
 \usage{
-recode(x, groups, Labels = NULL, na.val = "others", method = c("ranges",
-  "substrs", "elements")[1], mode = c("numeric", "character", "datetime")[1],
-  tsFormat = "ymd")
+recode(x, groups, Labels = NULL, na.val = "others",
+  method = c("ranges", "substrs", "elements")[1], mode = c("numeric",
+  "character", "datetime")[1], tsFormat = "ymd")
 }
 \arguments{
 \item{x}{is a vector which could be numeric, datetime or character}

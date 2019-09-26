@@ -4,9 +4,9 @@
 \alias{glmS}
 \title{glmS}
 \usage{
-glmS(Formula, data, weightsVar = 1, subset = "all", Family = c("gaussian",
-  "binomial", "poisson"), na.action = na.rm, lower = "~1",
-  nomoat = "0.1;0.2;0.3;0.5;0.7;0.8;0.9")
+glmS(Formula, data, weightsVar = 1, subset = "all",
+  Family = c("gaussian", "binomial", "poisson"), na.action = na.rm,
+  lower = "~1", nomoat = "0.1;0.2;0.3;0.5;0.7;0.8;0.9")
 }
 \description{
 is a function used in shiny app.

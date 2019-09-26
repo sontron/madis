@@ -30,22 +30,22 @@ descTab<-function(Formula,data){
     return(len)
   })->lenRht
   
-  min(lenRht,na.rm=T)->maxYlevel
+  (min(lenRht,na.rm=T)-1)->maxYlevel
   
   
   if(length(lhtVars)>1){
     apply(data[,lhtVars],1,function(i)paste(i,collapse='_'))->data[,paste(lhtVars,collapse='_')]
     as.formula(paste(paste(lhtVars,collapse='_'),rht,sep='~'))->Formula
-    mytable(Formula,data,method = 1,max.ylevel=maxYlevel)->res
+    mytable(Formula,data,method = 1,max.ylev=maxYlevel)->res
   } else {
     if(lhtVars==''){
       data$noGroupVar=1
       as.formula(paste('noGroupVar',rht,sep='~'))->Formula
-      mytable(Formula,data,method = 1,max.ylevel=maxYlevel)->res
+      mytable(Formula,data,method = 1,max.ylev=maxYlevel)->res
     } else {
       data[,lhtVars]->data[,paste(lhtVars,collapse='_')]
       as.formula(paste(paste(lhtVars,collapse='_'),rht,sep='~'))->Formula
-      mytable(Formula,data,method = 1,max.ylevel=maxYlevel)->res
+      mytable(Formula,data,method = 1,max.ylev=maxYlevel)->res
     }
     
   }

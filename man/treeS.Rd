@@ -4,9 +4,9 @@
 \alias{treeS}
 \title{treeS}
 \usage{
-treeS(Formula, data, subset = "all", na.action = na.rm, Minsplit = 30,
-  Minbucket = 10, Mincrit = 0.05, Maxdepth = 3, CP = 0.01,
-  treeMethod = c("ctree", "rpart")[1])
+treeS(Formula, data, subset = "all", na.action = na.rm,
+  Minsplit = 30, Minbucket = 10, Mincrit = 0.05, Maxdepth = 3,
+  CP = 0.01, treeMethod = c("ctree", "rpart")[1])
 }
 \description{
 function of tree model used in shiny app.

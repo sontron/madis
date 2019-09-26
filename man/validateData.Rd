@@ -4,9 +4,9 @@
 \alias{validateData}
 \title{validateData}
 \usage{
-validateData(data, val, legal, method = c("ranges", "substrs", "elements")[1],
-  mode = c("numeric", "character", "datetime")[1], type = c("fixed",
-  "regex")[1], tsFormat = "ymd")
+validateData(data, val, legal, method = c("ranges", "substrs",
+  "elements")[1], mode = c("numeric", "character", "datetime")[1],
+  type = c("fixed", "regex")[1], tsFormat = "ymd")
 }
 \arguments{
 \item{data}{is a data.frame object}

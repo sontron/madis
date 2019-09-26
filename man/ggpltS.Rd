@@ -5,11 +5,12 @@
 \title{ggpltS}
 \usage{
 ggpltS(data, x, y = "NULL", size = "NULL", fill = "NULL",
-  color = "NULL", shape = "NULL", alpha = "NULL", facetVar = "NULL",
-  geom = c("box", "hist", "bar", "line", "jitter", "point", "smooth")[1],
-  labx = "x", laby = "y", title = "my Plot", theme = c("grey", "bw",
-  "classic", "dark")[1], smoothMethod = c("lm", "glm", "loess", "gam")[1],
-  barPos = c("stack", "dodge")[1], Bins = 2, Width = 0.5, ...)
+  color = "NULL", shape = "NULL", alpha = "NULL",
+  facetVar = "NULL", geom = c("box", "hist", "bar", "line", "jitter",
+  "point", "smooth")[1], labx = "x", laby = "y", title = "my Plot",
+  theme = c("grey", "bw", "classic", "dark")[1], smoothMethod = c("lm",
+  "glm", "loess", "gam")[1], barPos = c("stack", "dodge")[1], Bins = 2,
+  Width = 0.5, ...)
 }
 \description{
 a wrapper function based on ggplot for easy plot. used in shiny app.

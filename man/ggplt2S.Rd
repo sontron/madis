@@ -5,13 +5,13 @@
 \title{ggplt2S}
 \usage{
 ggplt2S(data, x, y = "NULL", size = "NULL", fill = "NULL",
-  color = "NULL", shape = "NULL", alpha = "NULL", facetVar = "NULL",
-  geom = c("box", "hist", "bar", "line", "jitter", "point", "smooth")[1],
-  labx = "x", laby = "y", title = "my Plot", theme = c("grey", "bw",
-  "classic", "dark")[1], smoothMethod = c("lm", "glm", "loess", "gam")[1],
-  barPos = c("stack", "dodge")[1], Bins = "NULL", Colour = "NULL",
-  Fill = "NULL", Size = "NULL", Alpha = "NULL", Width = "NULL",
-  Shape = "NULL")
+  color = "NULL", shape = "NULL", alpha = "NULL",
+  facetVar = "NULL", geom = c("box", "hist", "bar", "line", "jitter",
+  "point", "smooth")[1], labx = "x", laby = "y", title = "my Plot",
+  theme = c("grey", "bw", "classic", "dark")[1], smoothMethod = c("lm",
+  "glm", "loess", "gam")[1], barPos = c("stack", "dodge")[1],
+  Bins = "NULL", Colour = "NULL", Fill = "NULL", Size = "NULL",
+  Alpha = "NULL", Width = "NULL", Shape = "NULL")
 }
 \arguments{
 \item{data}{data.frame}

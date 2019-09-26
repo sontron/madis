@@ -4,8 +4,9 @@
 \alias{uniVar}
 \title{uniVar}
 \usage{
-uniVar(data, xvars, varType = c("numeric", "character", "factor", "integer",
-  "ordered")[1], Digits = 4, nameX = "x", seed = 123, tabSort = TRUE)
+uniVar(data, xvars, varType = c("numeric", "character", "factor",
+  "integer", "ordered")[1], Digits = 4, nameX = "x", seed = 123,
+  tabSort = TRUE)
 }
 \arguments{
 \item{data}{data.frame}

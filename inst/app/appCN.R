@@ -21,6 +21,7 @@ library(skimr)
 library(madis)
 library(rio)
 library(rhandsontable)
+library(ROCR)
 
 
 
@@ -84,6 +85,7 @@ server<-function(input,output,session){
     input$go_kmeans
     input$go_pca
     input$go_fa
+    input$go_match
   })
   
   
@@ -4672,6 +4674,218 @@ server<-function(input,output,session){
   
   
   
+  
+  
+  
+  
+  
+  
+  
+  
+  ###### 倾向得分匹配(PSM) ######
+  
+  
+  output$more1_match<-renderUI({
+    change_data()
+    list(
+      panel(
+        heading='选择处理的数据集',
+        pickerInput(
+          inputId = "dataSel_match",
+          label = "选择数据集",
+          choices = ls(envMadis)[-which(ls(envMadis)%in%c('envMadis','server','ui','LstMadis'))],
+          selected =ls(envMadis)[-which(ls(envMadis)%in%c('envMadis','server','ui','LstMadis'))][1],
+          multiple = FALSE,
+          options = list(`actions-box` = FALSE)
+        )
+        #selectInput('dataSel_dataExpt','选择数据集',ls(envMadis)[-which(ls(envMadis)%in%c('envMadis','server','ui','LstMadis'))])
+      )
+    )
+  })
+  
+  data_match<-reactive({
+    change_data()
+    get(input$dataSel_match,envMadis)->dataMatch
+    return(dataMatch)
+  })
+  
+  output$more2_match<-renderUI({
+    list(
+      panel(
+        heading='选择匹配的相关变量',
+        pickerInput(
+          inputId='vary_match',
+          label='选择分组变量',
+          choices = names(data_match()),
+          selected=names(data_match())[1],
+          multiple = FALSE,
+          options = list(`actions-box` = TRUE)
+        ),
+        
+        
+        pickerInput(
+          inputId='varx_match',
+          label='选择需要匹配的变量',
+          choices = names(data_match()),
+          selected=names(data_match())[1],
+          multiple = TRUE,
+          options = list(`actions-box` = TRUE)
+        )
+      ),
+        
+      panel(
+        heading='选择匹配相关参数',
+        
+        pickerInput(
+          inputId='method_match',
+          label='设定匹配的方法',
+          choices = c('exact','full','nearest','subclass',
+                      'genetic'),
+          selected='nearest',
+          multiple=FALSE,
+          options = list(`actions-box` = FALSE)
+        ),
+        
+        pickerInput(
+          inputId='distance_match',
+          label='选择距离测量方法',
+          choices = c('logit'),
+          selected='logit',
+          multiple=FALSE,
+          options = list(`actions-box` = FALSE)
+        ),
+        
+        numericInput(
+          inputId = 'ratio_match',
+          label = '选择匹配比例',
+          value = 1,
+          step = 1
+        )
+        
+      ),
+      
+      panel(
+        heading='保存数据集',
+        textInputAddon(inputId='dataName_match',label='保存的数据名称',value='',placeholder = 'eg:data_newVarType',addon=icon('pencil'))
+      )
+        
+    )
+  })
+  
+  
+  
+  
+  output$more3_match<-renderUI({
+    list(
+      tabsetPanel(
+        tabPanel(
+          title='匹配汇总结果',
+          heading='模型结果',
+          verbatimTextOutput('summary_match'),
+          status='primary'
+        )
+        ,
+        tabPanel(
+          '匹配前后各组差异',
+          
+          panel(
+            heading='匹配前各组的表格结果',
+            DT::dataTableOutput('tableB_match',height='720px'),
+            status='primary'
+          ),
+          
+          panel(
+            heading='匹配后各组的表格结果',
+            DT::dataTableOutput('tableA_match',height='720px'),
+            status='primary'
+          )
+          # icon=icon('calendar')
+          
+        )
+    )
+    )
+  })
+  
+  res_match<-reactive({
+    input$go_match
+    req(input$go_match)
+    isolate({
+      data_match()->dat
+      
+      paste(input$vary_match,paste(input$varx_match,collapse='+'),sep='~')->formula_match
+      
+      matchIt(
+        data=dat,
+        formula=formula_match,
+        Method=input$method_match,
+        Distance=input$distance_match,
+        Ratio=input$ratio_match
+      )->resmatch
+      
+      if(input$dataName_match!=''){
+        assign(input$dataName_match,resmatch$dataMatched,envMadis)
+      } else {
+        assign(input$dataSel_match,resmatch$dataMatched,envMadis)
+      }
+      
+      return(list(resmatch=resmatch,formu=formula_match))
+    })
+    
+    
+  })
+  
+  
+  observeEvent(input$go_match,{  #### newly added for update picker input values.
+    change_data()
+    updatePickerInput(session,inputId = 'dataSel_match',choices = setdiff(c(ls(envMadis)[-which(ls(envMadis)%in%c('envMadis','server','ui','LstMadis'))],input$dataName_match),''))
+  })
+  
+  
+  output$summary_match<-renderPrint({
+    input$go_match
+    isolate({
+      
+      
+      cat('\n')
+      
+      cat('######匹配的汇总结果########')
+      print(pander(res_match()$resmatch$resMatch))
+      
+      cat('\n')
+      cat('\n')
+      
+    })
+  })
+  
+  
+  output$tableB_match<-DT:::renderDataTable({
+    input$go_match
+    
+    isolate({
+      data_match()->dat
+      res_match()$formu->formula_match
+      
+      descTab(formula_match,dat)
+      
+      
+    })
+  })
+  
+  output$tableA_match<-DT:::renderDataTable({
+    input$go_match
+    isolate({
+      res_match()$resmatch$dataMatched->dat
+      res_match()$formu->formula_match
+      descTab(formula_match,dat)
+      
+      
+    })
+    
+    
+    
+  })
+  
+  
   ###### 时间序列分析(myProphet) ######
   
   output$more1_myProphet<-renderUI({
@@ -5237,10 +5451,11 @@ ui<-fluidPage(
   
   
   navbarPage(
-    'MADIS',
+    strong('MADIS'),
     ###### 导入数据功能(data_Impt)######
     
     tabPanel(
+      icon=icon('file-upload'),
       '导入本地数据',
       sidebarLayout(
         position='left',
@@ -5289,11 +5504,12 @@ ui<-fluidPage(
     ###### 数据处理 ######
     navbarMenu(
       '数据处理',
-      
+      icon=icon('file-upload'),
       
       ###### 数据处理-变量名修改 ######
       tabPanel(
         '变量名更改',
+        icon=icon('pen'),
         sidebarLayout(
           sidebarPanel(
             uiOutput('more1_varName'),
@@ -5312,6 +5528,7 @@ ui<-fluidPage(
       
       ###### 数据处理-生成变量 ######
       tabPanel(
+        icon=icon('plus'),
         '生成新变量',
         sidebarLayout(
           sidebarPanel(
@@ -5332,6 +5549,7 @@ ui<-fluidPage(
       
       ###### 数据处理-变量类型转换 ######
       tabPanel(
+        icon=icon('exchange-alt'),
         strong('变量类型转换'),
         sidebarLayout(
           sidebarPanel(
@@ -5350,6 +5568,7 @@ ui<-fluidPage(
       
       ###### 数据处理-数据变形 ######
       tabPanel(
+        icon=icon('shapes'),
         '数据变形',
         sidebarLayout(
           sidebarPanel(
@@ -5367,6 +5586,7 @@ ui<-fluidPage(
       
       ###### 数据去重(unique) ######
       tabPanel(
+        icon=icon('align-justify'),
         '数据去重',
         sidebarLayout(
           sidebarPanel(
@@ -5384,6 +5604,7 @@ ui<-fluidPage(
       
       ###### 数据处理-合并 ######
       tabPanel(
+        icon=icon('object-ungroup'),
         '数据合并',
         sidebarLayout(
           sidebarPanel(
@@ -5401,6 +5622,7 @@ ui<-fluidPage(
       
       ###### 数据处理-缺失值填补 ######
       tabPanel(
+        icon=icon('paint-roller'),
         strong('缺失值填补'),
         sidebarLayout(
           sidebarPanel(
@@ -5418,6 +5640,7 @@ ui<-fluidPage(
       
       ###### 数据处理-筛选数据(行(子集，行号)，列(变量)) ######
       tabPanel(
+        icon=icon('filter'),
         '筛选数据',
         sidebarLayout(
           sidebarPanel(
@@ -5436,6 +5659,7 @@ ui<-fluidPage(
     
     ###### 数据处理-导出数据集 ######
     tabPanel(
+      icon=icon('download'),
       '数据导出',
       sidebarLayout(
         sidebarPanel(
@@ -5494,6 +5718,7 @@ ui<-fluidPage(
     
     ###### 描述性分析 ######
     tabPanel(
+      icon=icon('dice-one'),
       '单变量描述性分析结果',
       sidebarLayout(
         sidebarPanel(
@@ -5513,10 +5738,12 @@ ui<-fluidPage(
     ###### 统计检验和单因素分析表合并菜单 #####
     
     navbarMenu(
+      icon=icon('dice-two'),
       '统计检验',
       ###### 单因素(统计检验)分析 ######
       tabPanel(
         '假设检验',
+        icon=icon('heading'),
         sidebarLayout(
           sidebarPanel(
             uiOutput('more1_hTest'),
@@ -5531,6 +5758,7 @@ ui<-fluidPage(
       ),
       ###### 分类统计表制作 ######
       tabPanel(
+        icon=icon('table'),
         '描述性统计表',
         sidebarLayout(
           sidebarPanel(
@@ -5548,6 +5776,7 @@ ui<-fluidPage(
     ###### 统计图形制作 ######
     tabPanel(
       '统计图形',
+      icon=icon('chart-pie'),
       sidebarLayout(
         sidebarPanel(
           uiOutput('more1_myGplt'),
@@ -5566,9 +5795,11 @@ ui<-fluidPage(
     
     ###### 模型 ######
     navbarMenu(
+      icon=icon('medium'),
       '模型分析',
       tabPanel(
         '线性模型',
+        icon=icon('chart-line'),
         sidebarLayout(
           sidebarPanel(
             uiOutput('more1_myGlm'),
@@ -5582,6 +5813,7 @@ ui<-fluidPage(
         )
       ),
       tabPanel(
+        icon=icon('ruler-horizontal'),
         'COX风险模型',
         sidebarLayout(
           sidebarPanel(
@@ -5596,6 +5828,7 @@ ui<-fluidPage(
       ),
       tabPanel(
         '决策树模型',
+        icon=icon('tree'),
         sidebarLayout(
           sidebarPanel(
             uiOutput('more1_myTree'),
@@ -5608,6 +5841,7 @@ ui<-fluidPage(
         )
       ),
       tabPanel(
+        icon=icon('random'),
         '混合效应模型',
         sidebarLayout(
           sidebarPanel(
@@ -5629,8 +5863,10 @@ ui<-fluidPage(
     ###### 探索性数据分析 ######
     
     navbarMenu(
+      icon=icon('gavel'),
       '数据挖掘',
       tabPanel(
+        icon=icon('project-diagram'),
         '聚类分析',
         sidebarLayout(
           sidebarPanel(
@@ -5645,6 +5881,7 @@ ui<-fluidPage(
       ),
       
       tabPanel(
+        icon=icon('product-hunt'),
         '主成分分析',
         sidebarLayout(
           sidebarPanel(
@@ -5660,6 +5897,7 @@ ui<-fluidPage(
       
       tabPanel(
         '因子分析',
+        icon=icon('facebook-f'),
         sidebarLayout(
           sidebarPanel(
             uiOutput('more1_fa'),
@@ -5670,13 +5908,36 @@ ui<-fluidPage(
             uiOutput('more3_fa')
           )
         )
+      ),
+      ###### 倾向得分匹配 ######
+      tabPanel(
+        icon=icon('equals'),
+        # icon=icon('chart-scatter'),
+        '倾向得分匹配',
+        sidebarLayout(
+          sidebarPanel(
+            uiOutput('more1_match'),
+            uiOutput('more2_match'),
+            actionBttn('go_match','确定')
+          ),
+          mainPanel(
+            uiOutput('more3_match')
+          )
+        )
       )
     ),
     
     
     
+    
+    
+    
+    
+    
+    
     ###### 时间序列分析及预测 ######
     tabPanel(
+      icon=icon('calendar-alt'),
       '时间序列',
       sidebarLayout(
         sidebarPanel(
@@ -5696,6 +5957,7 @@ ui<-fluidPage(
     ####### datatable ###### 
     
     tabPanel(
+      icon=icon('th'),
       '统计表格',
       sidebarLayout(
         sidebarPanel(
@@ -5725,6 +5987,7 @@ ui<-fluidPage(
     
     ###### 自动化报告(report) ######
     tabPanel(
+      icon=icon('file-pdf'),
       '生成报告',
       sidebarLayout(
         sidebarPanel(

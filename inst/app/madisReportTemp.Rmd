@@ -21,7 +21,8 @@ output:
 
 
 ```{r}
-options(digits=4,knitr.table.format='markdown');library(forecast);library(reshape2);library(plotly);library(knitr);library(zoo);library(xts);library(rpart);library(partykit);library(showtext);library(ggplot2);library(rms);library(Hmisc);library(mgcv);library(stringi);library(fBasics);library(vcdExtra);library(ROCR);library(survival);library(pander);library(ggfortify);library(madis);library(prophet)
+options(digits=4,knitr.table.format='markdown')
+library(reshape2);library(plotly);library(knitr);library(zoo);library(xts);library(rpart);library(partykit);library(showtext);library(ggplot2);library(rms);library(Hmisc);library(mgcv);library(stringi);library(fBasics);library(vcdExtra);library(ROCR);library(survival);library(pander);library(ggfortify);library(madis);library(prophet);library(shiny)
 
 opts_chunk$set(echo=F,message=F,warning=F,results='asis',comment=NA,fig.showtext=TRUE,fig.width=7,fig.height=5,knitr.table.format='markdown')
 
