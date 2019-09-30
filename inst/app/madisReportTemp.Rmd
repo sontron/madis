@@ -20,9 +20,10 @@ output:
 
 
 
-```{r}
+```{r,message=F,warning=F,echo=F,error=F}
+library(shiny)
 options(digits=4,knitr.table.format='markdown')
-library(reshape2);library(plotly);library(knitr);library(zoo);library(xts);library(rpart);library(partykit);library(showtext);library(ggplot2);library(rms);library(Hmisc);library(mgcv);library(stringi);library(fBasics);library(vcdExtra);library(ROCR);library(survival);library(pander);library(ggfortify);library(madis);library(prophet);library(shiny)
+library(reshape2);library(plotly);library(knitr);library(zoo);library(xts);library(rpart);library(partykit);library(showtext);library(ggplot2);library(rms);library(Hmisc);library(mgcv);library(stringi);library(fBasics);library(vcdExtra);library(ROCR);library(survival);library(pander);library(ggfortify);library(madis);library(prophet);library(MASS)
 
 opts_chunk$set(echo=F,message=F,warning=F,results='asis',comment=NA,fig.showtext=TRUE,fig.width=7,fig.height=5,knitr.table.format='markdown')
 
@@ -56,7 +57,7 @@ if(is.na(descParams$xvars)) {
     cat('\n')
     #print(pander(resDesc[[i]]$resTabDesc))
     uniVar(data=LstMadis$Data[[descParams$dataName[i]]],xvars=descParams$xvars[i],Digits=descParams$Digits[i])->res
-    cat(pander(res$resDesc))
+    cat(pander(res$resDesc,split.table=Inf))
     cat('\n')
     # if(reportFormat$format=='HTML'){
     #   ggplotly(res$graphDesc)
@@ -96,7 +97,7 @@ if(is.na(hTestParams$xvars)){
     cat('\n')
     #print(pander(resDesc[[i]]$resTabDesc))
     hTest(data=LstMadis$Data[[hTestParams$dataName[i]]],xvars=hTestParams$xvars[i],yvars=hTestParams$yvars[i],alter=hTestParams$alter[i],paired=hTestParams$paired[i],confLevel=hTestParams$confLevel[i],nullHyp=hTestParams$nullHyp[i])->res
-    cat(pander(res$hTestRes))
+    cat(pander(res$hTestRes,split.table=Inf))
     cat('\n')
     plot(res$hTestGraph)
     cat('\n')
@@ -142,9 +143,27 @@ if(is.na(myGlmParms$data)){
     
     cat('\n')
     cat(paste0('#### 第',i,'个模型的全模型结果：'))
+    # cat('\n')
+    # cat(pander(summary(res$glmResFull)))
+    # cat('\n')
+    if(myGlmParms$Family[i]=='binomial'){
+      cat('\n')
+      cat(paste0('#### 第',i,'个模型的置信区间结果：'))
+      cat('\n')
+      summary(res$glmResFull)->fitSum
+      fitSum$coefficients<-cbind(fitSum$coefficients,exp(confint(res$glmResFull)))
+      # cat(pander(exp(confint(res$glmResFull))))
+      cat(pander(fitSum,split.table=Inf))
+      cat('\n')
+    } else {
+      
     cat('\n')
-    cat(pander(summary(res$glmResFull)))
+    cat(pander(summary(res$glmResFull),split.table=Inf))
     cat('\n')
+      
+    }
+    cat('\n')
+    
     cat(paste0('#### 第',i,'个模型的全模型诊断图结果：'))
     cat('\n')
     print(autoplot(res$glmResFull))
@@ -170,12 +189,40 @@ if(is.na(myGlmParms$data)){
     }
     cat('\n')
     cat(paste0('#### 第',i,'个模型的逐步回归模型结果：'))
+    # cat('\n')
+    # cat(pander(summary(res$glmResStep)))
+    # cat('\n')
+    
     cat('\n')
-    cat(pander(summary(res$glmResStep)))
+    
+     if(myGlmParms$Family[i]=='binomial'){
+      cat('\n')
+      cat(paste0('#### 第',i,'个模型的置信区间结果：'))
+      cat('\n')
+      summary(res$glmResStep)->fitSum
+      fitSum$coefficients<-cbind(fitSum$coefficients,exp(confint(res$glmResStep)))
+      # cat(pander(exp(confint(res$glmResFull))))
+      cat(pander(fitSum,split.table=Inf))
+      cat('\n')
+    } else {
+      
+    cat('\n')
+    cat(pander(summary(res$glmResStep),split.table=Inf))
+    cat('\n')
+      
+    }
+    
+    # if(myGlmParms$Family[i]=='binomial'){
+    #   cat('\n')
+    #   cat(paste0('#### 第',i,'个逐步回归模型的置信区间结果：'))
+    #   cat(pander(exp(confint(res$glmResFull))))
+    #   
+    #   cat('\n')
+    # }
     cat('\n')
     
     cat('\n')
-    cat(paste0('#### 第',i,'个模型的全模型诊断图结果：'))
+    cat(paste0('#### 第',i,'个逐步回归模型的诊断图结果：'))
     cat('\n')
     print(autoplot(res$glmResStep))
     cat('\n')
@@ -283,7 +330,7 @@ if(is.na(myCoxParms$data)){
     cat('\n')
     cat(paste0('#### 第',i,'个模型的全模型结果：'))
     cat('\n')
-    cat(pander(res$coxResFull))
+    cat(pander(summary(res$coxResFull),split.table=Inf))
     cat('\n')
     cat(paste0('#### 第',i,'个模型的全模型图结果：'))
     cat('\n')
@@ -291,7 +338,7 @@ if(is.na(myCoxParms$data)){
     cat('\n')
     cat(paste0('#### 第',i,'个模型的逐步回归模型结果：'))
     cat('\n')
-    cat(pander(res$coxResStep))
+    cat(pander(summary(res$coxResStep),split.table=Inf))
     cat('\n')
     cat(paste0('#### 第',i,'个模型的逐步回归模型诊断图结果：'))
     cat('\n')
@@ -348,12 +395,12 @@ if(is.na(myLmeParms$data)){
     cat('\n')
     cat(paste0('#### 第',i,'个模型的全模型结果：'))
     cat('\n')
-    cat(pander(res$lmeResFull))
+    cat(pander(res$lmeResFull,split.table=Inf))
     cat('\n')
     cat('\n')
     cat(paste0('#### 第',i,'个模型的逐步回归模型结果：'))
     cat('\n')
-    cat(pander(res$lmeResStep))
+    cat(pander(res$lmeResStep,split.table=Inf))
     cat('\n')
     cat('\n')
     cat('\n')
@@ -471,10 +518,10 @@ if(is.na(mypcaParms$data)){
     cat('\n')
     cat(paste0('#### 第',i,'主成分分析因子载荷结果：'))
     cat('\n')
-    cat(pander(res$resPCA$loadings[]))
+    cat(pander(res$resPCA$loadings[],split.table=Inf))
     cat('\n')
     cat('\n')
-    cat(pander(res$cumVar))
+    cat(pander(res$cumVar,split.table=Inf))
     cat('\n')
   }
   
@@ -537,10 +584,10 @@ if(is.na(myfaParms$data)){
     cat('\n')
     cat(paste0('#### 第',i,'因子分析因子载荷结果：'))
     cat('\n')
-    cat(pander(res$resFA$loadings[]))
+    cat(pander(res$resFA$loadings[],split.table=Inf))
     cat('\n')
     cat('\n')
-    cat(pander(res$cumVar))
+    cat(pander(res$cumVar,split.table=Inf))
     cat('\n')
   }
   
@@ -602,7 +649,7 @@ if(is.na(myProphetParms$data)){
     cat('\n')
     cat(paste0('#### 第',i,'个时间序列历史数据结果：'))
     cat('\n')
-    cat(pander(res$tabRes))
+    cat(pander(res$tabRes,split.table=Inf))
     cat('\n')
     cat(paste0('#### 第',i,'个时间序列历史数据图形结果：'))
     cat('\n')
@@ -649,7 +696,7 @@ if(is.na(myTableParms$data)){
     cat('\n')
     cat(paste0('### 第',i,'个表格的结果：'))
     cat('\n')
-    cat(pander(descTab(Formula=myTableParms$Formula[i],data=LstMadis$Data[[myTableParms$data[i]]])))
+    cat(pander(descTab(Formula=myTableParms$Formula[i],data=LstMadis$Data[[myTableParms$data[i]]]),split.table=Inf))
     cat('\n')
     cat('\n')
     
@@ -702,7 +749,7 @@ if(is.na(dataMnpParms$data)){
                            Digits=dataMnpParms$Digits[i],      
                            tbVars=dataMnpParms$tbVars[i],         
                            hbVars=dataMnpParms$hbVars[i],          
-                           colOrder=dataMnpParms$colOrder[i])$tabRes))
+                           colOrder=dataMnpParms$colOrder[i])$tabRes,split.table=Inf))
     cat('\n')
     cat('\n')
     
