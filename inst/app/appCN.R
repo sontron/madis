@@ -2133,7 +2133,7 @@ server<-function(input,output,session){
     list(
       tabsetPanel(
         tabPanel(
-          'ggplot结果',
+          title='ggplot结果',
           plotOutput('ggplot_myGplt',height='700px'),
           status='primary'
         ),
@@ -5426,7 +5426,7 @@ server<-function(input,output,session){
 ###### uiHeader ######
 
 ui<-fluidPage(
-  #shinythemes::themeSelector(),
+  # shinythemes::themeSelector(),
   tags$head(
     tags$style(
       type="text/css", "
@@ -5451,11 +5451,13 @@ ui<-fluidPage(
   
   
   navbarPage(
-    strong('MADIS'),
+    # strong('MADIS'),
+    title=div(icon("r-project"), strong("MADIS")),
+    windowTitle = 'MADIS',
     ###### 导入数据功能(data_Impt)######
     
     tabPanel(
-      icon=icon('file-upload'),
+      icon=icon('file-import'),
       '导入本地数据',
       sidebarLayout(
         position='left',
@@ -5479,7 +5481,7 @@ ui<-fluidPage(
           uiOutput('args_dataImpt'),
           uiOutput('more1_dataImpt'),
           
-          actionBttn('go_dataImpt','确认加载！')
+          actionBttn('go_dataImpt','确定')
         ),
         
         mainPanel(
@@ -5504,7 +5506,7 @@ ui<-fluidPage(
     ###### 数据处理 ######
     navbarMenu(
       '数据处理',
-      icon=icon('file-upload'),
+      icon=icon('wrench'),
       
       ###### 数据处理-变量名修改 ######
       tabPanel(
@@ -5514,7 +5516,7 @@ ui<-fluidPage(
           sidebarPanel(
             uiOutput('more1_varName'),
             uiOutput('more2_varName'),
-            actionBttn('go_varName','刷新')
+            actionBttn('go_varName','确定')
             
           ),
           mainPanel(
@@ -5534,7 +5536,7 @@ ui<-fluidPage(
           sidebarPanel(
             uiOutput('more1_varMnp'),
             uiOutput('more2_varMnp'),
-            actionBttn('go_varMnp','刷新')
+            actionBttn('go_varMnp','确定')
             
             
             
@@ -5549,14 +5551,14 @@ ui<-fluidPage(
       
       ###### 数据处理-变量类型转换 ######
       tabPanel(
-        icon=icon('exchange-alt'),
+        icon=icon('retweet'),
         strong('变量类型转换'),
         sidebarLayout(
           sidebarPanel(
             uiOutput('more1_varClass'),
             uiOutput('more2_varClass'),
             uiOutput('more3_varClass'),
-            actionBttn('go_varClass','刷新')
+            actionBttn('go_varClass','确定')
           ),
           mainPanel(
             verbatimTextOutput('summary_varClass')
@@ -5574,7 +5576,7 @@ ui<-fluidPage(
           sidebarPanel(
             uiOutput('more1_reshape'),
             uiOutput('more2_reshape'),
-            actionBttn('go_reshape','刷新')
+            actionBttn('go_reshape','确定')
           ),
           
           mainPanel(
@@ -5586,13 +5588,13 @@ ui<-fluidPage(
       
       ###### 数据去重(unique) ######
       tabPanel(
-        icon=icon('align-justify'),
+        icon=icon('broom'),
         '数据去重',
         sidebarLayout(
           sidebarPanel(
             uiOutput('more1_unique'),
             uiOutput('more2_unique'),
-            actionBttn('go_unique','刷新')
+            actionBttn('go_unique','确定')
           ),
           
           mainPanel(
@@ -5610,7 +5612,7 @@ ui<-fluidPage(
           sidebarPanel(
             uiOutput('more1_dataMerge'),
             uiOutput('more2_dataMerge'),
-            actionBttn('go_dataMerge','刷新')
+            actionBttn('go_dataMerge','确定')
           ),
           
           mainPanel(
@@ -5628,7 +5630,7 @@ ui<-fluidPage(
           sidebarPanel(
             uiOutput('more1_naImpute'),
             uiOutput('more2_naImpute'),
-            actionBttn('go_naImpute','刷新')
+            actionBttn('go_naImpute','确定')
           ),
           
           mainPanel(
@@ -5646,7 +5648,7 @@ ui<-fluidPage(
           sidebarPanel(
             uiOutput('more1_dataFilter'),
             uiOutput('more2_dataFilter'),
-            actionBttn('go_dataFilter','刷新')
+            actionBttn('go_dataFilter','确定')
           ),
           
           mainPanel(

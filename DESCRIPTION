@@ -1,7 +1,7 @@
 Package: madis
 Type: Package
 Title: Manipulating and Analyzing Data Interactively with Shiny 
-Version: 1.2.0
+Version: 1.2.2
 Author: son tron
 Maintainer: son tron <sontron@foxmail.com>
 Description: This pakcage is mainly used for statistical analysis.
