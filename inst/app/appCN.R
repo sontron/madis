@@ -173,7 +173,8 @@ server<-function(input,output,session){
           # ),
           textInputAddon(inputId = 'encod_dataImpt',label = '文件编码格式',value = 'gb18030',placeholder = 'eg:utf8',addon = icon("pencil")),
           awesomeCheckbox('header_dataImpt','数据包含变量名',TRUE),
-          awesomeCheckbox('strAsFac_dataImpt','是否将字符串转换成因子',FALSE)
+          awesomeCheckbox('strAsFac_dataImpt','是否将字符串转换成因子',FALSE),
+          awesomeCheckbox('deleteUnique','是否值唯一的变量',TRUE)
         ),
         textInputAddon(inputId = "argsMore_dataImpt", label = "更多参数设定", placeholder = "eg:nrows=10",value='',addon = icon("pencil")),
         helpText('在更多参数设置一栏，可以自定义参数，在此是read.table函数的参数，若无则留空，多个参数设定，用","隔开')
@@ -205,6 +206,13 @@ server<-function(input,output,session){
     isolate({
       data_dataImpt()->dat
       dat[,input$varsKeep_dataImpt]->dat
+      sapply(dat,function(i)length(unique(i)))->lenI
+      names(lenI)[which(lenI>1)]->namesNotUnique
+      if(input$deleteUnique){
+        dat[,namesNotUnique]->dat
+      } else {
+        dat->dat
+      }
       assign(input$dataName_dataImpt,dat,envMadis)
       LstMadis$Data[[input$dataName_dataImpt]]<-dat
       assign('LstMadis',LstMadis,envir=envMadis)

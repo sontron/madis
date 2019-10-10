@@ -42,6 +42,8 @@ glmS<-function(Formula,
   }
   if(Family=='binomial'){
     as.numeric(as.factor(dat[,yVar]))-1->dat[,yVar]
+  } else {
+    as.numeric(as.character(dat[,yVar]))->dat[,yVar]
   }
   glm(Formula,data=dat,family=Family,x=T,y=T,weights=Wt)->fit
   step(fit,scope=list(upper=Form1,lower=Form2),trace=F)->fitStep
