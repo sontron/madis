@@ -62,7 +62,9 @@ prophetS<-function(data,
   unlist(stri_split_fixed(measureVars,';'))->measureVars
   unlist(stri_split_fixed(groupVars,';'))->groupVars
   
-  which(is.na(data[,tsVar]))->ind
+  
+  parse_date_time(data[,tsVar],orders=tsFormat)->xTmp
+  which(is.na(xTmp))->ind
   if(length(ind)>0){data[-ind,]->dat} else {dat=data}
   
   # dat$cap<-Cap

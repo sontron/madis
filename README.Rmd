@@ -1,0 +1,77 @@
+# madis - Medical analytics using R and Shiny
+
+madis is an open-source platform-independent browser-based interface for medical statistical analytics in [R](http://www.r-project.org/). The application is based on the [Shiny](http://www.rstudio.com/shiny/) package and can be run locally or on a server. madis was developed by Sontron. Please use the issue tracker on GitHub to suggest enhancements or report problems: http://github.com/. For other questions and comments please use hw4m14@soton.ac.uk.
+
+## Key features
+
+- Explore:Quickly and easily summarize, visualize, and analyze your data
+- Pre-processing: Data cleaning, data integration, data conversion, and data reduction 
+- Modeling: Sevral classic statistical models are applied to conduct high-quality analysis
+- Programming:Integrate madis's analysis functions with your own R-code
+- Customize: The results of different kinds of analysis can be selected whether or not generated in a final report(PDF,Word,and HTML) 
+
+#### Explore
+
+madis is designed to collect data by uploading data from local Folder or pasting data into the input panel. A dateset create when a button is pressed(`Confirm` in Import) and a simple summary of all variables will be shown in the output interface. 
+
+#### Pre-processing
+
+The quality of data depends on pre-treatment. In this module, we create several functions( including: `Rename variables`, `Generate new variables`, `Variable's conversion`, `Data distortion`, `Data deduplication`, `Data merge`, `Filling of missing values`, `Filter data`) to clean the dataset and pre-processing them. 
+
+> **Note:** For users who don't need to do more analysis, the dataset which is pre-processed is available to download in module (`Output`). Three data formats  ('.txt','.csv','.RData') can be selected to generate the dataset.
+
+#### Modeling
+
+To conduct high-quality analysis, statistical model should be used. In madis, you can select models such as linear model, cox proportional hazards model, decision tree model, mixed model, clustering analysis, principal component analysis, factor analysis, propensity score matching, and time-series model to find deep relationships between independent variables and dependent variable.
+
+
+#### Programming
+
+Although madis's web-interface can handle quite a few daa and analysis tasks, you may prefer to write your own R-code. madis provides a bridge to progamming in R(studio) by exporting the functions used for analysis (i.e., you can select the button `Custom function?` to create your own function in madis).
+
+#### Customize
+
+madis can create a report (PDF,Word,and HTML)  using [Rmarkdown](http://rmarkdown.rstudio.com/). You can customize your report by using the button (`Whether to export the report`) in each module. madis also provides an output interface in each module so you can easily get the intermediate result to alaysis or write it into your report.
+
+
+#### How to install madis
+
+- Required: [R](https://cran.rstudio.com/) version 3.3.0 or later
+- Required: A modern browser (e.g., [Chrome](https://www.google.com/intl/en/chrome/browser/desktop/) or Safari). Internet Explorer (version 11 or higher) should work as well
+- Required: [Rstudio](http://www.rstudio.com/products/rstudio/download/)
+
+To install the latest version of madis for Windows or Mac, with complete documentation for off-line access, open R(studio) and copy-and-paste the command below:
+
+```r
+install.packages("madis", repos = "https://radiant-rstats.github.io/minicran/", type = 'binary')
+```
+
+Once all packages are installed use the command below to launch the app:
+
+```r
+madis()
+```
+
+
+**Optional:** 
+
+
+#### Reporting issues
+
+Please use the GitHub issue tracker at <a href="https://github.com/radiant-rstats/radiant/issues" target="_blank">github.com/radiant-rstats/radiant/issues</a> if you have any problems using madis.
+
+## Online
+
+## Running Radiant on shinyapps.io/ shiny-server
+
+## Saving and loading state
+
+## Source code
+
+## Credits
+
+madis would not be possible without [R](https://cran.rstudio.com/) and [Shiny](http://shiny.rstudio.com/). Other key components used in madis are ggplot2, shinyAce, shiny, shinythemes, shinyWidgets, stringi, reshape2, vcdExtra, pander, rmarkdown, rms, ggfortify, party, partykit, rpart, moonBook, fBasics, plotly, prophet, skimr, rio, rhandsontable, ROCR. 
+
+## License
+
+If you are interested in using madis please email me at hw4m14@soton.ac.uk.
