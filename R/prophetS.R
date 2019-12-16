@@ -77,7 +77,7 @@ prophetS<-function(data,
     if(length(groupVars)==1){
       dat$tsGroupVar<-dat[,groupVars]
     } else {
-      myApply(data = dat,vars = groupVars,MARGIN = 1,FUN = function(x)paste(x,collapse='_'))->dat$tsGroupVar
+      Apply(data = dat,vars = groupVars,MARGIN = 1,FUN = function(x)paste(x,collapse='_'))->dat$tsGroupVar
     }
     
   }
@@ -231,9 +231,20 @@ prophetS<-function(data,
         
       }
     }
+    
+    names(Lst[[1]])->names1
+    for(i in 1:length(Lst)){
+      intersect(names1,names(Lst[[i]]))->names1
+    }
+    
+    
+    for(i in 1:length(Lst)){
+      Lst[[i]][,names1]->Lst[[i]]
+    }
+    
     do.call(rbind,Lst)->dfGraphNew
     names(dfGraphNew)[1]<-tsVar
-    dfGraphNew[,c(tsVar,'groupVars','variable','y')]->predData
+    dfGraphNew[,c(tsVar,paste(groupVars,collapse='_'),'variable','y')]->predData
     ifelse(is.na(predData$y),dfGraphNew$yhat,predData$y)->predData$y
     
     if(Growth=='logistic'){
