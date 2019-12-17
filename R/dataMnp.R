@@ -47,6 +47,31 @@ dataMnp<-function(data,
   require('lubridate')
   require('stringi')
   if(is.character(data)){eval(as.name(data))->data}
+  
+  which(sapply(data,function(i)class(i))=='factor')->indFac
+  
+  if(length(indFac)>0){
+    for(i in indFac){
+      as.character(data[,i])->data[,i]
+    }
+  }
+  
+  
+  if(dateVar%in%names(data)){
+    if(length(dtOrders)>0){
+      parse_date_time(data[,dateVar],dtOrders)->xTmp
+      which(is.na(xTmp))->indNa
+      if(length(indNa)>0){
+        
+        data[-indNa,]->data 
+      } else {
+        data<-data
+      }
+      
+    }
+  }
+  
+  
   as.data.table(data)->data
   if(!all(newVars%in%c(NA,NULL,''))){
     setdiff(unlist(stri_split_fixed(newVars,';')),c(NA,'NULL',''))->newVars
@@ -83,14 +108,7 @@ dataMnp<-function(data,
     }
   }
   
-  which(sapply(data,function(i)class(i))=='factor')->indFac
-  
-  if(length(indFac)>0){
-    for(i in indFac){
-      as.character(data[,i])->data[,i]
-    }
-  }
-  
+ 
   
   as.data.table(data)->dt
   
