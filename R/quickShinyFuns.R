@@ -50,32 +50,18 @@ qGraph<-function(dt){
         
         output$more0_Filter<-renderUI({
           list(
-            
             pickerInput('Filter','choose filter vars',choices = c('无',names(dt)),selected ='无',multiple=T )
-            
-            
-            # conditionalPanel(condition = "input['Filter']!='无'",
-            #                  shinyFilter(dt,filter=input$Filter)   
-            #                  
-            #                  
-            #                  )
-            # if(is.null(input$filter)){
-            #   NULL
-            # } else {
-            #   shinyFilter(dt,filter=input$filter)
-            # }
-            
           )
           
         })
         
         output$more1_Filter<-renderUI({
           list(
-          if(input$Filter=='无'){
-            NULL
-          } else {
-            shinyFilter(dt,filter=input$Filter)
-          }
+            if(length(setdiff(input$Filter,'无'))==0){
+              NULL
+            } else {
+              shinyFilter(dt,filter=setdiff(input$Filter,'无'))
+            }
           )
         })
         
@@ -310,11 +296,11 @@ qGraph<-function(dt){
         res_myGplt<-reactive({
           input$go_myGplt
           req(input$go_myGplt)
-          if(input$Filter=='无'){
+          if(length(setdiff(input$Filter,'无'))==0){
             dat<-dt
           } else {
             
-            indMat<-sapply(input$Filter,function(i){
+            indMat<-sapply(setdiff(input$Filter,'无'),function(i){
               if(class(dt[,i])%in%c('character','factor')){
                 dt[,i]%in%input[[i]]
               } else {
