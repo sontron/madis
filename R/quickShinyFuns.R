@@ -11,6 +11,11 @@
 #' @export
 
 fnPlotly<-function(dt,...,Filter=NULL){
+  require(stringi)
+  require(plotly)
+  require(ggplot2)
+  require(shiny)
+  require(shinyWidgets)
   as.data.frame(dt)->dt
   if (interactive()) {
     library(shiny)
@@ -21,14 +26,16 @@ fnPlotly<-function(dt,...,Filter=NULL){
           sidebarPanel(
             panel(
               heading = 'Filters setting',
-              uiOutput('more1')
+              uiOutput('more1'),
+              status='primary'
             )
             
           ),
           mainPanel(
             panel(
               heading = 'Plotly result',
-              plotlyOutput('plotly',height='900px')
+              plotlyOutput('plotly',height='900px'),
+              status='primary'
             )
             
             
@@ -91,6 +98,9 @@ fnPlotly<-function(dt,...,Filter=NULL){
 
 
 fnDT<-function(dt){
+  require(DT)
+  require(shiny)
+  require(shinyWidgets)
   as.data.frame(dt)->dt
   if (interactive()) {
     library(shiny)
@@ -102,14 +112,16 @@ fnDT<-function(dt){
           sidebarPanel(
             panel(
               heading = 'vars to keep',
-              uiOutput('more1')
+              uiOutput('more1'),
+              status='primary'
             )
             
           ),
           mainPanel(
             panel(
               heading = 'DataTable Outputs',
-              DTOutput('tbl')
+              DTOutput('tbl'),
+              status='primary'
             )
             
           )
