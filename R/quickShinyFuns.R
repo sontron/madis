@@ -10,7 +10,7 @@
 #' 
 #' @export
 
-qGraph<-function(dt,...,Filter=NULL){
+qGraph<-function(dt){
   require(stringi)
   require(plotly)
   require(ggplot2)
@@ -27,6 +27,7 @@ qGraph<-function(dt,...,Filter=NULL){
             panel(
               heading = 'Filter setting',
               uiOutput('more0_Filter'),
+              uiOutput('more1_Filter'),
               status = 'primary'
             ),
             
@@ -49,16 +50,34 @@ qGraph<-function(dt,...,Filter=NULL){
         
         output$more0_Filter<-renderUI({
           list(
-            if(is.null(Filter)){
-              NULL
-            } else {
-              shinyFilter(dt,Filter)
-            }
+            
+            pickerInput('Filter','choose filter vars',choices = c('无',names(dt)),selected ='无',multiple=T )
+            
+            
+            # conditionalPanel(condition = "input['Filter']!='无'",
+            #                  shinyFilter(dt,filter=input$Filter)   
+            #                  
+            #                  
+            #                  )
+            # if(is.null(input$filter)){
+            #   NULL
+            # } else {
+            #   shinyFilter(dt,filter=input$filter)
+            # }
             
           )
           
         })
         
+        output$more1_Filter<-renderUI({
+          list(
+          if(input$Filter=='无'){
+            NULL
+          } else {
+            shinyFilter(dt,filter=input$Filter)
+          }
+          )
+        })
         
         
         output$more2_myGplt<-renderUI({
@@ -291,11 +310,11 @@ qGraph<-function(dt,...,Filter=NULL){
         res_myGplt<-reactive({
           input$go_myGplt
           req(input$go_myGplt)
-          if(is.null(Filter)){
-            dtt<-dat
+          if(input$Filter=='无'){
+            dat<-dt
           } else {
             
-            indMat<-sapply(Filter,function(i){
+            indMat<-sapply(input$Filter,function(i){
               if(class(dt[,i])%in%c('character','factor')){
                 dt[,i]%in%input[[i]]
               } else {
