@@ -271,7 +271,7 @@ ggplt2S<-function(data,
   
   paste(graph,themes,myLab,adjTitle,sep='+')->Graph
   resGGplot<-eval(parse(text=Graph))
-  ggplotly(resGGplot)->resPlotly
+  tryCatch(ggplotly(resGGplot),error=function(e)NULL)->resPlotly
   return(list(resGGplot=resGGplot,resPlotly=resPlotly))
   
   
