@@ -10,7 +10,7 @@
 #' 
 #' @export
 
-qGraph<-function(dt){
+qGraph<-function(dt,...){
   require(stringi)
   require(plotly)
   require(ggplot2)
@@ -18,9 +18,7 @@ qGraph<-function(dt){
   require(shinyWidgets)
   as.data.frame(dt)->dt
   if (interactive()) {
-    library(shiny)
-    library(DT)
-    shinyApp(
+    shinyApp(options=list(...),
       ui = fluidPage(
         sidebarLayout(
           sidebarPanel(
@@ -142,6 +140,7 @@ qGraph<-function(dt){
         output$more3_myGplt<-renderUI({
           list(
             tabsetPanel(
+              
               tabPanel(
                 title='ggplot结果',
                 plotOutput('ggplot_myGplt',height='700px'),
@@ -376,16 +375,13 @@ qGraph<-function(dt){
 #' @export
 
 
-qDT<-function(dt){
+qDT<-function(dt,...){
   require(DT)
   require(shiny)
   require(shinyWidgets)
   as.data.frame(dt)->dt
   if (interactive()) {
-    library(shiny)
-    library(DT)
-    library(shinyWidgets)
-    shinyApp(
+    shinyApp(options=list(...),
       ui = fluidPage(
         sidebarLayout(
           sidebarPanel(
@@ -419,7 +415,7 @@ qDT<-function(dt){
         })
         
         output$tbl = renderDT(
-          datatable(dt[,input$varsKeep,drop=F]),
+          dt[,input$varsKeep,drop=F],
           server=T,filter='top'
         )
       }
@@ -454,17 +450,14 @@ shinyFilter<-function(dt,filter=Filter){
 #' @export
 
 
-qTable<-function(dt){
+qTable<-function(dt,...){
   require(DT)
   require(shiny)
   require(shinyWidgets)
   require(rhandsontable)
   as.data.frame(dt)->dt
   if (interactive()) {
-    library(shiny)
-    library(DT)
-    library(shinyWidgets)
-    shinyApp(
+    shinyApp(options=list(...),
       ui = fluidPage(
         sidebarLayout(
           sidebarPanel(
@@ -496,9 +489,10 @@ qTable<-function(dt){
                 value = 1,
                 min=1,
                 max=100
-              )
-            ),
-            awesomeCheckbox('export_dataMnp','将该结果输出报告',FALSE)
+              ),
+              status = 'primary'
+            )#,
+            # awesomeCheckbox('export_dataMnp','将该结果输出报告',FALSE)
           )
         })
         
