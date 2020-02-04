@@ -210,7 +210,7 @@ dataMnp<-function(data,
     res$rowID<-1:nrow(res)
     
   } else {
-    setorderv(res,dimNames,rep(1,length(dimNames)))
+    # setorderv(res,dimNames,rep(1,length(dimNames)))
     res$rowID<-1:nrow(res)
   }
   res[,c(which(colnames(res)=='rowID'),which(colnames(res)!='rowID')),with=F]->res
