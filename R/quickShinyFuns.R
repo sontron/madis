@@ -139,6 +139,9 @@ qGraph<-function(dt,...){
         
         output$more3_myGplt<-renderUI({
           list(
+            panel(
+              heading = '图形结果',
+            
             tabsetPanel(
               
               tabPanel(
@@ -152,6 +155,11 @@ qGraph<-function(dt,...){
                 status='primary'
               )
             ),
+            status='primary'
+            ),
+            panel(
+              heading='更多参数设置',
+            
             tabsetPanel(
               tabPanel(
                 '调整可变属性',
@@ -286,6 +294,8 @@ qGraph<-function(dt,...){
                   )
                 )
               )
+            ),
+            status='primary'
             )
             
           )
@@ -467,10 +477,12 @@ qTable<-function(dt,...){
           mainPanel(
             panel(
               heading = '设置表格参数',
-              rHandsontableOutput("handsonTB")
+              rHandsontableOutput("handsonTB"),
+              status='primary'
             ),
             panel(heading = '表格结果',
-                  DT:::dataTableOutput('resMnp')
+                  DT:::dataTableOutput('resMnp'),
+                  status='primary'
             )
             
             
