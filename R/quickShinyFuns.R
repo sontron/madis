@@ -472,15 +472,15 @@ qTable<-function(dt,...){
         sidebarLayout(
           sidebarPanel(
             uiOutput('more1_DT'),
-            actionBttn('go_DT','确定')
+            actionBttn('go_DT','confirm')
           ),
           mainPanel(
             panel(
-              heading = '设置表格参数',
+              heading = 'set dataMnp args',
               rHandsontableOutput("handsonTB"),
               status='primary'
             ),
-            panel(heading = '表格结果',
+            panel(heading = 'results',
                   DT:::dataTableOutput('resMnp'),
                   status='primary'
             )
@@ -494,10 +494,10 @@ qTable<-function(dt,...){
         output$more1_DT<-renderUI({
           list(
             panel(
-              heading = '设置参数个数',
+              heading = 'set no of args',
               numericInput(
                 inputId = 'nrow_DT',
-                label = '设定配置参数个数',
+                label = 'no of args',
                 value = 1,
                 min=1,
                 max=100
@@ -512,26 +512,26 @@ qTable<-function(dt,...){
         
         output$handsonTB<-renderRHandsontable({
           rhandsontable(data.frame(
-            子集=rep('',input$nrow_DT),
-            新变量名称=rep('',input$nrow_DT),
-            新变量计算公式=rep('',input$nrow_DT),
-            新变量维度汇总=rep('',input$nrow_DT),
-            指标名称=rep('',input$nrow_DT),
-            指标公式=rep('',input$nrow_DT),
-            维度变量=rep('',input$nrow_DT),
-            维度名称=rep('',input$nrow_DT),
-            日期变量=rep('',input$nrow_DT),
-            日期格式=rep('',input$nrow_DT),
-            边际汇总=rep(0L,input$nrow_DT),  
-            调整边际汇总=rep(0L,input$nrow_DT),  
-            调整结果名称=rep('',input$nrow_DT),  
-            调整公式=rep('',input$nrow_DT),  
-            行排序变量=rep('',input$nrow_DT),   
-            行排序顺序=rep('',input$nrow_DT),   
-            小数点=rep(0L,input$nrow_DT),      
-            同比指标=rep('',input$nrow_DT),         
-            环比指标=rep('',input$nrow_DT),          
-            列排序=rep('',input$nrow_DT)
+            subset=rep('',input$nrow_DT),
+            newvars=rep('',input$nrow_DT),
+            newvarsformulas=rep('',input$nrow_DT),
+            newvarsby=rep('',input$nrow_DT),
+            indexnames=rep('',input$nrow_DT),
+            formulas=rep('',input$nrow_DT),
+            dimvars=rep('',input$nrow_DT),
+            dimnames=rep('',input$nrow_DT),
+            datevar=rep('',input$nrow_DT),
+            dtorders=rep('',input$nrow_DT),
+            margin=rep(0L,input$nrow_DT),  
+            revisedmargin=rep(0L,input$nrow_DT),  
+            revisednames=rep('',input$nrow_DT),  
+            revisedformulas=rep('',input$nrow_DT),  
+            ordervars=rep('',input$nrow_DT),   
+            orders=rep('',input$nrow_DT),   
+            digits=rep(0L,input$nrow_DT),      
+            tbvars=rep('',input$nrow_DT),         
+            hbvars=rep('',input$nrow_DT),          
+            colorder=rep('',input$nrow_DT)
           ),readOnly=F)
         })
         
@@ -544,26 +544,26 @@ qTable<-function(dt,...){
           cfg[cfg=='']<-NA
           dataMnp(
             data=dt,
-            subset=cfg$子集,
-            newVars=cfg$新变量名称,
-            newVarsFormulas=cfg$新变量计算公式,
-            newVarsBy=cfg$新变量维度汇总,
-            indexNames=cfg$指标名称,
-            Formulas=cfg$指标公式,
-            dimVars=cfg$维度变量,
-            dimNames=cfg$维度名称,
-            dateVar=cfg$日期变量,
-            dtOrders=cfg$日期格式,
-            margin=cfg$边际汇总,  
-            revisedMargin=cfg$调整边际汇总,  
-            revisedNames=cfg$调整结果名称,  
-            revisedFormulas=cfg$调整公式,  
-            orderVars=cfg$行排序变量,   
-            orders=cfg$行排序顺序,   
-            Digits=cfg$小数点,      
-            tbVars=cfg$同比指标,         
-            hbVars=cfg$环比指标,          
-            colOrder=cfg$列排序
+            subset=cfg$subset,
+            newVars=cfg$newvars,
+            newVarsFormulas=cfg$newvarsformulas,
+            newVarsBy=cfg$newvarsby,
+            indexNames=cfg$indexnames,
+            Formulas=cfg$formulas,
+            dimVars=cfg$dimvars,
+            dimNames=cfg$dimnames,
+            dateVar=cfg$datevar,
+            dtOrders=cfg$dtorders,
+            margin=cfg$margin,  
+            revisedMargin=cfg$revisedmargin,  
+            revisedNames=cfg$revisednames,  
+            revisedFormulas=cfg$revisedformulas,  
+            orderVars=cfg$ordervars,   
+            orders=cfg$orders,   
+            Digits=cfg$digits,      
+            tbVars=cfg$tbvars,         
+            hbVars=cfg$hbvars,          
+            colOrder=cfg$colorder
             
           )->res
           return(res)
