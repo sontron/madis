@@ -1958,7 +1958,7 @@ server<-function(input,output,session){
             pickerInput(
               inputId='lht_myTable',
               label='select group vars',
-              choices = c('无'='',names(data_myTable())),
+              choices = c('NULL'='',names(data_myTable())),
               selected='',
               multiple = TRUE,
               options = list(`actions-box` = TRUE)
