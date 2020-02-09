@@ -34,7 +34,7 @@ qGraph<-function(dt,...){
               uiOutput('more2_myGplt'),
               status = 'primary'
             ),
-            actionBttn('go_myGplt','确定')
+            actionBttn('go_myGplt','confirm')
           ),
           mainPanel(
             uiOutput('more3_myGplt')
@@ -48,17 +48,17 @@ qGraph<-function(dt,...){
         
         output$more0_Filter<-renderUI({
           list(
-            pickerInput('Filter','choose filter vars',choices = c('无',names(dt)),selected ='无',multiple=T )
+            pickerInput('Filter','choose filter vars',choices = c('none'='',names(dt)),selected ='无',multiple=T )
           )
           
         })
         
         output$more1_Filter<-renderUI({
           list(
-            if(length(setdiff(input$Filter,'无'))==0){
+            if(length(setdiff(input$Filter,''))==0){
               NULL
             } else {
-              shinyFilter(dt,filter=setdiff(input$Filter,'无'))
+              shinyFilter(dt,filter=setdiff(input$Filter,''))
             }
           )
         })
@@ -68,11 +68,11 @@ qGraph<-function(dt,...){
           list(
             panel(
               flowLayout(
-                heading='选择作图各属性参数(aes)',
+                heading='set aes attributes',
                 pickerInput(
                   inputId='xvar_myGplt',
-                  label='选择x轴变量',
-                  choices = c('无'='NULL',names(dt)),
+                  label='select x var',
+                  choices = c('NULL'='NULL',names(dt)),
                   selected='NULL',
                   multiple = FALSE,
                   options = list(`actions-box` = FALSE)
@@ -80,8 +80,8 @@ qGraph<-function(dt,...){
                 
                 pickerInput(
                   inputId='yvar_myGplt',
-                  label='选择y轴变量',
-                  choices = c('无'='NULL',names(dt)),
+                  label='select y vars',
+                  choices = c('NULL'='NULL',names(dt)),
                   selected='NULL',
                   multiple = FALSE,
                   options = list(`actions-box` = FALSE)
@@ -89,8 +89,8 @@ qGraph<-function(dt,...){
                 
                 pickerInput(
                   inputId='size_myGplt',
-                  label='设定点或线的大小',
-                  choices = c('无'='NULL',names(dt)),
+                  label='select size var',
+                  choices = c('NULL'='NULL',names(dt)),
                   selected='NULL',
                   multiple = FALSE,
                   options = list(`actions-box` = FALSE)
@@ -98,8 +98,8 @@ qGraph<-function(dt,...){
                 
                 pickerInput(
                   inputId='color_myGplt',
-                  label='设定点线颜色',
-                  choices = c('无'='NULL',names(dt)),
+                  label='select colour var',
+                  choices = c('NULL'='NULL',names(dt)),
                   selected='NULL',
                   multiple = FALSE,
                   options = list(`actions-box` = FALSE)
@@ -107,8 +107,8 @@ qGraph<-function(dt,...){
                 
                 pickerInput(
                   inputId='fill_myGplt',
-                  label='设定面的填充',
-                  choices = c('无'='NULL',names(dt)),
+                  label='select fill var',
+                  choices = c('NULL'='NULL',names(dt)),
                   selected='NULL',
                   multiple = FALSE,
                   options = list(`actions-box` = FALSE)
@@ -116,8 +116,8 @@ qGraph<-function(dt,...){
                 
                 pickerInput(
                   inputId='shape_myGplt',
-                  label='设定形状',
-                  choices = c('无'='NULL',names(dt)),
+                  label='select shapevar',
+                  choices = c('NULL'='NULL',names(dt)),
                   selected='NULL',
                   multiple = FALSE,
                   options = list(`actions-box` = FALSE)
@@ -125,8 +125,8 @@ qGraph<-function(dt,...){
                 
                 pickerInput(
                   inputId='alpha_myGplt',
-                  label='设定透明度',
-                  choices = c('无'='NULL',names(dt)),
+                  label='select alpha var',
+                  choices = c('NULL'='NULL',names(dt)),
                   selected='NULL',
                   multiple = FALSE,
                   options = list(`actions-box` = FALSE)
@@ -140,17 +140,17 @@ qGraph<-function(dt,...){
         output$more3_myGplt<-renderUI({
           list(
             panel(
-              heading = '图形结果',
+              heading = 'graph results',
             
             tabsetPanel(
               
               tabPanel(
-                title='ggplot结果',
+                title='ggplot result',
                 plotOutput('ggplot_myGplt',height='700px'),
                 status='primary'
               ),
               tabPanel(
-                'plotly结果',
+                'plotly result',
                 plotlyOutput('plotly_myGplt',height='700px'),
                 status='primary'
               )
@@ -158,23 +158,23 @@ qGraph<-function(dt,...){
             status='primary'
             ),
             panel(
-              heading='更多参数设置',
+              heading='mor args',
             
             tabsetPanel(
               tabPanel(
-                '调整可变属性',
+                'set other attributes',
                 flowLayout(
                   pickerInput(
                     inputId='geom_myGplt',
-                    label='选择图层',
+                    label='select layer',
                     choices = c(
-                      '箱图'='box',
-                      '直方图'='hist',
-                      '条图'='bar',
-                      '线图'='line',
-                      'Jitter图'='jitter',
-                      '散点图'='point',
-                      '平滑曲线'='smooth'
+                      'box plot'='box',
+                      'histogram'='hist',
+                      'bar plot'='bar',
+                      'line plot'='line',
+                      'Jitter'='jitter',
+                      'scatter plot'='point',
+                      'smooth line'='smooth'
                     ),
                     selected='box',
                     multiple = TRUE,
@@ -185,12 +185,12 @@ qGraph<-function(dt,...){
                   #   condition = "'smooth'%in%input['geom_myGplt']",
                   pickerInput(
                     inputId='smoothMethod_myGplt',
-                    label='选择平滑曲线函数',
+                    label='select smooth method',
                     choices = c(
-                      '线性回归'='lm',
-                      'GAM模型'='gam',
-                      'GLM模型'='glm',
-                      '局部回归'='loess'
+                      'linear regression'='lm',
+                      'GAM model'='gam',
+                      'GLM model'='glm',
+                      'loess'='loess'
                     ),
                     selected='lm',
                     multiple = FALSE,
@@ -202,9 +202,9 @@ qGraph<-function(dt,...){
                   #   condition = "'bar'%in%input['geom_myGplt']",
                   pickerInput(
                     inputId='barPos_myGplt',
-                    label='条图呈现方式',
+                    label='position of bar plot',
                     choices = c(
-                      '堆叠'='stack',
+                      'Stack'='stack',
                       'Dodge'='dodge'
                     ),
                     selected='dodge',
@@ -216,7 +216,7 @@ qGraph<-function(dt,...){
                   
                   pickerInput(
                     inputId='theme_myGplt',
-                    label='主题配色',
+                    label='set theme',
                     choices = c(
                       'Dark'='dark',
                       'Classic'='classic',
@@ -230,48 +230,48 @@ qGraph<-function(dt,...){
                   
                   pickerInput(
                     inputId='facetVar_myGplt',
-                    label='选择分层作图变量',
-                    choices = c('无'='NULL',names(dt)),
+                    label='select facet var',
+                    choices = c('NULL'='NULL',names(dt)),
                     selected='NULL',
                     multiple = TRUE,
                     options = list(`actions-box` = TRUE)
                   ),
                   
-                  textInputAddon(inputId='labx_myGplt','设定x轴标题',value='',placeholder = 'eg:x title for my graph',addon = icon('pencil')),
-                  textInputAddon(inputId='laby_myGplt','设定y轴标题',value='',placeholder = 'eg:y title for my graph',addon = icon('pencil')),
-                  textInputAddon(inputId='title_myGplt','设定图标题',value='',placeholder = 'eg:my graph',addon = icon('pencil'))
+                  textInputAddon(inputId='labx_myGplt','set x label',value='',placeholder = 'eg:x title for my graph',addon = icon('pencil')),
+                  textInputAddon(inputId='laby_myGplt','set y label',value='',placeholder = 'eg:y title for my graph',addon = icon('pencil')),
+                  textInputAddon(inputId='title_myGplt','set title',value='',placeholder = 'eg:my graph',addon = icon('pencil'))
                   
                 )
               ),
               tabPanel(
-                '设定固定属性',
+                'set graph attributes',
                 flowLayout(
                   # conditionalPanel(
                   #   condition = "'hist'%in%input['geom_myGplt']",
                   numericInput(
                     inputId = 'Bins_myGplt',
-                    label='直方图宽度',
+                    label='bins',
                     min=1,
                     val=10,
                     step=1
                   ),
                   # ),
                   textInputAddon(
-                    inputId='Colour_myGplt','设定点及线的整体颜色',value='NULL',placeholder = 'eg:red',addon = icon('pencil')
+                    inputId='Colour_myGplt','set colour',value='NULL',placeholder = 'eg:red',addon = icon('pencil')
                   ),
                   textInputAddon(
-                    inputId='Fill_myGplt','设定面及区域的整体颜色',value='NULL',placeholder = 'eg:red',addon = icon('pencil')
+                    inputId='Fill_myGplt','set fill',value='NULL',placeholder = 'eg:red',addon = icon('pencil')
                   ),
                   numericInput(
                     inputId = 'Size_myGplt',
-                    label='设定点的大小',
+                    label='set size',
                     min=1,
                     val='NULL',
                     step=1
                   ),
                   numericInput(
                     inputId = 'Alpha_myGplt',
-                    label='设置透明度',
+                    label='set alpha',
                     min=0,
                     val='NULL',
                     step=1
@@ -279,7 +279,7 @@ qGraph<-function(dt,...){
                   
                   numericInput(
                     inputId = 'Width_myGplt',
-                    label='条图及箱图宽度',
+                    label='set width',
                     min=0.1,
                     val='NULL',
                     step=1
@@ -287,7 +287,7 @@ qGraph<-function(dt,...){
                   
                   numericInput(
                     inputId = 'Shape_myGplt',
-                    label='点的形状设定',
+                    label='set shape',
                     min=1,
                     val='NULL',
                     step=1
@@ -305,11 +305,11 @@ qGraph<-function(dt,...){
         res_myGplt<-reactive({
           input$go_myGplt
           req(input$go_myGplt)
-          if(length(setdiff(input$Filter,'无'))==0){
+          if(length(setdiff(input$Filter,''))==0){
             dat<-dt
           } else {
             
-            indMat<-sapply(setdiff(input$Filter,'无'),function(i){
+            indMat<-sapply(setdiff(input$Filter,''),function(i){
               if(class(dt[,i])%in%c('character','factor')){
                 dt[,i]%in%input[[i]]
               } else {

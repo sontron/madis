@@ -133,15 +133,15 @@ server<-function(input,output,session){
   output$args_dataImpt<-renderUI({
     list(
       panel(status='primary',
-            heading='数据读取参数设定',
+            heading='args for import data',
             flowLayout(
               pickerInput(
                 inputId='sep_dataImpt',
-                label='文本分隔符',
+                label='field separator',
                 choices=c(
-                  '逗号分隔'=',',
-                  '制表分隔符'='\t',
-                  '空格分隔'=''
+                  'comma'=',',
+                  'tabs'='\t',
+                  'white sapce'=''
                 ),
                 selected=',',
                 multiple = FALSE,
@@ -149,10 +149,10 @@ server<-function(input,output,session){
               ),
               pickerInput(
                 inputId='nastr_dataImpt',
-                label='缺失值类型',
+                label='na strings',
                 choices=c(
-                  '空白'='',
-                  '空格'=' ',
+                  'white space'='',
+                  'blank space'=' ',
                   'NA'='NA',
                   '.'='.'
                 ),
@@ -171,13 +171,13 @@ server<-function(input,output,session){
               #   multiple = FALSE,
               #   options = list(`actions-box` = FALSE)
               # ),
-              textInputAddon(inputId = 'encod_dataImpt',label = '文件编码格式',value = 'gb18030',placeholder = 'eg:utf8',addon = icon("pencil")),
-              awesomeCheckbox('header_dataImpt','数据包含变量名',TRUE),
-              awesomeCheckbox('strAsFac_dataImpt','是否将字符串转换成因子',FALSE),
-              awesomeCheckbox('deleteUnique','是否值唯一的变量',TRUE)
+              textInputAddon(inputId = 'encod_dataImpt',label = 'file encoding',value = 'gb18030',placeholder = 'eg:utf8',addon = icon("pencil")),
+              awesomeCheckbox('header_dataImpt','first row as header',TRUE),
+              awesomeCheckbox('strAsFac_dataImpt','strings as factors',FALSE),
+              awesomeCheckbox('deleteUnique','delete duplicated rows',TRUE)
             ),
-            textInputAddon(inputId = "argsMore_dataImpt", label = "更多参数设定", placeholder = "eg:nrows=10",value='',addon = icon("pencil")),
-            helpText('在更多参数设置一栏，可以自定义参数，在此是read.table函数的参数，若无则留空，多个参数设定，用","隔开')
+            textInputAddon(inputId = "argsMore_dataImpt", label = "more args", placeholder = "eg:nrows=10",value='',addon = icon("pencil")),
+            helpText('use "," to separate more args')
       )
       
     )
@@ -187,16 +187,16 @@ server<-function(input,output,session){
   output$more1_dataImpt<-renderUI({
     list(
       panel(status='primary',
-            heading='变量筛选及数据名设定',
+            heading='setting data name and choose vars to keep',
             pickerInput(
               inputId = "varsKeep_dataImpt",
-              label = "选定需要保留的变量",
+              label = "choose vars to import",
               choices = names(data_dataImpt()),
               selected =names(data_dataImpt()),
               multiple = TRUE,
               options = list(`actions-box` = TRUE)
             ),
-            textInputAddon(inputId = "dataName_dataImpt", label = "输入保存对象的名称", placeholder = "eg:mydata",value='data1',addon = icon("pencil"))
+            textInputAddon(inputId = "dataName_dataImpt", label = "set data name", placeholder = "eg:mydata",value='data1',addon = icon("pencil"))
       )
       
     )
@@ -226,9 +226,9 @@ server<-function(input,output,session){
     input$go_dataImpt
     req(input$go_dataImpt)
     isolate({
-      cat('当前数据共：',nrow(data_dataImpt()),'观测(行)','\n')
-      cat('当前数据共：',ncol(data_dataImpt()),'变量(列)','\n')
-      cat('数据各变量类型如下：','\n')
+      cat('data has ',nrow(data_dataImpt()),'obs','\n')
+      cat('data has ',ncol(data_dataImpt()),'vars','\n')
+      cat('classes of each vars ','\n')
       sapply(data_dataImpt(),class)
     })
   })
@@ -259,10 +259,10 @@ server<-function(input,output,session){
     #?#
     
     list(
-      panel(status='primary',heading='选择数据集',
+      panel(status='primary',heading='choose data set',
             pickerInput(
               inputId = "dataSel_varName",
-              label = "选择数据集",
+              label = "choose data",
               choices = ls(envMadis)[-which(ls(envMadis)%in%c('envMadis','server','ui','LstMadis'))],
               selected =ls(envMadis)[-which(ls(envMadis)%in%c('envMadis','server','ui','LstMadis'))][1],
               multiple = FALSE,
@@ -283,17 +283,17 @@ server<-function(input,output,session){
   output$more2_varName<-renderUI({
     
     list(
-      panel(status='primary',heading='变量名修改',
+      panel(status='primary',heading='rename var name',
             pickerInput(
               inputId = "var_varName",
-              label = "选择需要修改的变量名",
+              label = "choose var",
               choices = names(data_varName()),
               selected =names(data_varName())[1],
               multiple = FALSE,
               options = list(`actions-box` = FALSE)
             ),
             #selectInput('var_varName','选择需要修改的变量名',names(data_varName())),
-            textInputAddon(inputId = "new_varName", label = "设定新的变量名", placeholder = "eg:new_var1",value='',addon = icon("pencil"))
+            textInputAddon(inputId = "new_varName", label = "set new var name", placeholder = "eg:new_var1",value='',addon = icon("pencil"))
             
       )
     )
@@ -332,10 +332,10 @@ server<-function(input,output,session){
     change_data()
     list(
       panel(status='primary',
-            heading='选择数据集',
+            heading='choose data set',
             pickerInput(
               inputId = "dataSel_varMnp",
-              label = "选择数据集",
+              label = "choose data",
               choices = ls(envMadis)[-which(ls(envMadis)%in%c('envMadis','server','ui','LstMadis'))],
               selected =ls(envMadis)[-which(ls(envMadis)%in%c('envMadis','server','ui','LstMadis'))][1],
               multiple = FALSE,
@@ -358,13 +358,13 @@ server<-function(input,output,session){
     data_varMnp()->dat
     list(
       panel(status='primary',
-            heading='选择操作类型',
+            heading='type of generate new var',
             pickerInput(
               inputId='type_varMnp',
-              label='创建变量的方式',
+              label='types',
               choices=c(
-                '基于原始数据的变量'='dep',
-                '不基于原始数据的变量'='noDep'
+                'based on orginal vars'='dep',
+                'not based on orginal vars'='noDep'
               ),
               selected ='dep',
               multiple=FALSE,
@@ -374,10 +374,10 @@ server<-function(input,output,session){
       conditionalPanel(
         condition="input['type_varMnp']=='dep'",
         panel(status='primary',
-              heading='选择处理的变量',
+              heading='select vars',
               pickerInput(
                 inputId = "varsSel_varMnp",
-                label = "选定进行操作的变量",
+                label = "select vars",
                 choices = names(dat),
                 #selected =names(dat)[1],
                 multiple = TRUE,
@@ -385,75 +385,75 @@ server<-function(input,output,session){
               )
         ),
         panel(status='primary',
-              heading='设定处理方法或函数',
+              heading='choose function',
               awesomeCheckbox('usemyFun_varMnp','自定义函数?',FALSE),
               conditionalPanel(
                 condition = "!input['usemyFun_varMnp']",
                 pickerInput(
                   inputId='method_varMnp',
-                  label='处理方法',
+                  label='functions',
                   choices=c(
-                    '无处理'='',
-                    '求和{Sum}'='sum',
-                    '均值{Mean}'='mean',
-                    '标准差{SD}'='sd',
-                    '方差{Var}'='var',
-                    '最小值{Min}'='min',
-                    '最大值{Max}'='max',
-                    '中位数{Median}'='median',
-                    '绝对值{ABS}'='abs',
-                    '对数转换{Log}'='log',
-                    '指数转换{Exp}'='exp',
-                    '正弦转换{Sin}'='sin',
-                    '余弦转换{Cos}'='cos',
-                    '字符串查找{Detect}'='detect',
-                    '字符串提取{Extract}'='extract',
-                    '字符串替换{Replace}'='replace',
-                    '字符串补齐{Pad}'='strpad',
-                    '字符串截取{Sub}'='substr',
-                    '字符串切割{Split}'='split',
-                    '字符串合并{Paste}'='paste',
-                    '合法值判定{LegalSet}'='legalSet',
-                    '重编码{Recode}'='reCode'
+                    'no'='',
+                    'sum{Sum}'='sum',
+                    'mean value{Mean}'='mean',
+                    'standard deviation{SD}'='sd',
+                    'variance{Var}'='var',
+                    'minimum value{Min}'='min',
+                    'maximum value{Max}'='max',
+                    'median value{Median}'='median',
+                    'absolute value{ABS}'='abs',
+                    'log transfomation{Log}'='log',
+                    'exp transformation{Exp}'='exp',
+                    'sin value{Sin}'='sin',
+                    'cos value{Cos}'='cos',
+                    'string detect{Detect}'='detect',
+                    'string extract{Extract}'='extract',
+                    'string replace{Replace}'='replace',
+                    'string padding{Pad}'='strpad',
+                    'string sub{Sub}'='substr',
+                    'string split{Split}'='split',
+                    'string paste{Paste}'='paste',
+                    'validate test{Validate test}'='legalSet',
+                    'regroup{Regroup}'='reCode'
                   ),
                   selected ='',
                   multiple=FALSE,
                   options = list(`actions-box` = FALSE)
                 ),
                 panel(status='primary',
-                      heading='设定各个函数的参数',
+                      heading='set args for function',
                       conditionalPanel(
                         condition="input['method_varMnp']=='detect'||input['method_varMnp']=='replace'||input['method_varMnp']=='split'",
-                        textInputAddon('pattern_varMnp',label='模式(pattern)',value='',addon=icon('pencil')),
-                        awesomeCheckbox('regex_varMnp','是否为正则表达式',FALSE)
+                        textInputAddon('pattern_varMnp',label='Pattern',value='',addon=icon('pencil')),
+                        awesomeCheckbox('regex_varMnp','regex expression?',FALSE)
                       ),
                       conditionalPanel(
                         condition="input['method_varMnp']=='replace'",
                         pickerInput(
                           inputId='mode_replace',
-                          label='字符串位置',
+                          label='location of string',
                           choices = c(
-                            '第一个'='first',
-                            '最后一个'='last',
-                            '所有'='all'
+                            'first'='first',
+                            'last'='last',
+                            'all'='all'
                           ),
                           selected ='first',
                           multiple=FALSE,
                           options = list(`actions-box` = FALSE)
                         ),
-                        textInputAddon('replacement_replace',label='替换的字符串(replacement)',value='',addon=icon('pencil'))
+                        textInputAddon('replacement_replace',label='string replacement',value='',addon=icon('pencil'))
                       ),
                       conditionalPanel(
                         condition = "input['method_varMnp']=='strpad'",
-                        numericInput('width_strpad','补齐的长度',min=0,max=Inf,value=10),
-                        textInputAddon(input='pad_strpad','需要填补的字符串',value='',placeholder = 'eg:0',addon = icon('pencil')),
+                        numericInput('width_strpad','length of padding',min=0,max=Inf,value=10),
+                        textInputAddon(input='pad_strpad','string for padding',value='',placeholder = 'eg:0',addon = icon('pencil')),
                         pickerInput(
                           inputId='side_strpad',
-                          label='补齐方式',
+                          label='way of padding',
                           choices = c(
-                            '左侧补齐'='left',
-                            '右侧补齐'='right',
-                            '双侧补齐'='both'
+                            'left side'='left',
+                            'right side'='right',
+                            'two side'='both'
                           ),
                           selected ='left',
                           multiple=FALSE,
@@ -462,77 +462,77 @@ server<-function(input,output,session){
                       ),
                       conditionalPanel(
                         condition="input['method_varMnp']=='split'",
-                        numericInput('indexSplit_varMnp','选择分隔之后的第n个',value=1,min=1,max=100,step=1)
+                        numericInput('indexSplit_varMnp','which element to choose after splitting',value=1,min=1,max=100,step=1)
                       ),
                       conditionalPanel(
                         condition="input['method_varMnp']=='substr'",
-                        numericInput('from_substr','起始位置',value=1,min=1,max=1000,step=1),
-                        numericInput('to_substr','结束位置',value=1,min=1,max=1000,step=1)
+                        numericInput('from_substr','startting location',value=1,min=1,max=1000,step=1),
+                        numericInput('to_substr','ending location',value=1,min=1,max=1000,step=1)
                       ),
                       
                       conditionalPanel(
                         condition = "input['method_varMnp']=='extract'",
                         pickerInput(
                           inputId='mode_extract',
-                          label='抽取的方式',
+                          label='way of extract',
                           choices = c(
-                            '第一个'='first',
-                            '最后一个'='last',
-                            '所有'='all'
+                            'First one'='first',
+                            'Last one'='last',
+                            'All'='all'
                           ),
                           selected ='first',
                           multiple=FALSE,
                           options = list(`actions-box` = FALSE)
                         ),
-                        textInputAddon(inputId='pattern_extract','输入抽取的字符串',value='',placeholder = 'eg:female',addon = icon('pencil')),
-                        awesomeCheckbox('regex_extract','正则表达式？',FALSE)
+                        textInputAddon(inputId='pattern_extract','string to extract',value='',placeholder = 'eg:female',addon = icon('pencil')),
+                        awesomeCheckbox('regex_extract','Regex expression?',FALSE)
                       ),
                       conditionalPanel(
                         condition="input['method_varMnp']=='paste'",
-                        textInputAddon('pasteSep_varMnp',label='拼接的字符或符号',value='',addon=icon('pencil'))
+                        textInputAddon('pasteSep_varMnp',label='padding strings',value='',addon=icon('pencil'))
                       ),
                       conditionalPanel(
                         condition="input['method_varMnp']=='legalSet'",
                         pickerInput(
                           inputId='legalType_varMnp',
-                          label='设置方法类别',
+                          label='choose validate method',
                           choices=c(
-                            '区间范围'='ranges',
-                            '元素'='elements',
-                            '子字符串'='substrs'
+                            'numeric range'='ranges',
+                            'elements'='elements',
+                            'substrings'='substrs'
                           ),
                           selected ='ranges',
                           multiple=FALSE,
                           options = list(`actions-box` = FALSE)
                         ),
-                        textInputAddon(inputId='legalSet_varMnp',label='设定合法值范围',value='',addon=icon('pencil')),
-                        helpText('合法值范围可以取多个，用";"隔开'),
-                        awesomeCheckbox('regexLegal_varMnp','是否为正则表达式',FALSE)
+                        textInputAddon(inputId='legalSet_varMnp',label='set validate expression',value='',addon=icon('pencil')),
+                        helpText('use ";" if there are more than one validate sets'),
+                        awesomeCheckbox('regexLegal_varMnp','regex expression?',FALSE)
                       ),
                       conditionalPanel(
                         condition="input['method_varMnp']=='reCode'",
                         pickerInput(
                           inputId='reCodeType_varMnp',
-                          label='设置方法类别',
+                          label='choose regroup method',
                           choices=c(
-                            '区间范围'='ranges',
-                            '元素'='elements',
-                            '子字符串'='substrs'
+                            'numeric range'='ranges',
+                            'element'='elements',
+                            'sub string'='substrs'
                           ),
                           selected ='ranges',
                           multiple=FALSE,
                           options = list(`actions-box` = FALSE)
                         ),
-                        textInputAddon(inputId='reGroup_varMnp',label='设定分组',value='',addon=icon('pencil')),
-                        textInputAddon(inputId='reGroupLabel_varMnp',label='设定分组标签',value='',addon=icon('pencil')),
-                        textInputAddon(inputId='reGroupOther_varMnp',label='设定其他组(未定义组)分组标签',value='Others',addon=icon('pencil'))
+                        textInputAddon(inputId='reGroup_varMnp',label='set grouping expression',value='',addon=icon('pencil')),
+                        textInputAddon(inputId='reGroupLabel_varMnp',label='set grouping labels',value='',addon=icon('pencil')),
+                        textInputAddon(inputId='reGroupOther_varMnp',label='set label for unincluded grouping',value='Others',addon=icon('pencil'))
                       )
                 )
               ),
               conditionalPanel(
                 condition = "input['usemyFun_varMnp']",
-                textInputAddon(inputId = "fun_varMnp", label = "输入自定义的函数", placeholder = "eg:myfun",value='',addon = icon("pencil")),
-                helpText('此处提供自定义函数，函数写法和R中自定义函数一致，如:funtion(x)sd(x)/mean(x)')
+                textInputAddon(inputId = "fun_varMnp", label = "user defined function", placeholder = "eg:myfun",value='',addon = icon("pencil")),
+                helpText('same as function in R, eg. funtion(x)sd(x)/mean(x)')
               )
         )
       ),
@@ -540,19 +540,19 @@ server<-function(input,output,session){
       conditionalPanel(
         condition="input['type_varMnp']=='noDep'",
         panel(status='primary',
-              heading='生成新变量的代码',
-              textInputAddon('creatVar_varMnp',label='输入生成的新变量的代码',value='',addon=icon('pencil'))
+              heading='user defined expression',
+              textInputAddon('creatVar_varMnp',label='expression in R code',value='',addon=icon('pencil'))
         )
       ),
       
       panel(status='primary',
-            heading='设定新变量名',
-            textInputAddon(inputId='varNewName_varMnp',label='输入新变量的名称',placeholder='eg:newVar1',value='',addon=icon('pencil')),
-            helpText('变量名如果留空，则默认将原始变量名增加"_new"作为新变量名称，若原始变量数量大于1，则默认用第一个变量名')
+            heading='set new var name',
+            textInputAddon(inputId='varNewName_varMnp',label='new var name',placeholder='eg:newVar1',value='',addon=icon('pencil')),
+            helpText('the new var name is original var name + _new as new var name when nothing specified here')
       ),
       panel(status='primary',
-            heading='保存数据集',
-            textInputAddon(inputId='dataName_varMnp',label='保存的数据名称',value='',placeholder = 'eg:data_newVarMnp',addon=icon('pencil'))
+            heading='save data set',
+            textInputAddon(inputId='dataName_varMnp',label='new data name',value='',placeholder = 'eg:data_newVarMnp',addon=icon('pencil'))
       )
     )
   })
@@ -742,10 +742,10 @@ server<-function(input,output,session){
     #?#
     list(
       panel(status='primary',
-            heading='选择数据集',
+            heading='choose data set',
             pickerInput(
               inputId = "dataSel_varClass",
-              label = "选择数据集",
+              label = "choose data",
               choices = ls(envMadis)[-which(ls(envMadis)%in%c('envMadis','server','ui','LstMadis'))],
               selected =ls(envMadis)[-which(ls(envMadis)%in%c('envMadis','server','ui','LstMadis'))][1],
               multiple = FALSE,
@@ -767,19 +767,19 @@ server<-function(input,output,session){
   output$more2_varClass<-renderUI({
     list(
       panel(status='primary',
-            heading='变量类型转换',
-            awesomeCheckbox('auto_varClass','是否进行自动判断？',TRUE),
+            heading='change var mode',
+            awesomeCheckbox('auto_varClass','automatic processing?',TRUE),
             conditionalPanel(
               condition="input['auto_varClass']",
-              numericInput('lengthTab','唯一元素数目',min=1,max=1000,value=10),
-              numericInput('threshold','阈值',min=0,max=1,value=0.8)
+              numericInput('lengthTab','number of unique values',min=1,max=1000,value=10),
+              numericInput('threshold','set threshold',min=0,max=1,value=0.8)
               
             ),
             conditionalPanel(
               condition="!input['auto_varClass']",
               pickerInput(
                 inputId='varsNum_varClass',
-                label='转换为数值型变量',
+                label='vars as numerical',
                 choices=names(data_varClass()),
                 #selected =names(data_varClass())[1],
                 multiple=TRUE,
@@ -787,17 +787,17 @@ server<-function(input,output,session){
               ),
               pickerInput(
                 inputId='varsChar_varClass',
-                label='转换为字符型变量',
+                label='vars as character strings',
                 choices=names(data_varClass()),
                 #selected =names(data_varClass())[1],
                 multiple=TRUE,
                 options = list(`actions-box` = TRUE)
               ),
               panel(status='primary',
-                    heading='日期时间转换设置',
+                    heading='change into date',
                     pickerInput(
                       inputId='varsDate_varClass',
-                      label='转换为日期型变量',
+                      label='vars as Date',
                       choices=names(data_varClass()),
                       #selected =names(data_varClass())[1],
                       multiple=TRUE,
@@ -805,29 +805,29 @@ server<-function(input,output,session){
                     ),
                     pickerInput(
                       inputId='dateFormat',
-                      label='日期格式',
+                      label='date format',
                       choices=c(
-                        '年'='y',
-                        '年月'='ym',
-                        "年月日"="ymd",
-                        '月日年'='mdy',
-                        '日月年'='dmy'
+                        'year'='y',
+                        'year mon'='ym',
+                        "ymd"="ymd",
+                        'mdy'='mdy',
+                        'dmy'='dmy'
                       ),
-                      selected ='yyyymmdd',
+                      selected ='ymd',
                       multiple=FALSE,
                       options=list(`actions-box` = FALSE)
                     ),
                     
                     pickerInput(
                       inputId='timeFormat',
-                      label='时间格式',
+                      label='time format',
                       choices=c(
-                        '无'='',
-                        '时'='H',
-                        "时分"="HM",
-                        '时分秒'='HMS'
+                        'no'='',
+                        'hour'='H',
+                        "HM"="HM",
+                        'HMS'='HMS'
                       ),
-                      selected ='yyyymmdd',
+                      selected ='HMS',
                       multiple=FALSE,
                       options=list(`actions-box` = FALSE)
                     )
@@ -836,8 +836,8 @@ server<-function(input,output,session){
               
               pickerInput(
                 inputId='varsOrder_varClass',
-                label='转换为有序型变量',
-                choices=c('无'='',names(data_varClass())),
+                label='vars as ordered factors',
+                choices=c('no'='',names(data_varClass())),
                 #selected =names(data_varClass())[1],
                 multiple=FALSE,
                 options = list(`actions-box` = FALSE)
@@ -856,14 +856,14 @@ server<-function(input,output,session){
         condition = "input['varsOrder_varClass']!=''",
         selectizeInput(
           inputId="order_varsOrder",
-          label='有序变量各水平排序',
+          label='squence of ordered levels',
           choices=chcs,
           multiple=TRUE
         )
       ),
       panel(status='primary',
-            heading='保存数据集',
-            textInputAddon(inputId='dataName_varClass',label='保存的数据名称',value='',placeholder = 'eg:data_newVarType',addon=icon('pencil'))
+            heading='save data set',
+            textInputAddon(inputId='dataName_varClass',label='new data name',value='',placeholder = 'eg:data_newVarType',addon=icon('pencil'))
       )
     )
   })
@@ -955,10 +955,10 @@ server<-function(input,output,session){
     #?#
     list(
       panel(status='primary',
-            heading='选择数据集',
+            heading='choose data set',
             pickerInput(
               inputId = "dataSel_reshape",
-              label = "选择数据集",
+              label = "choose data",
               choices = ls(envMadis)[-which(ls(envMadis)%in%c('envMadis','server','ui','LstMadis'))],
               selected =ls(envMadis)[-which(ls(envMadis)%in%c('envMadis','server','ui','LstMadis'))][1],
               multiple = FALSE,
@@ -981,13 +981,13 @@ server<-function(input,output,session){
     data_reshape()->dat
     list(
       panel(status='primary',
-            heading='选择转换方式',
+            heading='way of reshaping',
             pickerInput(
               inputId='reshapeMethod',
-              label='选择转换方式',
+              label='choose method',
               choices=c(
-                '行转列'='melt',
-                '列转行'='cast'
+                'Melt'='melt',
+                'Cast'='cast'
               ),
               selected ='melt',
               multiple=FALSE,
@@ -997,10 +997,10 @@ server<-function(input,output,session){
       conditionalPanel(
         condition = "input['reshapeMethod']=='melt'",
         panel(status='primary',
-              heading='设定行转列(melt)方法的各个参数',
+              heading='set melting args',
               pickerInput(
                 inputId='idVars',
-                label='选择ID变量',
+                label='choose id vars',
                 choices=names(dat),
                 #selected =names(dat)[1],
                 multiple=TRUE,
@@ -1008,26 +1008,26 @@ server<-function(input,output,session){
               ),
               pickerInput(
                 inputId='measureVars',
-                label='选择测量变量',
+                label='choose measure vars',
                 choices=names(dat),
                 #selected =names(dat)[1],
                 multiple=TRUE,
                 options = list(`actions-box` = TRUE)
               ),
-              textInputAddon(inputId = "varName_melt", label = "设定变量名称", placeholder = "eg:variable",value='variable',addon = icon("pencil")),
+              textInputAddon(inputId = "varName_melt", label = "set var name", placeholder = "eg:variable",value='variable',addon = icon("pencil")),
               flowLayout(
-                awesomeCheckbox('naRm_melt','排除缺失值',FALSE),
-                awesomeCheckbox('facsAsStrs_melt','因子转化成字符',TRUE)
+                awesomeCheckbox('naRm_melt','remove na values?',FALSE),
+                awesomeCheckbox('facsAsStrs_melt','factors as strings?',TRUE)
               )
         )
       ),
       conditionalPanel(
         condition="input['reshapeMethod']=='cast'",
         panel(status='primary',
-              heading='设定列转行方法(dcast)的各个参数',
+              heading='set dcast args',
               pickerInput(
                 inputId='lhs_cast',
-                label='选择左变量',
+                label='choose lhs var',
                 choices=names(dat),
                 #selected =names(dat)[1],
                 multiple=TRUE,
@@ -1035,7 +1035,7 @@ server<-function(input,output,session){
               ),
               pickerInput(
                 inputId='rhs_cast',
-                label='选择右变量',
+                label='choose right var',
                 choices=names(dat),
                 #selected =names(dat)[1],
                 multiple=TRUE,
@@ -1043,23 +1043,23 @@ server<-function(input,output,session){
               ),
               pickerInput(
                 inputId='valueVar_cast',
-                label='选择值变量',
+                label='choose value var',
                 choices=names(dat),
                 #selected =names(dat)[1],
                 multiple=TRUE,
                 options = list(`actions-box` = TRUE)
               ),
-              textInputAddon(inputId='argsMore_cast','其他参数(参考dcast)',value='',placeholder = 'eg:drop=TRUE',addon = icon("pencil")),
+              textInputAddon(inputId='argsMore_cast','more args, see help(dcast)',value='',placeholder = 'eg:drop=TRUE',addon = icon("pencil")),
               pickerInput(
                 inputId='fnAggre',
-                label='选择合并函数',
+                label='choose aggregating function',
                 choices=c(
-                  '最小值'='min',
-                  '最大值'='max',
-                  '平均值'='mean',
-                  '中位数'='median',
-                  '标准差'='sd',
-                  '自定义函数'='myFun'
+                  'minimum value'='min',
+                  'maximum value'='max',
+                  'mean'='mean',
+                  'median'='median',
+                  'standard deviation'='sd',
+                  'user defined function'='myFun'
                 ),
                 selected ='min',
                 multiple=FALSE,
@@ -1067,13 +1067,13 @@ server<-function(input,output,session){
               ),
               conditionalPanel(
                 condition = "input['fnAggre']=='myFun'",
-                textInputAddon(inputId='myFunAggre','输入自定义函数',value='',placeholder = 'eg:function(x)mean(x)',addon = icon("pencil"))
+                textInputAddon(inputId='myFunAggre','write your own function',value='',placeholder = 'eg:function(x)mean(x)',addon = icon("pencil"))
               )
         )
       ),
       panel(status='primary',
-            heading='保存数据',
-            textInputAddon(inputId='dataName_reshape','保存为对象名称',value='',placeholder = 'eg:data_reshape',addon = icon("pencil"))
+            heading='save data set',
+            textInputAddon(inputId='dataName_reshape','new data name',value='',placeholder = 'eg:data_reshape',addon = icon("pencil"))
             
       )
     )
@@ -1159,10 +1159,10 @@ server<-function(input,output,session){
     #?#
     list(
       panel(status='primary',
-            heading='选择处理的数据集',
+            heading='choose data set',
             pickerInput(
               inputId = "dataSel_unique",
-              label = "选择数据集",
+              label = "choose data",
               choices = ls(envMadis)[-which(ls(envMadis)%in%c('envMadis','server','ui','LstMadis'))],
               selected =ls(envMadis)[-which(ls(envMadis)%in%c('envMadis','server','ui','LstMadis'))][1],
               multiple = FALSE,
@@ -1183,8 +1183,8 @@ server<-function(input,output,session){
   
   output$more2_unique<-renderUI({
     panel(status='primary',
-          heading='设定数据集名称',
-          textInputAddon('dataName_unique','输入保存的数据集名称',value='',placeholder = 'eg:dataUnique',addon = icon('pencil'))
+          heading='set data name',
+          textInputAddon('dataName_unique','new data name',value='',placeholder = 'eg:dataUnique',addon = icon('pencil'))
     )
   })
   
@@ -1224,10 +1224,10 @@ server<-function(input,output,session){
     #?#
     list(
       panel(status='primary',
-            heading='选择需要合并的数据集',
+            heading='choose datas to merge or bind',
             pickerInput(
               inputId = "dataSel1_dataMerge",
-              label = "选择数据集1",
+              label = "choose the 1st data",
               choices = ls(envMadis)[-which(ls(envMadis)%in%c('envMadis','server','ui','LstMadis'))],
               selected =ls(envMadis)[-which(ls(envMadis)%in%c('envMadis','server','ui','LstMadis'))][1],
               multiple = FALSE,
@@ -1235,7 +1235,7 @@ server<-function(input,output,session){
             ),
             pickerInput(
               inputId = "dataSel2_dataMerge",
-              label = "选择数据集2",
+              label = "choose the 2nd data",
               choices = ls(envMadis)[-which(ls(envMadis)%in%c('envMadis','server','ui','LstMadis'))],
               selected =ls(envMadis)[-which(ls(envMadis)%in%c('envMadis','server','ui','LstMadis'))][1],
               multiple = FALSE,
@@ -1262,13 +1262,13 @@ server<-function(input,output,session){
     
     list(
       panel(status='primary',
-            heading="选择合并的方式",
+            heading="merge or bind",
             pickerInput(
               inputId='method_dataMerge',
-              label="合并方式",
+              label="bind & join",
               choices=c(
-                '链接(Join)'='Merge',
-                '合并(Bind)'='Bind'
+                'merging'='Merge',
+                'binding'='Bind'
               ),
               selected ='Merge',
               multiple=FALSE,
@@ -1277,17 +1277,17 @@ server<-function(input,output,session){
       ),
       
       panel(status='primary',
-            heading='设定合并的相关参数',
+            heading='set args',
             conditionalPanel(
               condition="input['method_dataMerge']=='Merge'",
               pickerInput(
                 inputId='joinMethod',
-                label='选择链接方式',
+                label='choose mrege method',
                 choices=c(
-                  '左链接'='left',
-                  '右链接'='right',
-                  '内链接'='inner',
-                  '全链接'='full'
+                  'left join'='left',
+                  'right join'='right',
+                  'inner join'='inner',
+                  'full join'='full'
                 ),
                 selected ='left',
                 multiple=FALSE,
@@ -1295,40 +1295,40 @@ server<-function(input,output,session){
               ),
               selectizeInput(
                 inputId='byX',
-                label='选择数据集1的链接变量',
+                label='choose join by vars of 1st dta',
                 choices=names(dat1),
                 multiple=T#,
                 #options = list(`actions-box` = FALSE)
               ),
               selectizeInput(
                 inputId='byY',
-                label='选择数据集2的链接变量',
+                label='choose join by vars of 2nd dta',
                 choices=names(dat2),
                 multiple=T#,
                 #options = list(`actions-box` = FALSE)
               ),
-              awesomeCheckbox('sortMerge','对数据重新排序？',FALSE)
+              awesomeCheckbox('sortMerge','sort joined data?',FALSE)
             ),
             conditionalPanel(
               condition = "input['method_dataMerge']=='Bind'",
               pickerInput(
                 inputId='bindMethod',
-                label='合并的方式',
+                label='method of bind',
                 choices=c(
-                  '上下合并'='rBind',
-                  '左右合并'='cBind'
+                  'row bind'='rBind',
+                  'column bind'='cBind'
                 ),
                 selected ='rBind',
                 multiple=FALSE,
                 options = list(`actions-box` = FALSE)
-              ),
-              helpText('注意，上下合并，要求两数据变量名完全一致，左右合并要求量数据行数相等')
+              )#,
+              # helpText('注意，上下合并，要求两数据变量名完全一致，左右合并要求量数据行数相等')
             )
             
       ),
       panel(status='primary',
-            heading='设定新数据集的名称',
-            textInputAddon(inputId='dataName_dataMerge',label='数据集名称',value='',placeholder = 'eg:data_Bind',addon = icon('pencil'))
+            heading='set data name',
+            textInputAddon(inputId='dataName_dataMerge',label='new data name',value='',placeholder = 'eg:data_Bind',addon = icon('pencil'))
       )
     )
   })
@@ -1397,10 +1397,10 @@ server<-function(input,output,session){
     #?#
     list(
       panel(status='primary',
-            heading='选择处理的数据集',
+            heading='choose data set',
             pickerInput(
               inputId = "dataSel_naImpute",
-              label = "选择数据集",
+              label = "choose data",
               choices = ls(envMadis)[-which(ls(envMadis)%in%c('envMadis','server','ui','LstMadis'))],
               selected =ls(envMadis)[-which(ls(envMadis)%in%c('envMadis','server','ui','LstMadis'))][1],
               multiple = FALSE,
@@ -1423,10 +1423,10 @@ server<-function(input,output,session){
     data_naImpute()->dat
     list(
       panel(status='primary',
-            heading='选择填补的变量',
+            heading='choose imputed vars',
             pickerInput(
               inputId='var_naImpute',
-              label='选择变量',
+              label='choose imputed vars',
               choices = names(dat),
               selected =names(dat)[1],
               multiple=TRUE,
@@ -1434,20 +1434,20 @@ server<-function(input,output,session){
             )
       ),
       panel(status='primary',
-            heading='选择填补方法',
+            heading='choose impute method',
             pickerInput(
               inputId='method_impute',
-              label='选择填补方法',
+              label='impute method',
               choices = c(
-                '均值{数值型}'='mean',
-                '中位数{数值型}'='median',
-                '最小值{数值型}'='min',
-                '最大值{数值型}'='max',
-                '众数{数值型或字符型}'='most',
-                '随机抽取{数值型或字符型}'='random',
+                'mean{numeric vars}'='mean',
+                'median{numeric vars}'='median',
+                'minimum value{numeric vars}'='min',
+                'maximum value{numeric vars}'='max',
+                'mode{numeric or character}'='most',
+                'samplling{numeric or character}'='random',
                 # '树模型填补'='treeImpute',
-                'MICE模型填补'='MICE',
-                '自定义方法'='myFun'
+                'MICE{from mice package}'='MICE',
+                'user defined function'='myFun'
               ),
               selected ='mean',
               multiple=FALSE,
@@ -1455,13 +1455,13 @@ server<-function(input,output,session){
             ),
             conditionalPanel(
               condition = "input['method_impute']=='myFun'",
-              textInputAddon(inputId='funImpute',label='自定义填补函数',value='',placeholder = 'eg:function(x)mean(x)',addon = icon('pencil'))
+              textInputAddon(inputId='funImpute',label='write your own function',value='',placeholder = 'eg:function(x)mean(x)',addon = icon('pencil'))
             ),
             conditionalPanel(
               condition = "input['method_impute']=='treeImpute'",
               pickerInput(
                 inputId='var_treeModel',
-                label='选择纳入模型的变量',
+                label='choose vars in tree model',
                 choices = names(dat),
                 selected =names(dat)[1],
                 multiple=TRUE,
@@ -1469,10 +1469,10 @@ server<-function(input,output,session){
               ),
               pickerInput(
                 inputId='method_impute',
-                label='选择填补方法',
+                label='set pred method',
                 choices = c(
-                  '随机抽样'='sample',
-                  '模型预测'='pred'
+                  'sampling'='sample',
+                  'predict'='pred'
                 ),
                 selected ='sample',
                 multiple=FALSE,
@@ -1485,7 +1485,7 @@ server<-function(input,output,session){
               condition = "input['method_impute']=='MICE'",
               pickerInput(
                 inputId='method_MICE',
-                label='选择MICE方法',
+                label='choose mice method',
                 choices = c(
                   'pmm',
                   'cart',
@@ -1520,13 +1520,13 @@ server<-function(input,output,session){
       ),
       conditionalPanel(
         condition = "input['method_impute']=='random'",
-        awesomeCheckbox('rep_naImpute','重复抽样？',TRUE)
+        awesomeCheckbox('rep_naImpute','resampling?',TRUE)
       ),
       conditionalPanel(
         condition = "input['method_impute']!='treeImpute'",
         panel(status='primary',
-              heading='保存填补后的变量',
-              textInputAddon(inputId='varName_naImpute',label='保存为新的变量名',value='',placeholder = 'eg:varImputed',addon = icon('pencil'))
+              heading='save imputed vars',
+              textInputAddon(inputId='varName_naImpute',label='new var name',value='',placeholder = 'eg:varImputed',addon = icon('pencil'))
         )
         #awesomeCheckbox('rep_naImpute','重复抽样？',TRUE)
       )
@@ -1627,10 +1627,10 @@ server<-function(input,output,session){
     #?#
     list(
       panel(status='primary',
-            heading='选择处理的数据集',
+            heading='choose data set',
             pickerInput(
               inputId = "dataSel_dataFilter",
-              label = "选择数据集",
+              label = "choose data",
               choices = ls(envMadis)[-which(ls(envMadis)%in%c('envMadis','server','ui','LstMadis'))],
               selected =ls(envMadis)[-which(ls(envMadis)%in%c('envMadis','server','ui','LstMadis'))][1],
               multiple = FALSE,
@@ -1653,13 +1653,13 @@ server<-function(input,output,session){
     data_dataFilter()->dat
     list(
       panel(status='primary',
-            heading='选择筛选方法及参数',
+            heading='choose sub data',
             pickerInput(
               inputId='method_dataFilter',
-              label='选择筛选方法',
+              label='method for subsetting data',
               choices = c(
-                '筛选变量'='vars_dataFilter',
-                '筛选子集'='subset_dataFilter'
+                'subsetting data by vars'='vars_dataFilter',
+                'subsetting data by rows'='subset_dataFilter'
               ),
               selected ='vars_dataFilter',
               multiple = FALSE,
@@ -1669,7 +1669,7 @@ server<-function(input,output,session){
               condition = "input['method_dataFilter']=='vars_dataFilter'",
               pickerInput(
                 inputId='varsKeep_dataFilter',
-                label='选择保留的变量',
+                label='choose vars to keep',
                 choices = names(dat),
                 selected =names(dat),
                 multiple = TRUE,
@@ -1680,10 +1680,10 @@ server<-function(input,output,session){
               condition = "input['method_dataFilter']=='subset_dataFilter'",
               pickerInput(
                 inputId='methodSubset_dataFilter',
-                label='筛选子集的方法',
+                label='way of row subsetting',
                 choices = c(
-                  '保留数据行'='rows_dataFilter',
-                  '按照逻辑表达式'='subsetExp_dataFilter'
+                  'select rows by numbers'='rows_dataFilter',
+                  'select rows by logic expression'='subsetExp_dataFilter'
                 ),
                 selected ='rows_dataFilter',
                 multiple = FALSE,
@@ -1691,18 +1691,18 @@ server<-function(input,output,session){
               ),
               conditionalPanel(
                 condition = "input['methodSubset_dataFilter']=='rows_dataFilter'",
-                numericInput('startRow_dataFilter','输入起始行',min=1,max=Inf,value=1),
-                numericInput('endRow_dataFilter','输入结束行',min=1,max=Inf,value=nrow(dat))
+                numericInput('startRow_dataFilter','start row number',min=1,max=Inf,value=1),
+                numericInput('endRow_dataFilter','end row number',min=1,max=Inf,value=nrow(dat))
               ),
               conditionalPanel(
                 condition = "input['methodSubset_dataFilter']=='subsetExp_dataFilter'",
-                textInputAddon(inputId='textSubset_dataFilter','输入逻辑表达式',value='',placeholder = 'eg:age>10&sex==1',addon = icon('pencil'))
+                textInputAddon(inputId='textSubset_dataFilter','logic expression',value='',placeholder = 'eg:age>10&sex==1',addon = icon('pencil'))
               )
             )
       ),
       panel(status='primary',
-            heading='设定数据集名称',
-            textInputAddon(inputId='dataName_dataFilter',label='设定数据集的名称',value='',placeholder = 'eg:dataFilter',addon = icon('pencil'))
+            heading='set data name',
+            textInputAddon(inputId='dataName_dataFilter',label='data name',value='',placeholder = 'eg:dataFilter',addon = icon('pencil'))
       )
     )
   })
@@ -1759,10 +1759,10 @@ server<-function(input,output,session){
     #?#
     list(
       panel(status='primary',
-            heading='选择处理的数据集',
+            heading='choose data set',
             pickerInput(
               inputId = "dataSel_dataExpt",
-              label = "选择数据集",
+              label = "choose data",
               choices = ls(envMadis)[-which(ls(envMadis)%in%c('envMadis','server','ui','LstMadis'))],
               selected =ls(envMadis)[-which(ls(envMadis)%in%c('envMadis','server','ui','LstMadis'))][1],
               multiple = FALSE,
@@ -1784,14 +1784,14 @@ server<-function(input,output,session){
   output$more2_dataExpt<-renderUI({
     list(
       panel(status='primary',
-            heading='保存的数据格式',
+            heading='file format',
             pickerInput(
               inputId='dataType_dataExpt',
-              label='选择数据格式',
+              label='file format',
               choices = c(
-                '文本数据'='txtFile_dataExpt',
-                'csv数据'='csvFile_dataExpt',
-                'R数据文件'='RData_dataExpt'
+                'txt file'='txtFile_dataExpt',
+                'csv file'='csvFile_dataExpt',
+                'Rdata file'='RData_dataExpt'
               ),
               selected ='csvFile_dataExpt',
               multiple = FALSE,
@@ -1799,17 +1799,17 @@ server<-function(input,output,session){
             )
       ),
       panel(status='primary',
-            heading='设定参数',
+            heading='args',
             conditionalPanel(
               condition = "input['dataType_dataExpt']=='txtFile_dataExpt'||input['dataType_dataExpt']=='csvFile_dataExpt'",
-              awesomeCheckbox('quote_dataExpt','字符类型是否带引号',FALSE),
+              awesomeCheckbox('quote_dataExpt','quote',FALSE),
               pickerInput(
                 inputId='sep_dataExpt',
-                label='文件分隔符',
+                label='field separator',
                 choices = c(
-                  '逗号分隔'=',',
-                  '制表符分隔'='\t',
-                  '空格分隔'=' '
+                  ','=',',
+                  'tab'='\t',
+                  'white space'=' '
                 ),
                 selected =',',
                 multiple = FALSE,
@@ -1821,10 +1821,10 @@ server<-function(input,output,session){
               ),
               pickerInput(
                 inputId='fileEncoding_dataExpt',
-                label='字符集编码',
+                label='file encoding',
                 choices = c(
-                  '国标(GB18030)'='GB18030',
-                  'UTF8编码'='utf8'
+                  'GB18030'='GB18030',
+                  'UTF8'='utf8'
                 ),
                 selected ='GB18030',
                 multiple = FALSE,
@@ -1834,12 +1834,12 @@ server<-function(input,output,session){
             
             conditionalPanel(
               condition = "input['dataType_dataExpt']=='RData_dataExpt'",
-              awesomeCheckbox('ascii_dataExpt','是否保存为ASCII格式？',FALSE)
+              awesomeCheckbox('ascii_dataExpt','ASCII?',FALSE)
             )
       ),
       panel(status='primary',
-            heading='设定文件名称',
-            textInputAddon(inputId='fileName_dataExpt','保存的文件名称',value='',placeholder = 'eg:myData',addon = icon('pencil'))
+            heading='set file name',
+            textInputAddon(inputId='fileName_dataExpt','file name',value='',placeholder = 'eg:myData',addon = icon('pencil'))
       )
     )
   })
@@ -1930,10 +1930,10 @@ server<-function(input,output,session){
     
     list(
       panel(status='primary',
-            heading='选择处理的数据集',
+            heading='choose data set',
             pickerInput(
               inputId = "dataSel_myTable",
-              label = "选择数据集",
+              label = "choose data",
               choices = ls(envMadis)[-which(ls(envMadis)%in%c('envMadis','server','ui','LstMadis'))],
               selected =ls(envMadis)[-which(ls(envMadis)%in%c('envMadis','server','ui','LstMadis'))][1],
               multiple = FALSE,
@@ -1954,10 +1954,10 @@ server<-function(input,output,session){
   output$more2_myTable<-renderUI({
     list(
       panel(status='primary',
-            heading='选择分组的变量',
+            heading='choost group vars',
             pickerInput(
               inputId='lht_myTable',
-              label='选择变量',
+              label='choose group vars',
               choices = c('无'='',names(data_myTable())),
               selected='',
               multiple = TRUE,
@@ -1966,21 +1966,21 @@ server<-function(input,output,session){
             
             pickerInput(
               inputId='rht_myTable',
-              label='选择统计的变量',
+              label='choose statisc vars',
               choices = names(data_myTable()),
               selected='',
               multiple = TRUE,
               options = list(`actions-box` = TRUE)
             )
       ),
-      awesomeCheckbox('export_myTable','将该结果输出报告',FALSE)
+      awesomeCheckbox('export_myTable','export to report?',FALSE)
     )
   })
   
   output$more3_myTable<-renderUI({
     list(
       panel(
-        heading='分类统计表的结果',
+        heading='table 1',
         dataTableOutput('res_myTable'),
         status='primary'
       )
@@ -2043,10 +2043,10 @@ server<-function(input,output,session){
     
     list(
       panel(status='primary',
-            heading='选择处理的数据集',
+            heading='choose data set',
             pickerInput(
               inputId = "dataSel_myGplt",
-              label = "选择数据集",
+              label = "choose data",
               choices = ls(envMadis)[-which(ls(envMadis)%in%c('envMadis','server','ui','LstMadis'))],
               selected =ls(envMadis)[-which(ls(envMadis)%in%c('envMadis','server','ui','LstMadis'))][1],
               multiple = FALSE,
@@ -2068,11 +2068,11 @@ server<-function(input,output,session){
     list(
       panel(status='primary',
             flowLayout(
-              heading='选择作图各属性参数(aes)',
+              heading='set aes in ggplot2',
               pickerInput(
                 inputId='xvar_myGplt',
-                label='选择x轴变量',
-                choices = c('无'='NULL',names(data_myGplt())),
+                label='choose x var',
+                choices = c('NULL'='NULL',names(data_myGplt())),
                 selected='NULL',
                 multiple = FALSE,
                 options = list(`actions-box` = FALSE)
@@ -2080,8 +2080,8 @@ server<-function(input,output,session){
               
               pickerInput(
                 inputId='yvar_myGplt',
-                label='选择y轴变量',
-                choices = c('无'='NULL',names(data_myGplt())),
+                label='choose y var',
+                choices = c('NULL'='NULL',names(data_myGplt())),
                 selected='NULL',
                 multiple = FALSE,
                 options = list(`actions-box` = FALSE)
@@ -2089,8 +2089,8 @@ server<-function(input,output,session){
               
               pickerInput(
                 inputId='size_myGplt',
-                label='设定点或线的大小',
-                choices = c('无'='NULL',names(data_myGplt())),
+                label='choose size var',
+                choices = c('NULL'='NULL',names(data_myGplt())),
                 selected='NULL',
                 multiple = FALSE,
                 options = list(`actions-box` = FALSE)
@@ -2098,8 +2098,8 @@ server<-function(input,output,session){
               
               pickerInput(
                 inputId='color_myGplt',
-                label='设定点线颜色',
-                choices = c('无'='NULL',names(data_myGplt())),
+                label='choose colour var',
+                choices = c('NULL'='NULL',names(data_myGplt())),
                 selected='NULL',
                 multiple = FALSE,
                 options = list(`actions-box` = FALSE)
@@ -2107,8 +2107,8 @@ server<-function(input,output,session){
               
               pickerInput(
                 inputId='fill_myGplt',
-                label='设定面的填充',
-                choices = c('无'='NULL',names(data_myGplt())),
+                label='choose fill var',
+                choices = c('NULL'='NULL',names(data_myGplt())),
                 selected='NULL',
                 multiple = FALSE,
                 options = list(`actions-box` = FALSE)
@@ -2116,8 +2116,8 @@ server<-function(input,output,session){
               
               pickerInput(
                 inputId='shape_myGplt',
-                label='设定形状',
-                choices = c('无'='NULL',names(data_myGplt())),
+                label='choose shape var',
+                choices = c('NULL'='NULL',names(data_myGplt())),
                 selected='NULL',
                 multiple = FALSE,
                 options = list(`actions-box` = FALSE)
@@ -2125,14 +2125,14 @@ server<-function(input,output,session){
               
               pickerInput(
                 inputId='alpha_myGplt',
-                label='设定透明度',
-                choices = c('无'='NULL',names(data_myGplt())),
+                label='choose alpha var',
+                choices = c('NULL'='NULL',names(data_myGplt())),
                 selected='NULL',
                 multiple = FALSE,
                 options = list(`actions-box` = FALSE)
               )
             ),
-            awesomeCheckbox('export_myGplt','将该结果输出报告',FALSE)
+            awesomeCheckbox('export_myGplt','export to report?',FALSE)
       )
     )
   })
@@ -2141,31 +2141,31 @@ server<-function(input,output,session){
     list(
       tabsetPanel(
         tabPanel(
-          title='ggplot结果',
+          title='ggplot graph',
           plotOutput('ggplot_myGplt',height='700px'),
           status='primary'
         ),
         tabPanel(
-          'plotly结果',
+          'plotly graph',
           plotlyOutput('plotly_myGplt',height='700px'),
           status='primary'
         )
       ),
       tabsetPanel(
         tabPanel(
-          '调整可变属性',
+          'other args',
           flowLayout(
             pickerInput(
               inputId='geom_myGplt',
-              label='选择图层',
+              label='choose layer',
               choices = c(
-                '箱图'='box',
-                '直方图'='hist',
-                '条图'='bar',
-                '线图'='line',
-                'Jitter图'='jitter',
-                '散点图'='point',
-                '平滑曲线'='smooth'
+                'box plot'='box',
+                'histogram'='hist',
+                'barplot'='bar',
+                'line'='line',
+                'Jitter'='jitter',
+                'scatter'='point',
+                'smooth line'='smooth'
               ),
               selected='box',
               multiple = TRUE,
@@ -2176,12 +2176,12 @@ server<-function(input,output,session){
             #   condition = "'smooth'%in%input['geom_myGplt']",
             pickerInput(
               inputId='smoothMethod_myGplt',
-              label='选择平滑曲线函数',
+              label='choose smoothing method',
               choices = c(
-                '线性回归'='lm',
-                'GAM模型'='gam',
-                'GLM模型'='glm',
-                '局部回归'='loess'
+                'linear model'='lm',
+                'GAM model'='gam',
+                'GLM model'='glm',
+                'loess'='loess'
               ),
               selected='lm',
               multiple = FALSE,
@@ -2193,9 +2193,9 @@ server<-function(input,output,session){
             #   condition = "'bar'%in%input['geom_myGplt']",
             pickerInput(
               inputId='barPos_myGplt',
-              label='条图呈现方式',
+              label='position for bar plot',
               choices = c(
-                '堆叠'='stack',
+                'Stack'='stack',
                 'Dodge'='dodge'
               ),
               selected='dodge',
@@ -2207,7 +2207,7 @@ server<-function(input,output,session){
             
             pickerInput(
               inputId='theme_myGplt',
-              label='主题配色',
+              label='set theme',
               choices = c(
                 'Dark'='dark',
                 'Classic'='classic',
@@ -2221,48 +2221,48 @@ server<-function(input,output,session){
             
             pickerInput(
               inputId='facetVar_myGplt',
-              label='选择分层作图变量',
-              choices = c('无'='NULL',names(data_myGplt())),
+              label='choose facet vars',
+              choices = c('NULL'='NULL',names(data_myGplt())),
               selected='NULL',
               multiple = TRUE,
               options = list(`actions-box` = TRUE)
             ),
             
-            textInputAddon(inputId='labx_myGplt','设定x轴标题',value='',placeholder = 'eg:x title for my graph',addon = icon('pencil')),
-            textInputAddon(inputId='laby_myGplt','设定y轴标题',value='',placeholder = 'eg:y title for my graph',addon = icon('pencil')),
-            textInputAddon(inputId='title_myGplt','设定图标题',value='',placeholder = 'eg:my graph',addon = icon('pencil'))
+            textInputAddon(inputId='labx_myGplt','set x label',value='',placeholder = 'eg:x title for my graph',addon = icon('pencil')),
+            textInputAddon(inputId='laby_myGplt','set y label',value='',placeholder = 'eg:y title for my graph',addon = icon('pencil')),
+            textInputAddon(inputId='title_myGplt','set title',value='',placeholder = 'eg:my graph',addon = icon('pencil'))
             
           )
         ),
         tabPanel(
-          '设定固定属性',
+          'set fixed attribute',
           flowLayout(
             # conditionalPanel(
             #   condition = "'hist'%in%input['geom_myGplt']",
             numericInput(
               inputId = 'Bins_myGplt',
-              label='直方图宽度',
+              label='bins of hist',
               min=1,
               val=10,
               step=1
             ),
             # ),
             textInputAddon(
-              inputId='Colour_myGplt','设定点及线的整体颜色',value='NULL',placeholder = 'eg:red',addon = icon('pencil')
+              inputId='Colour_myGplt','set colour',value='NULL',placeholder = 'eg:red',addon = icon('pencil')
             ),
             textInputAddon(
-              inputId='Fill_myGplt','设定面及区域的整体颜色',value='NULL',placeholder = 'eg:red',addon = icon('pencil')
+              inputId='Fill_myGplt','set fill',value='NULL',placeholder = 'eg:red',addon = icon('pencil')
             ),
             numericInput(
               inputId = 'Size_myGplt',
-              label='设定点的大小',
+              label='set size',
               min=1,
               val='NULL',
               step=1
             ),
             numericInput(
               inputId = 'Alpha_myGplt',
-              label='设置透明度',
+              label='set alpha',
               min=0,
               val='NULL',
               step=1
@@ -2270,7 +2270,7 @@ server<-function(input,output,session){
             
             numericInput(
               inputId = 'Width_myGplt',
-              label='条图及箱图宽度',
+              label='set width',
               min=0.1,
               val='NULL',
               step=1
@@ -2278,7 +2278,7 @@ server<-function(input,output,session){
             
             numericInput(
               inputId = 'Shape_myGplt',
-              label='点的形状设定',
+              label='set shape',
               min=1,
               val='NULL',
               step=1
@@ -2402,10 +2402,10 @@ server<-function(input,output,session){
     #?#
     list(
       panel(status='primary',
-            heading='选择处理的数据集',
+            heading='choose data set',
             pickerInput(
               inputId = "dataSel_desc",
-              label = "选择数据集",
+              label = "choose data",
               choices = ls(envMadis)[-which(ls(envMadis)%in%c('envMadis','server','ui','LstMadis'))],
               selected =ls(envMadis)[-which(ls(envMadis)%in%c('envMadis','server','ui','LstMadis'))][1],
               multiple = FALSE,
@@ -2428,10 +2428,10 @@ server<-function(input,output,session){
   output$more2_desc<-renderUI({
     list(
       panel(status='primary',
-            heading='选择分析的变量',
+            heading='choose vars to analysis',
             pickerInput(
               inputId='vars_desc',
-              label='选择变量',
+              label='choose vars',
               choices = names(data_desc()),
               selected=names(data_desc())[1],
               multiple = TRUE,
@@ -2440,16 +2440,16 @@ server<-function(input,output,session){
             #awesomeCheckbox('myFun_desc','是否自定义分析函数？',FALSE),
             conditionalPanel(
               condition = "!input['myFun_desc']",
-              numericInput('digits_desc','结果保留小数位数',min=0,max=100,value=2)
+              numericInput('digits_desc','digits',min=0,max=100,value=2)
               # numericInput('colsPlot_desc','多个图形排放列数',min=1,max=10,value=2)
               #awesomeCheckbox('export_desc','是否将该分析结果导出报告？',FALSE)
             ),
             conditionalPanel(
               condition = "input['myFun_desc']",
-              textInputAddon('textFun_desc','输入自定义函数',value='',placeholder = 'eg:function(x)mean(x)',addon = icon('pencil'))
+              textInputAddon('textFun_desc','function in R code',value='',placeholder = 'eg:function(x)mean(x)',addon = icon('pencil'))
             ),
-            awesomeCheckbox('myFun_desc','是否自定义分析函数？',FALSE),
-            awesomeCheckbox('export_desc','是否导出报告？',FALSE)
+            awesomeCheckbox('myFun_desc','write your own function',FALSE),
+            awesomeCheckbox('export_desc','export to report',FALSE)
       )
     )
   })
@@ -2457,14 +2457,14 @@ server<-function(input,output,session){
   output$more3_desc<-renderUI({
     list(
       panel(
-        heading='描述性分析结果',
+        heading='descriptive results',
         verbatimTextOutput('res_desc'),
         status='primary'
       ),
       conditionalPanel(
         condition = "!input['myFun_desc']",
         panel(
-          heading='图形结果',
+          heading='graph results',
           plotOutput('graph_desc',height='720px'),
           status='primary'
         )
@@ -2499,10 +2499,10 @@ server<-function(input,output,session){
   output$more4_desc<-renderUI({
     list(
       panel(status='primary',
-            heading='选择需要展示的结果',
+            heading='choose result to show',
             pickerInput(
               inputId='Res_desc',
-              label='选择结果',
+              label='choose result',
               choices = input$vars_desc,
               selected=input$vars_desc[1],
               multiple = FALSE,
@@ -2559,10 +2559,10 @@ server<-function(input,output,session){
     change_data()
     list(
       panel(status='primary',
-            heading='选择处理的数据集',
+            heading='choose data set',
             pickerInput(
               inputId = "dataSel_hTest",
-              label = "选择数据集",
+              label = "choose data",
               choices = ls(envMadis)[-which(ls(envMadis)%in%c('envMadis','server','ui','LstMadis'))],
               selected =ls(envMadis)[-which(ls(envMadis)%in%c('envMadis','server','ui','LstMadis'))][1],
               multiple = FALSE,
@@ -2582,10 +2582,10 @@ server<-function(input,output,session){
   output$more2_hTest<-renderUI({
     list(
       panel(status='primary',
-            heading='选择分析的变量',
+            heading='choose vars',
             pickerInput(
               inputId='varsx_hTest',
-              label='选择变量x',
+              label='choose x vars',
               choices = names(data_hTest()),
               selected=names(data_hTest())[1],
               multiple = TRUE,
@@ -2593,8 +2593,8 @@ server<-function(input,output,session){
             ),
             pickerInput(
               inputId='varsy_hTest',
-              label='选择变量y',
-              choices = c('无'='',names(data_hTest())),
+              label='choose y vars',
+              choices = c('no'='',names(data_hTest())),
               selected='',
               multiple = TRUE,
               options = list(`actions-box` = TRUE)
@@ -2603,27 +2603,27 @@ server<-function(input,output,session){
               condition = "!input['myFun_hTest']",
               pickerInput(
                 inputId='alter_hTest',
-                label='选择备择假设',
+                label='choose alternative hypothesis',
                 choices = c(
-                  '等于'='two.sided',
-                  '大于'='greater',
-                  '小于'='less'
+                  'equal'='two.sided',
+                  'greater than'='greater',
+                  'less than'='less'
                 ),
                 selected='two.sided',
                 multiple = FALSE,
                 options = list(`actions-box` = FALSE)
               ),
-              numericInput('nullHyp_hTest','总体参数',value=0),
-              numericInput('confLevel_hTest','置信水平',value=0.95,min=0,max=1),
-              awesomeCheckbox('paired_hTest','数据是否为配对数据？',FALSE)
+              numericInput('nullHyp_hTest','population statistic',value=0),
+              numericInput('confLevel_hTest','confidence level',value=0.95,min=0,max=1),
+              awesomeCheckbox('paired_hTest','matched?',FALSE)
               # numericInput('colsPlot_hTest','多个图形排放列数',min=1,max=10,value=2)
             ),
-            awesomeCheckbox('myFun_hTest','是否自定义分析函数？',FALSE),
+            awesomeCheckbox('myFun_hTest','write your own function?',FALSE),
             conditionalPanel(
               condition = "input['myFun_hTest']",
               aceEditor("textFun_hTest", mode="r", value="#The data name is dat",height='100px')
             ),
-            awesomeCheckbox('export_hTest','将该结果输出报告',FALSE)
+            awesomeCheckbox('export_hTest','export to report',FALSE)
       )
     )
   })
@@ -2634,14 +2634,14 @@ server<-function(input,output,session){
   output$more3_hTest<-renderUI({
     list(
       panel(
-        heading='统计检验结果',
+        heading='hypothesis results',
         verbatimTextOutput('res_hTest'),
         status='primary'
       ),
       conditionalPanel(
         condition = "!input['myFun_hTest']",
         panel(
-          heading='图形结果',
+          heading='graph results',
           plotOutput('graph_hTest',height='720px'),
           status='primary'
         )
@@ -2692,10 +2692,10 @@ server<-function(input,output,session){
   output$more4_hTest<-renderUI({
     list(
       panel(status='primary',
-            heading='选择展示的结果',
+            heading='choose result to shows',
             pickerInput(
               inputId='Res_hTest',
-              label='选择展示的结果',
+              label='choose result',
               choices = apply(expand.grid(input$varsx_hTest,input$varsy_hTest),1,function(x)paste(x,collapse=','))
             )
       )
@@ -2734,10 +2734,10 @@ server<-function(input,output,session){
     change_data()
     list(
       panel(status='primary',
-            heading='选择处理的数据集',
+            heading='choose data set',
             pickerInput(
               inputId = "dataSel_myGlm",
-              label = "选择数据集",
+              label = "choose data",
               choices = ls(envMadis)[-which(ls(envMadis)%in%c('envMadis','server','ui','LstMadis'))],
               selected =ls(envMadis)[-which(ls(envMadis)%in%c('envMadis','server','ui','LstMadis'))][1],
               multiple = FALSE,
@@ -2757,10 +2757,10 @@ server<-function(input,output,session){
   output$more2_myGlm<-renderUI({
     list(
       panel(status='primary',
-            heading='设定模型参数',
+            heading='set GLM args',
             pickerInput(
               inputId='varsy_myGlm',
-              label='选择因变量y',
+              label='choose y var',
               choices = names(data_myGlm()),
               selected=names(data_myGlm())[1],
               multiple = FALSE,
@@ -2768,23 +2768,23 @@ server<-function(input,output,session){
             ),
             pickerInput(
               inputId='varsx_myGlm',
-              label='选择自变量x',
-              choices = c('无'='',names(data_myGlm())),
+              label='choose x vars',
+              choices = c('NULL'='',names(data_myGlm())),
               selected='',
               multiple = TRUE,
               options = list(`actions-box` = TRUE)
             ),
             pickerInput(
               inputId='family_myGlm',
-              label='设定模型类型',
-              choices = c('线性模型'='gaussian','logistic模型'='binomial','泊松回归'='poisson'),
+              label='choose family',
+              choices = c('gaussian'='gaussian','binomial'='binomial','poisson'='poisson'),
               selected='gaussian',
               multiple=FALSE,
               options = list(`actions-box` = FALSE)
             ),
             awesomeCheckbox(
               inputId = 'reviseVarsx_myGlm',
-              label='调整自变量',
+              label='revise x vars',
               value = FALSE
             ),
             conditionalPanel(
@@ -2792,7 +2792,7 @@ server<-function(input,output,session){
               list(
                 textInputAddon(
                   inputId = 'newVarsx_myGlm',
-                  label = '自变量调整',
+                  label = 'adjust x vars',
                   placeholder = 'eg: log(age)',
                   value='',
                   addon = 'pencil'
@@ -2801,7 +2801,7 @@ server<-function(input,output,session){
             ),
             awesomeCheckbox(
               inputId = 'weightSet_myGlm',
-              label='设定权重',
+              label='set weight',
               value = FALSE
             ),
             conditionalPanel(
@@ -2809,7 +2809,7 @@ server<-function(input,output,session){
               list(
                 pickerInput(
                   inputId='weightsVar_myGlm',
-                  label='选择权重变量',
+                  label='choose weight var',
                   choices = names(data_myGlm()),
                   selected=names(data_myGlm())[1],
                   multiple = FALSE,
@@ -2819,7 +2819,7 @@ server<-function(input,output,session){
             ),
             awesomeCheckbox(
               inputId = 'subsetSet_myGlm',
-              label='设定子集',
+              label='set subset',
               value = FALSE
             ),
             conditionalPanel(
@@ -2827,7 +2827,7 @@ server<-function(input,output,session){
               list(
                 textInputAddon(
                   inputId = 'subsets_myGlm',
-                  label = '设定子集表达式',
+                  label = 'subset expression',
                   placeholder = 'eg: sex==1',
                   value='',
                   addon = 'pencil'
@@ -2837,7 +2837,7 @@ server<-function(input,output,session){
             
             awesomeCheckbox(
               inputId = 'lowerFormSet_myGlm',
-              label='设定逐步回归最小模型',
+              label='set lower component in step process',
               value = FALSE
             ),
             conditionalPanel(
@@ -2845,7 +2845,7 @@ server<-function(input,output,session){
               list(
                 textInputAddon(
                   inputId = 'lowerForm_myGlm',
-                  label = '最小模型表达式',
+                  label = 'lower formula expression',
                   placeholder = 'eg: sex+age',
                   value='',
                   addon = 'pencil'
@@ -2854,7 +2854,7 @@ server<-function(input,output,session){
             )
             
       ),
-      awesomeCheckbox('export_myGlm','是否导出到报告中?',FALSE)
+      awesomeCheckbox('export_myGlm','export to report?',FALSE)
     )
   })
   
@@ -2865,17 +2865,17 @@ server<-function(input,output,session){
     list(
       tabsetPanel(
         tabPanel(
-          '模型结果',
+          'model results',
           verbatimTextOutput('res_myGlm'),
           status='primary'
         ),
         tabPanel(
-          '全模型诊断图形结果',
+          'full model diagnosis results',
           plotOutput('graphFull_myGlm',height='720px'),
           plotOutput('graphROCFull')
         ),
         tabPanel(
-          '逐步回归模型诊断图形结果',
+          'step model diagnosis results',
           plotOutput('graphStep_myGlm',height='720px'),
           plotOutput('graphROCStep')
           
@@ -2974,12 +2974,12 @@ server<-function(input,output,session){
       
       
       cat('\n')
-      cat('######模型分析结果如下########')
+      cat('######model results########')
       cat('\n')
-      cat('######全模型分析结果如下########')
+      cat('######Full model########')
       tryCatch(print(pander(summary(res_myGlm()$glmResFull))),error=function(e)print(summary(res_myGlm()$glmResFull)))
       cat('\n')
-      cat('######逐步回归模型分析结果如下########')
+      cat('######Step model########')
       tryCatch(print(pander(summary(res_myGlm()$glmResStep))),error=function(e)print(summary(res_myGlm()$glmResStep)))
       cat('\n')
       
@@ -3064,10 +3064,10 @@ server<-function(input,output,session){
     change_data()
     list(
       panel(status='primary',
-            heading='选择处理的数据集',
+            heading='choose data set',
             pickerInput(
               inputId = "dataSel_myTree",
-              label = "选择数据集",
+              label = "choose data",
               choices = ls(envMadis)[-which(ls(envMadis)%in%c('envMadis','server','ui','LstMadis'))],
               selected =ls(envMadis)[-which(ls(envMadis)%in%c('envMadis','server','ui','LstMadis'))][1],
               multiple = FALSE,
@@ -3087,12 +3087,12 @@ server<-function(input,output,session){
   output$more2_myTree<-renderUI({
     list(
       panel(status='primary',
-            heading='设定模型参数',
+            heading='set tree model args',
             panel(status='primary',
-                  heading='设定因变量',
+                  heading='choose y var',
                   awesomeCheckbox(
                     inputId = 'surv_myTree',
-                    label='是否为生存模型',
+                    label='survival object?',
                     value = FALSE
                   ),
                   conditionalPanel(
@@ -3100,7 +3100,7 @@ server<-function(input,output,session){
                     list(
                       pickerInput(
                         inputId='timeVar_myTree',
-                        label='选择时间变量',
+                        label='time var',
                         choices = names(data_myTree()),
                         selected=names(data_myTree())[1],
                         multiple = FALSE,
@@ -3108,8 +3108,8 @@ server<-function(input,output,session){
                       ),
                       pickerInput(
                         inputId='centVar_myTree',
-                        label='选择结局变量',
-                        choices = c('无'='',names(data_myTree())),
+                        label='event var',
+                        choices = c('no'='',names(data_myTree())),
                         selected=names(data_myTree())[1],
                         multiple = FALSE,
                         options = list(`actions-box` = FALSE)
@@ -3122,7 +3122,7 @@ server<-function(input,output,session){
                     list(
                       pickerInput(
                         inputId='varsy_myTree',
-                        label='选择因变量y',
+                        label='choose y var',
                         choices = names(data_myTree()),
                         selected=names(data_myTree())[1],
                         multiple = FALSE,
@@ -3134,15 +3134,15 @@ server<-function(input,output,session){
             
             pickerInput(
               inputId='varsx_myTree',
-              label='选择自变量x',
-              choices = c('无'='',names(data_myTree())),
+              label='choose x vars',
+              choices = c('no'='',names(data_myTree())),
               selected='',
               multiple = TRUE,
               options = list(`actions-box` = TRUE)
             ),
             pickerInput(
               inputId='method_myTree',
-              label='设定树模型算法',
+              label='tree method',
               choices = c('RPART'='rpart','CTREE'='ctree'),
               selected='rpart',
               multiple=FALSE,
@@ -3151,7 +3151,7 @@ server<-function(input,output,session){
             
             awesomeCheckbox(
               inputId = 'subsetSet_myTree',
-              label='设定子集',
+              label='set subset',
               value = FALSE
             ),
             conditionalPanel(
@@ -3159,7 +3159,7 @@ server<-function(input,output,session){
               list(
                 textInputAddon(
                   inputId = 'subsets_myTree',
-                  label = '设定子集表达式',
+                  label = 'subset expression',
                   placeholder = 'eg: sex==1',
                   value='',
                   addon = 'pencil'
@@ -3167,10 +3167,10 @@ server<-function(input,output,session){
               )
             ),
             panel(status='primary',
-                  heading='设定模型参数',
+                  heading='set aspects of tree fit',
                   numericInput(
                     inputId = 'maxDepth_myTree',
-                    label='设定最大生长深度',
+                    label='max depth',
                     value = 3,
                     min=1,
                     max=30,
@@ -3178,7 +3178,7 @@ server<-function(input,output,session){
                   ),
                   numericInput(
                     inputId = 'minSplit_myTree',
-                    label='设定最小子节点样本量',
+                    label='minimum split',
                     value = 30,
                     min=1,
                     max=Inf,
@@ -3186,7 +3186,7 @@ server<-function(input,output,session){
                   ),
                   numericInput(
                     inputId = 'minBucket_myTree',
-                    label='设定最小叶节点样本量',
+                    label='minimum bucket',
                     value = 3,
                     min=1,
                     max=30,
@@ -3194,14 +3194,14 @@ server<-function(input,output,session){
                   ),
                   numericInput(
                     inputId = 'param_myTree',
-                    label='设定系数',
+                    label='criterion(cp for rpart and test statistic for ctree)',
                     value = 0.05,
                     min=0,
                     max=10
                   )
             )
       ),
-      awesomeCheckbox('export_myTree','是否导出到报告中?',FALSE)
+      awesomeCheckbox('export_myTree','export to report?',FALSE)
     )
   })
   
@@ -3212,13 +3212,13 @@ server<-function(input,output,session){
     list(
       tabsetPanel(
         tabPanel(
-          '模型结果',
-          heading='模型结果',
+          'model results',
+          heading='model results',
           htmlOutput('summary_myTree'),
           status='primary'
         ),
         tabPanel(
-          '模型图形结果',
+          'graph results',
           plotOutput('graph_myTree',height='720px')
         )
       )
@@ -3369,10 +3369,10 @@ server<-function(input,output,session){
     change_data()
     list(
       panel(status='primary',
-            heading='选择处理的数据集',
+            heading='choose data set',
             pickerInput(
               inputId = "dataSel_myCox",
-              label = "选择数据集",
+              label = "choose data",
               choices = ls(envMadis)[-which(ls(envMadis)%in%c('envMadis','server','ui','LstMadis'))],
               selected =ls(envMadis)[-which(ls(envMadis)%in%c('envMadis','server','ui','LstMadis'))][1],
               multiple = FALSE,
@@ -3392,10 +3392,10 @@ server<-function(input,output,session){
   output$more2_myCox<-renderUI({
     list(
       panel(status='primary',
-            heading='设定模型参数',
+            heading='set model args',
             pickerInput(
               inputId='timeVar_myCox',
-              label='选择时间变量',
+              label='choose time var',
               choices = names(data_myCox()),
               selected=names(data_myCox())[1],
               multiple = FALSE,
@@ -3403,31 +3403,31 @@ server<-function(input,output,session){
             ),
             pickerInput(
               inputId='centVar_myCox',
-              label='选择结局变量',
-              choices = c('无'='',names(data_myCox())),
+              label='choose event var',
+              choices = c('no'='',names(data_myCox())),
               selected='',
               multiple = FALSE,
               options = list(`actions-box` = TRUE)
             ),
             pickerInput(
               inputId='varsx_myCox',
-              label='选择自变量x',
-              choices = c('无'='',names(data_myCox())),
+              label='choose x vars',
+              choices = c('no'='',names(data_myCox())),
               selected='',
               multiple = TRUE,
               options = list(`actions-box` = TRUE)
             ),
             pickerInput(
               inputId='strataVar_myCox',
-              label='选择分层变量',
-              choices = c('无'='1',names(data_myCox())),
+              label='choose group var',
+              choices = c('no'='1',names(data_myCox())),
               selected='1',
               multiple=FALSE,
               options = list(`actions-box` = FALSE)
             ),
             awesomeCheckbox(
               inputId = 'reviseVarsx_myCox',
-              label='调整自变量',
+              label='revise x vars',
               value = FALSE
             ),
             conditionalPanel(
@@ -3435,7 +3435,7 @@ server<-function(input,output,session){
               list(
                 textInputAddon(
                   inputId = 'newVarsx_myCox',
-                  label = '自变量调整',
+                  label = 'new x vars',
                   placeholder = 'eg: log(age)',
                   value='',
                   addon = 'pencil'
@@ -3444,7 +3444,7 @@ server<-function(input,output,session){
             ),
             awesomeCheckbox(
               inputId = 'weightSet_myCox',
-              label='设定权重',
+              label='set weight',
               value = FALSE
             ),
             conditionalPanel(
@@ -3452,7 +3452,7 @@ server<-function(input,output,session){
               list(
                 pickerInput(
                   inputId='weightsVar_myCox',
-                  label='选择权重变量',
+                  label='choose weight var',
                   choices = names(data_myCox()),
                   selected=names(data_myCox())[1],
                   multiple = FALSE,
@@ -3462,7 +3462,7 @@ server<-function(input,output,session){
             ),
             awesomeCheckbox(
               inputId = 'subsetSet_myCox',
-              label='设定子集',
+              label='set subset',
               value = FALSE
             ),
             conditionalPanel(
@@ -3470,7 +3470,7 @@ server<-function(input,output,session){
               list(
                 textInputAddon(
                   inputId = 'subsets_myCox',
-                  label = '设定子集表达式',
+                  label = 'subset expression',
                   placeholder = 'eg: sex==1',
                   value='',
                   addon = 'pencil'
@@ -3480,7 +3480,7 @@ server<-function(input,output,session){
             
             awesomeCheckbox(
               inputId = 'lowerFormSet_myCox',
-              label='设定逐步回归最小模型',
+              label='set lower component in step process',
               value = FALSE
             ),
             conditionalPanel(
@@ -3488,7 +3488,7 @@ server<-function(input,output,session){
               list(
                 textInputAddon(
                   inputId = 'lowerForm_myCox',
-                  label = '最小模型表达式',
+                  label = 'lower formula',
                   placeholder = 'eg: sex+age',
                   value='',
                   addon = 'pencil'
@@ -3497,7 +3497,7 @@ server<-function(input,output,session){
             )
             
       ),
-      awesomeCheckbox('export_myCox','是否导出到报告中?',FALSE)
+      awesomeCheckbox('export_myCox','export to report?',FALSE)
     )
   })
   
@@ -3508,22 +3508,22 @@ server<-function(input,output,session){
     list(
       tabsetPanel(
         tabPanel(
-          '模型结果',
-          heading='模型结果',
+          'model results',
+          heading='model results',
           verbatimTextOutput('res_myCox'),
           status='primary'
         ),
         tabPanel(
-          '全模型诊断图形结果',
+          'Full model diagnosis result',
           plotOutput('graphFull_myCox',height='720px')
         ),
         tabPanel(
-          '逐步回归模型诊断图形结果',
+          'Step model diagnosis result',
           plotOutput('graphStep_myCox',height='720px')
           
         ),
         tabPanel(
-          '分层生存曲线',
+          'Survival curve',
           plotOutput('graphStrata_myCox',height='720px')
           
         )
@@ -3640,12 +3640,12 @@ server<-function(input,output,session){
       
       
       cat('\n')
-      cat('######模型分析结果如下########')
+      cat('######model results########')
       cat('\n')
-      cat('######全模型分析结果如下########')
+      cat('######Full model results########')
       tryCatch(print(pander(res_myCox()$coxResFull)),error=function(e)print(res_myCox()$coxResFull))
       cat('\n')
-      cat('######逐步回归模型分析结果如下########')
+      cat('######Step model results########')
       tryCatch(print(pander(res_myCox()$coxResStep)),error=function(e)print(res_myCox()$coxResStep))
       cat('\n')
       
@@ -3692,10 +3692,10 @@ server<-function(input,output,session){
     change_data()
     list(
       panel(status='primary',
-            heading='选择处理的数据集',
+            heading='choose data set',
             pickerInput(
               inputId = "dataSel_myLme",
-              label = "选择数据集",
+              label = "choose data",
               choices = ls(envMadis)[-which(ls(envMadis)%in%c('envMadis','server','ui','LstMadis'))],
               selected =ls(envMadis)[-which(ls(envMadis)%in%c('envMadis','server','ui','LstMadis'))][1],
               multiple = FALSE,
@@ -3715,10 +3715,10 @@ server<-function(input,output,session){
   output$more2_myLme<-renderUI({
     list(
       panel(status='primary',
-            heading='设定模型参数',
+            heading='set mixed model args',
             pickerInput(
               inputId='varsy_fixed',
-              label='选择固定效应因变量y',
+              label='choose y var in fixed effects',
               choices = names(data_myLme()),
               selected=names(data_myLme())[1],
               multiple = FALSE,
@@ -3727,8 +3727,8 @@ server<-function(input,output,session){
             
             pickerInput(
               inputId='varsx_fixed',
-              label='选择固定效应自变量x',
-              choices = c('无'='',names(data_myLme())),
+              label='choose x vars in fixed effects',
+              choices = c('NULL'='',names(data_myLme())),
               selected='',
               multiple = TRUE,
               options = list(`actions-box` = TRUE)
@@ -3736,7 +3736,7 @@ server<-function(input,output,session){
             
             awesomeCheckbox(
               inputId = 'reviseVarsx_myLme',
-              label='调整固定效应自变量',
+              label='revise vars in fixed effects',
               value = FALSE
             ),
             conditionalPanel(
@@ -3744,7 +3744,7 @@ server<-function(input,output,session){
               list(
                 textInputAddon(
                   inputId = 'newVarsx_myLme',
-                  label = '自变量调整',
+                  label = 'revise vars',
                   placeholder = 'eg: log(age)',
                   value='',
                   addon = 'pencil'
@@ -3754,7 +3754,7 @@ server<-function(input,output,session){
             
             textInputAddon(
               inputId = 'random_myLme',
-              label = '随机效应设置',
+              label = 'set random effects',
               placeholder = 'eg: 1|g1/g2',
               value='',
               addon = 'pencil'
@@ -3762,7 +3762,7 @@ server<-function(input,output,session){
             
             pickerInput(
               inputId='method_myLme',
-              label='设定模型算法',
+              label='method',
               choices = c('ML method'='ML','RMLE method'='RMLE'),
               selected='ML',
               multiple=FALSE,
@@ -3771,7 +3771,7 @@ server<-function(input,output,session){
             
             awesomeCheckbox(
               inputId = 'subsetSet_myLme',
-              label='设定子集',
+              label='set subset',
               value = FALSE
             ),
             
@@ -3780,7 +3780,7 @@ server<-function(input,output,session){
               list(
                 textInputAddon(
                   inputId = 'subsets_myLme',
-                  label = '设定子集表达式',
+                  label = 'subset expression',
                   placeholder = 'eg: sex==1',
                   value='',
                   addon = 'pencil'
@@ -3788,7 +3788,7 @@ server<-function(input,output,session){
               )
             )
       ),
-      awesomeCheckbox('export_myLme','是否导出到报告中?',FALSE)
+      awesomeCheckbox('export_myLme','export to report?',FALSE)
     )
   })
   
@@ -3799,8 +3799,8 @@ server<-function(input,output,session){
     list(
       tabsetPanel(
         tabPanel(
-          '模型结果',
-          heading='模型结果',
+          'model results',
+          heading='model results',
           verbatimTextOutput('summary_myLme'),
           status='primary'
         )#,
@@ -3898,13 +3898,13 @@ server<-function(input,output,session){
       
       cat('\n')
       
-      cat('######全模型结果########')
+      cat('######Full model results########')
       cat('\n')
       
       tryCatch(print(pander(summary(res_myLme()$lmeResFull))),error=function(e)print(summary(res_myLme()$lmeResFull)))
       
       cat('\n')
-      cat('######逐步模型结果########')
+      cat('######Step model results########')
       cat('\n')
       
       tryCatch(print(pander(summary(res_myLme()$lmeResStep))),error=function(e)print(summary(res_myLme()$lmeResStep)))
@@ -3925,10 +3925,10 @@ server<-function(input,output,session){
     change_data()
     list(
       panel(status='primary',
-            heading='选择处理的数据集',
+            heading='choose data set',
             pickerInput(
               inputId = "dataSel_kmeans",
-              label = "选择数据集",
+              label = "choose data",
               choices = ls(envMadis)[-which(ls(envMadis)%in%c('envMadis','server','ui','LstMadis'))],
               selected =ls(envMadis)[-which(ls(envMadis)%in%c('envMadis','server','ui','LstMadis'))][1],
               multiple = FALSE,
@@ -3948,20 +3948,20 @@ server<-function(input,output,session){
   output$more2_kmeans<-renderUI({
     list(
       panel(status='primary',
-            heading='设定聚类分析的相关参数',
+            heading='set kmeans args',
             pickerInput(
               inputId='vars_kmeans',
-              label='选择聚类需要的变量',
+              label='choose vars',
               choices = names(data_kmeans()),
               selected=names(data_kmeans())[1],
               multiple = TRUE,
               options = list(`actions-box` = TRUE)
             ),
             panel(status='primary',
-                  heading='设置聚类数目判断相关参数(cascadeKM)',
+                  heading='set args in cascadeKM method',
                   numericInput(
                     inputId = 'infgr_kmeans',
-                    label='设定最小聚类数目',
+                    label='min clusters',
                     value = 1,
                     min=1,
                     max=10
@@ -3969,7 +3969,7 @@ server<-function(input,output,session){
                   ),
                   numericInput(
                     inputId = 'supgr_kmeans',
-                    label='设定最大聚类数目',
+                    label='max clusters',
                     value = 3,
                     min=1,
                     max=10
@@ -3978,7 +3978,7 @@ server<-function(input,output,session){
                   
                   pickerInput(
                     inputId='crit_kmeans',
-                    label='设定判别标准',
+                    label='crit of cascadeKM',
                     choices = c('calinski','ssi'),
                     selected='calinski',
                     multiple=FALSE,
@@ -3986,7 +3986,7 @@ server<-function(input,output,session){
                   ),
                   numericInput(
                     inputId = 'iter_kmeans',
-                    label='设定迭代次数',
+                    label='iteration times',
                     value = 100,
                     min=1,
                     max=10
@@ -3995,10 +3995,10 @@ server<-function(input,output,session){
             ),
             
             panel(status='primary',
-                  heading='设置kmeans相关参数',
+                  heading='set args in kmeans',
                   numericInput(
                     inputId = 'centers_kmeans',
-                    label='设定实际聚类数目',
+                    label='set cluster numbers',
                     value = 1,
                     min=1,
                     max=10
@@ -4007,7 +4007,7 @@ server<-function(input,output,session){
                   
                   numericInput(
                     inputId = 'iterMax_kmeans',
-                    label='设定最大迭代次数',
+                    label='max iteration times',
                     value = 100,
                     min=1,
                     max=10
@@ -4017,7 +4017,7 @@ server<-function(input,output,session){
                   
                   pickerInput(
                     inputId='method_kmeans',
-                    label='设定聚类算法',
+                    label='cluster method',
                     choices = c('Hartigan-Wong','Lloyd','Forgy'),
                     selected='Hartigan-Wong',
                     multiple=FALSE,
@@ -4025,7 +4025,7 @@ server<-function(input,output,session){
                   ),
                   awesomeCheckbox(
                     inputId = 'subsetSet_kmeans',
-                    label='设定子集',
+                    label='set subset',
                     value = FALSE
                   ),
                   
@@ -4034,7 +4034,7 @@ server<-function(input,output,session){
                     list(
                       textInputAddon(
                         inputId = 'subsets_kmeans',
-                        label = '设定子集表达式',
+                        label = 'subset expression',
                         placeholder = 'eg: sex==1',
                         value='',
                         addon = 'pencil'
@@ -4043,7 +4043,7 @@ server<-function(input,output,session){
                   ),
                   numericInput(
                     inputId = 'seed_kmeans',
-                    label='设定随机数种子',
+                    label='set random seed',
                     value = 1234,
                     min=1,
                     max=100000
@@ -4053,7 +4053,7 @@ server<-function(input,output,session){
             
             textInputAddon(
               inputId = 'clusterName_kmeans',
-              label = '设定聚类新变量名',
+              label = 'set cluster var name',
               placeholder = 'eg: clusterKmeans',
               value='',
               addon = 'pencil'
@@ -4061,13 +4061,13 @@ server<-function(input,output,session){
             
             awesomeCheckbox(
               inputId = 'addVar_kmeans',
-              label='将聚类结果合并至数据中',
+              label='add cluster var into data?',
               value = FALSE
             )
             
             
       ),
-      awesomeCheckbox('export_kmeans','是否导出到报告中?',FALSE)
+      awesomeCheckbox('export_kmeans','export to report?',FALSE)
     )
   })
   
@@ -4078,13 +4078,13 @@ server<-function(input,output,session){
     list(
       tabsetPanel(
         tabPanel(
-          '聚类汇总结果',
-          heading='模型结果',
+          'results of kmeans',
+          heading='results',
           verbatimTextOutput('summary_kmeans'),
           status='primary'
         ),
         tabPanel(
-          '聚类数量图形结果',
+          'graph results',
           plotOutput('graph_kmeans',height='720px')
         )
       )
@@ -4189,7 +4189,7 @@ server<-function(input,output,session){
       
       cat('\n')
       
-      cat('######聚类结果########')
+      cat('######cluster results########')
       cat('\n')
       
       tryCatch(print(pander(head(res_kmeans()$resKmeans))),error=function(e)print(head(res_kmeans()$resKmeans)))
@@ -4221,10 +4221,10 @@ server<-function(input,output,session){
     change_data()
     list(
       panel(status='primary',
-            heading='选择处理的数据集',
+            heading='choose data set',
             pickerInput(
               inputId = "dataSel_pca",
-              label = "选择数据集",
+              label = "choose data",
               choices = ls(envMadis)[-which(ls(envMadis)%in%c('envMadis','server','ui','LstMadis'))],
               selected =ls(envMadis)[-which(ls(envMadis)%in%c('envMadis','server','ui','LstMadis'))][1],
               multiple = FALSE,
@@ -4244,10 +4244,10 @@ server<-function(input,output,session){
   output$more2_pca<-renderUI({
     list(
       panel(status='primary',
-            heading='设定主成分分析的相关参数',
+            heading='set pca args',
             pickerInput(
               inputId='vars_pca',
-              label='选择分析的变量',
+              label='choose vars',
               choices = names(data_pca()),
               selected=names(data_pca())[1],
               multiple = TRUE,
@@ -4256,7 +4256,7 @@ server<-function(input,output,session){
             
             numericInput(
               inputId = 'nfcts_pca',
-              label='设定主成分数量',
+              label='set no of components',
               value = 1,
               min=1,
               max=10
@@ -4266,7 +4266,7 @@ server<-function(input,output,session){
             
             pickerInput(
               inputId='rotate_pca',
-              label='设定因子旋转方法',
+              label='method of rotation',
               choices = c('none','varimax','quartimax','promax','oblimin','simplimax','cluster'),
               selected='varimax',
               multiple=FALSE,
@@ -4274,7 +4274,7 @@ server<-function(input,output,session){
             ),
             awesomeCheckbox(
               inputId = 'subsetSet_pca',
-              label='设定子集',
+              label='set subset',
               value = FALSE
             ),
             
@@ -4283,7 +4283,7 @@ server<-function(input,output,session){
               list(
                 textInputAddon(
                   inputId = 'subsets_pca',
-                  label = '设定子集表达式',
+                  label = 'subset expression',
                   placeholder = 'eg: sex==1',
                   value='',
                   addon = 'pencil'
@@ -4292,7 +4292,7 @@ server<-function(input,output,session){
             ),
             textInputAddon(
               inputId = 'varName_pca',
-              label = '设定主成分变量名称',
+              label = 'set new pca var name',
               placeholder = 'eg: PCAVar',
               value='',
               addon='pencil'
@@ -4300,11 +4300,11 @@ server<-function(input,output,session){
             ),
             awesomeCheckbox(
               inputId = 'addVar_pca',
-              label='将主成分变量添加至数据',
+              label='add pca var into data?',
               value = FALSE
             )
       ),
-      awesomeCheckbox('export_pca','是否导出到报告中?',FALSE)
+      awesomeCheckbox('export_pca','export to report?',FALSE)
     )
   })
   
@@ -4315,13 +4315,13 @@ server<-function(input,output,session){
     list(
       tabsetPanel(
         tabPanel(
-          '主成分分析汇总结果',
-          heading='模型结果',
+          'pca results',
+          heading='model results',
           verbatimTextOutput('summary_pca'),
           status='primary'
         ),
         tabPanel(
-          '主成分分析图形结果',
+          'graph results',
           plotOutput('graph_pca',height='720px')
         )
       )
@@ -4406,16 +4406,16 @@ server<-function(input,output,session){
       
       cat('\n')
       
-      cat('######主成分分析结果########')
+      cat('######pca results########')
       cat('\n')
       
-      cat('######因子载荷########')
+      cat('######results of loadings########')
       cat('\n')
       tryCatch(print(pander(res_pca()$resPCA$loadings[])),error=function(e)print(res_pca()$resPCA$loadings[]))
       
       cat('\n')
       cat('\n')
-      cat('######累积贡献率########')
+      cat('######results of cumulative variance########')
       cat('\n')
       tryCatch(print(pander(res_pca()$cumVar)),error=function(e)print(res_pca()$cumVar))
       
@@ -4447,10 +4447,10 @@ server<-function(input,output,session){
     change_data()
     list(
       panel(status='primary',
-            heading='选择处理的数据集',
+            heading='choose data set',
             pickerInput(
               inputId = "dataSel_fa",
-              label = "选择数据集",
+              label = "choose data",
               choices = ls(envMadis)[-which(ls(envMadis)%in%c('envMadis','server','ui','LstMadis'))],
               selected =ls(envMadis)[-which(ls(envMadis)%in%c('envMadis','server','ui','LstMadis'))][1],
               multiple = FALSE,
@@ -4470,10 +4470,10 @@ server<-function(input,output,session){
   output$more2_fa<-renderUI({
     list(
       panel(status='primary',
-            heading='设定因子分析的相关参数',
+            heading='set fa args',
             pickerInput(
               inputId='vars_fa',
-              label='选择分析的变量',
+              label='choose vars',
               choices = names(data_fa()),
               selected=names(data_fa())[1],
               multiple = TRUE,
@@ -4482,7 +4482,7 @@ server<-function(input,output,session){
             
             numericInput(
               inputId = 'nfcts_fa',
-              label='设定因子数量',
+              label='set no of components',
               value = 1,
               min=1,
               max=10
@@ -4492,7 +4492,7 @@ server<-function(input,output,session){
             
             pickerInput(
               inputId='rotate_fa',
-              label='设定因子旋转方法',
+              label='rotation method',
               choices = c('none','varimax','quartimax','bentlerT',
                           'varmin','equamax','geominT','bifactor','promax','oblimin',
                           'simplimax','bentlerQ','geominQ','biquartimin','cluster'),
@@ -4502,7 +4502,7 @@ server<-function(input,output,session){
             ),
             pickerInput(
               inputId='scores_fa',
-              label='设定因子分值',
+              label='set factor scores',
               choices = c('regression','Thurstone','tenBerge','Anderson','Barlett'),
               selected='regression',
               multiple=FALSE,
@@ -4510,7 +4510,7 @@ server<-function(input,output,session){
             ),
             pickerInput(
               inputId='fm_fa',
-              label='设定因子得分方式',
+              label='set factoring method',
               choices = c('minres','uls','ols','wls','gls','pa','ml','minchi','minrank'),
               selected='minres',
               multiple=FALSE,
@@ -4518,7 +4518,7 @@ server<-function(input,output,session){
             ),
             awesomeCheckbox(
               inputId = 'subsetSet_fa',
-              label='设定子集',
+              label='set subset',
               value = FALSE
             ),
             
@@ -4527,7 +4527,7 @@ server<-function(input,output,session){
               list(
                 textInputAddon(
                   inputId = 'subsets_fa',
-                  label = '设定子集表达式',
+                  label = 'subset expression',
                   placeholder = 'eg: sex==1',
                   value='',
                   addon = 'pencil'
@@ -4536,7 +4536,7 @@ server<-function(input,output,session){
             ),
             textInputAddon(
               inputId = 'varName_fa',
-              label = '设定因子得分变量名称',
+              label = 'set fa variable name',
               placeholder = 'eg: FAVar',
               value='',
               addon='pencil'
@@ -4544,11 +4544,11 @@ server<-function(input,output,session){
             ),
             awesomeCheckbox(
               inputId = 'addVar_fa',
-              label='将因子得分合并至数据中',
+              label='add fa variable into data',
               value = FALSE
             )
       ),
-      awesomeCheckbox('export_fa','是否导出到报告中?',FALSE)
+      awesomeCheckbox('export_fa','export to report?',FALSE)
     )
   })
   
@@ -4559,13 +4559,13 @@ server<-function(input,output,session){
     list(
       tabsetPanel(
         tabPanel(
-          '因子分析汇总结果',
-          heading='模型结果',
+          'fa results',
+          heading='model results',
           verbatimTextOutput('summary_fa'),
           status='primary'
         ),
         tabPanel(
-          '因子分析图形结果',
+          'graph results',
           plotOutput('graph_fa',height='720px')
         )
       )
@@ -4651,16 +4651,16 @@ server<-function(input,output,session){
       
       cat('\n')
       
-      cat('######因子分析结果########')
+      cat('######fa results########')
       cat('\n')
       
-      cat('######因子载荷########')
+      cat('######loading results########')
       cat('\n')
       tryCatch(print(pander(res_fa()$resFA$loadings[])),error=function(e)print(res_fa()$resFA$loadings[]))
       
       cat('\n')
       cat('\n')
-      cat('######累积贡献率########')
+      cat('######results of cumulative variance########')
       cat('\n')
       tryCatch(print(pander(res_fa()$cumVar)),error=function(e)print(res_fa()$cumVar))
       
@@ -4697,10 +4697,10 @@ server<-function(input,output,session){
     change_data()
     list(
       panel(status='primary',
-            heading='选择处理的数据集',
+            heading='choose data set',
             pickerInput(
               inputId = "dataSel_match",
-              label = "选择数据集",
+              label = "choose data",
               choices = ls(envMadis)[-which(ls(envMadis)%in%c('envMadis','server','ui','LstMadis'))],
               selected =ls(envMadis)[-which(ls(envMadis)%in%c('envMadis','server','ui','LstMadis'))][1],
               multiple = FALSE,
@@ -4720,10 +4720,10 @@ server<-function(input,output,session){
   output$more2_match<-renderUI({
     list(
       panel(status='primary',
-            heading='选择匹配的相关变量',
+            heading='vars in PSM',
             pickerInput(
               inputId='vary_match',
-              label='选择分组变量',
+              label='choose group var',
               choices = names(data_match()),
               selected=names(data_match())[1],
               multiple = FALSE,
@@ -4733,7 +4733,7 @@ server<-function(input,output,session){
             
             pickerInput(
               inputId='varx_match',
-              label='选择需要匹配的变量',
+              label='choose matching vars',
               choices = names(data_match()),
               selected=names(data_match())[1],
               multiple = TRUE,
@@ -4742,11 +4742,11 @@ server<-function(input,output,session){
       ),
       
       panel(status='primary',
-            heading='选择匹配相关参数',
+            heading='set psm args',
             
             pickerInput(
               inputId='method_match',
-              label='设定匹配的方法',
+              label='set mathing method',
               choices = c('exact','full','nearest','subclass',
                           'genetic'),
               selected='nearest',
@@ -4756,7 +4756,7 @@ server<-function(input,output,session){
             
             pickerInput(
               inputId='distance_match',
-              label='选择距离测量方法',
+              label='method for distance calculation',
               choices = c('logit'),
               selected='logit',
               multiple=FALSE,
@@ -4765,7 +4765,7 @@ server<-function(input,output,session){
             
             numericInput(
               inputId = 'ratio_match',
-              label = '选择匹配比例',
+              label = 'ratio for matching',
               value = 1,
               step = 1
             )
@@ -4773,8 +4773,8 @@ server<-function(input,output,session){
       ),
       
       panel(status='primary',
-            heading='保存数据集',
-            textInputAddon(inputId='dataName_match',label='保存的数据名称',value='',placeholder = 'eg:data_newVarType',addon=icon('pencil'))
+            heading='save matched data',
+            textInputAddon(inputId='dataName_match',label='data name',value='',placeholder = 'eg:data_newVarType',addon=icon('pencil'))
       )
       
     )
@@ -4787,23 +4787,23 @@ server<-function(input,output,session){
     list(
       tabsetPanel(
         tabPanel(
-          title='匹配汇总结果',
-          heading='模型结果',
+          title='matched results',
+          heading='results',
           verbatimTextOutput('summary_match'),
           status='primary'
         )
         ,
         tabPanel(
-          '匹配前后各组差异',
+          'difference before and after matching',
           
           panel(
-            heading='匹配前各组的表格结果',
+            heading='difference before matching',
             DT::dataTableOutput('tableB_match',height='720px'),
             status='primary'
           ),
           
           panel(
-            heading='匹配后各组的表格结果',
+            heading='difference after matching',
             DT::dataTableOutput('tableA_match',height='720px'),
             status='primary'
           )
@@ -4856,7 +4856,7 @@ server<-function(input,output,session){
       
       cat('\n')
       
-      cat('######匹配的汇总结果########')
+      cat('######results of psm########')
       print(pander(res_match()$resmatch$resMatch))
       
       cat('\n')
@@ -4901,10 +4901,10 @@ server<-function(input,output,session){
     
     list(
       panel(status='primary',
-            heading='选择处理的数据集',
+            heading='choose data set',
             pickerInput(
               inputId = "dataSel_myProphet",
-              label = "选择数据集",
+              label = "choose data",
               choices = ls(envMadis)[-which(ls(envMadis)%in%c('envMadis','server','ui','LstMadis'))],
               selected =ls(envMadis)[-which(ls(envMadis)%in%c('envMadis','server','ui','LstMadis'))][1],
               multiple = FALSE,
@@ -4926,10 +4926,10 @@ server<-function(input,output,session){
     list(
       panel(status='primary',
             flowLayout(
-              heading='选择时间序列分析各参数',
+              heading='set args in prophet',
               pickerInput(
                 inputId='tsvar_myProphet',
-                label='选择日期时间变量',
+                label='choose datetime var',
                 choices = c(names(data_myProphet())),
                 selected='NULL',
                 multiple = FALSE,
@@ -4938,36 +4938,36 @@ server<-function(input,output,session){
               
               pickerInput(
                 inputId='dateFormat_myProphet',
-                label='日期格式',
+                label='date format',
                 choices=c(
-                  '年'='y',
-                  '年月'='ym',
-                  "年月日"="ymd",
-                  '月日年'='mdy',
-                  '日月年'='dmy'
+                  'year'='y',
+                  'year mon'='ym',
+                  "ymd"="ymd",
+                  'mdy'='mdy',
+                  'dmy'='dmy'
                 ),
-                selected ='yyyymmdd',
+                selected ='ymd',
                 multiple=FALSE,
                 options=list(`actions-box` = FALSE)
               ),
               
               pickerInput(
                 inputId='timeFormat_myProphet',
-                label='时间格式',
+                label='time format',
                 choices=c(
-                  '无'='',
-                  '时'='H',
-                  "时分"="HM",
-                  '时分秒'='HMS'
+                  'NULL'='',
+                  'hour'='H',
+                  "HM"="HM",
+                  'HMS'='HMS'
                 ),
-                selected ='yyyymmdd',
+                selected ='HMS',
                 multiple=FALSE,
                 options=list(`actions-box` = FALSE)
               ),
               
               pickerInput(
                 inputId='measurevars_myProphet',
-                label='选择待分析变量',
+                label='choose measure vars',
                 choices = c(names(data_myProphet())),
                 selected='NULL',
                 multiple = TRUE,
@@ -4976,8 +4976,8 @@ server<-function(input,output,session){
               
               pickerInput(
                 inputId='groupvars_myProphet',
-                label='选择亚组分析变量',
-                choices = c('无'='1',names(data_myProphet())),
+                label='choose subgroup vars',
+                choices = c('NULL'='1',names(data_myProphet())),
                 selected='1',
                 multiple = TRUE,
                 options = list(`actions-box` = TRUE)
@@ -4985,13 +4985,13 @@ server<-function(input,output,session){
               
               pickerInput(
                 inputId='period_myProphet',
-                label='选择处理时间段',
+                label='choose periods',
                 choices = c(
-                  '日'='days',
-                  '周'='weeks',
-                  '月'='months',
-                  '季'='quarters',
-                  '年'='years'
+                  'days'='days',
+                  'weeks'='weeks',
+                  'months'='months',
+                  'quaters'='quarters',
+                  'years'='years'
                   
                 ),
                 selected='months',
@@ -5002,9 +5002,9 @@ server<-function(input,output,session){
               
               pickerInput(
                 inputId='growth_myProphet',
-                label='设定趋势类型',
+                label='set trend',
                 choices = c(
-                  '线性'='linear',
+                  'Linear'='linear',
                   'Logistic'='logistic'
                 ),
                 selected='linear',
@@ -5013,24 +5013,24 @@ server<-function(input,output,session){
               ),
               pickerInput(
                 inputId='FN_myProphet',
-                label='设定分析方法',
+                label='set aggregate method',
                 choices = c(
-                  '求和'='function(x)sum(x,na.rm=T)',
-                  '均值'='function(x)mean(x,na.rm=T)',
-                  '中位数'='function(x)median(x,na.rm=T)',
-                  '最大值'='function(x)max(x,na.rm=T)',
-                  '最小值'='function(x)min(x,na.rm=T)',
-                  '标准差'='function(x)sd(x,na.rm=T)'
+                  'sum'='function(x)sum(x,na.rm=T)',
+                  'mean'='function(x)mean(x,na.rm=T)',
+                  'median'='function(x)median(x,na.rm=T)',
+                  'max'='function(x)max(x,na.rm=T)',
+                  'min'='function(x)min(x,na.rm=T)',
+                  'sd'='function(x)sd(x,na.rm=T)'
                 ),
                 selected='function(x)sum(x,na.rm=T)',
                 multiple = FALSE,
                 options = list(`actions-box` = FALSE)
               ),
-              awesomeCheckbox('dailyS_myProphet','是否分析日趋势',TRUE),
-              awesomeCheckbox('weeklyS_myProphet','是否分析周趋势',TRUE),
-              awesomeCheckbox('yearlyS_myProphet','是否分析年趋势',TRUE)
+              awesomeCheckbox('dailyS_myProphet','daily.seasonality',TRUE),
+              awesomeCheckbox('weeklyS_myProphet','weekly.seasonality',TRUE),
+              awesomeCheckbox('yearlyS_myProphet','yearly.seasonality',TRUE)
             ),
-            awesomeCheckbox('export_myProphet','将该结果输出报告',FALSE)
+            awesomeCheckbox('export_myProphet','export to report?',FALSE)
       )
     )
   })
@@ -5040,21 +5040,21 @@ server<-function(input,output,session){
     list(
       tabsetPanel(
         tabPanel(
-          '历史数据结果',
+          'historary results',
           tabsetPanel(
             tabPanel(
-              '历史数据表格结果',
+              'table results',
               dataTableOutput(
                 'resTab_myProphet'
               )
             ),
             tabPanel(
-              'ggplot结果',
+              'ggplot',
               plotOutput('ggplotHis_myProphet',height='700px'),
               status='primary'
             ),
             tabPanel(
-              'plotly结果',
+              'plotly',
               plotlyOutput('plotlyHis_myProphet',height='700px'),
               status='primary'
             )
@@ -5064,21 +5064,21 @@ server<-function(input,output,session){
           
         ),
         tabPanel(
-          '预测结果',
+          'prediction results',
           tabsetPanel(
             tabPanel(
-              '预测数据表格结果',
+              'table results',
               dataTableOutput(
                 'predTab_myProphet'
               )
             ),
             tabPanel(
-              'ggplot结果',
+              'ggplot',
               plotOutput('ggplotPred_myProphet',height='700px'),
               status='primary'
             ),
             tabPanel(
-              'plotly结果',
+              'plotly',
               plotlyOutput('plotlyPred_myProphet',height='700px'),
               status='primary'
             )
@@ -5090,26 +5090,26 @@ server<-function(input,output,session){
       ),
       # tabsetPanel(
       tabPanel(
-        '调整可变属性',
+        'set other attributes',
         flowLayout(
           
           numericInput(
             inputId='cap_myProphet',
-            label='设定相对上限',
+            label='caption',
             value=-1,
             step=1
           ),
           
           numericInput(
             inputId='floor_myProphet',
-            label='设定相对下限',
+            label='floor',
             value=-1,
             step=1
           ),
           
           numericInput(
             inputId='H_myProphet',
-            label='设定预测时间长度',
+            label='predict steps',
             value=10,
             step=1
           )
@@ -5235,10 +5235,10 @@ server<-function(input,output,session){
     change_data()
     list(
       panel(status='primary',
-            heading='选择处理的数据集',
+            heading='choose data set',
             pickerInput(
               inputId = "dataSel_DT",
-              label = "选择数据集",
+              label = "choose data",
               choices = ls(envMadis)[-which(ls(envMadis)%in%c('envMadis','server','ui','LstMadis'))],
               selected =ls(envMadis)[-which(ls(envMadis)%in%c('envMadis','server','ui','LstMadis'))][1],
               multiple = FALSE,
@@ -5247,16 +5247,16 @@ server<-function(input,output,session){
       ),
       
       panel(status='primary',
-            heading = '设置参数个数',
+            heading = 'no of args',
             numericInput(
               inputId = 'nrow_DT',
-              label = '设定配置参数个数',
+              label = 'set no of args',
               value = 1,
               min=1,
               max=100
             )
       ),
-      awesomeCheckbox('export_dataMnp','将该结果输出报告',FALSE)
+      awesomeCheckbox('export_dataMnp','export to report',FALSE)
     )
   })
   
@@ -5421,7 +5421,7 @@ server<-function(input,output,session){
   output$down_report<-renderUI({
     req(input$go_report)
     list(
-      downloadButton('downloadReport','下载报告',class='fa-3x')
+      downloadButton('downloadReport','download report',class='fa-3x')
     )
     
   })
@@ -5466,22 +5466,22 @@ ui<-fluidPage(
     
     tabPanel(
       icon=icon('file-import'),
-      '导入本地数据',
+      'import data set',
       sidebarLayout(
         position='left',
         sidebarPanel(
           panel(status='primary',
-                heading='导入数据',
+                heading='import data',
                 fileInput(
                   'file_dataImpt', 
-                  '点击上传数据',
+                  'click to import data',
                   accept = c(
                     '.csv',
                     '.tsv',
                     '.txt'
                   )
                 ),
-                helpText('注意：数据需为txt或csv格式文件，或复制表格数据(excel，csv等文件)到下面的窗口中'),
+                helpText('note: data file should be txt or csv file, or you can copy data into the window below'),
                 aceEditor("text_dataImpt", value=readr:::format_tsv(mtcars), mode="r", theme="chrome",height="150px")
                 
           ),
@@ -5489,18 +5489,18 @@ ui<-fluidPage(
           uiOutput('args_dataImpt'),
           uiOutput('more1_dataImpt'),
           
-          actionBttn('go_dataImpt','确定')
+          actionBttn('go_dataImpt','comfirm')
         ),
         
         mainPanel(
           panel(
-            heading='原始数据变量描述',
+            heading='summary of data',
             verbatimTextOutput('varClass_dataImpt'),
             status='primary'
           ),
           #hr(),
           panel(
-            heading='载入数据查看',
+            heading='hea of data',
             verbatimTextOutput('head_dataImpt'),
             status='primary'
           )
@@ -5513,18 +5513,18 @@ ui<-fluidPage(
     
     ###### 数据处理 ######
     navbarMenu(
-      '数据处理',
+      'data manipulation',
       icon=icon('wrench'),
       
       ###### 数据处理-变量名修改 ######
       tabPanel(
-        '变量名更改',
+        'variable rename',
         icon=icon('pen'),
         sidebarLayout(
           sidebarPanel(
             uiOutput('more1_varName'),
             uiOutput('more2_varName'),
-            actionBttn('go_varName','确定')
+            actionBttn('go_varName','confirm')
             
           ),
           mainPanel(
@@ -5539,12 +5539,12 @@ ui<-fluidPage(
       ###### 数据处理-生成变量 ######
       tabPanel(
         icon=icon('plus'),
-        '生成新变量',
+        'generate new variable',
         sidebarLayout(
           sidebarPanel(
             uiOutput('more1_varMnp'),
             uiOutput('more2_varMnp'),
-            actionBttn('go_varMnp','确定')
+            actionBttn('go_varMnp','confirm')
             
             
             
@@ -5560,13 +5560,13 @@ ui<-fluidPage(
       ###### 数据处理-变量类型转换 ######
       tabPanel(
         icon=icon('retweet'),
-        strong('变量类型转换'),
+        strong('change variable mode'),
         sidebarLayout(
           sidebarPanel(
             uiOutput('more1_varClass'),
             uiOutput('more2_varClass'),
             uiOutput('more3_varClass'),
-            actionBttn('go_varClass','确定')
+            actionBttn('go_varClass','confirm')
           ),
           mainPanel(
             verbatimTextOutput('summary_varClass')
@@ -5579,12 +5579,12 @@ ui<-fluidPage(
       ###### 数据处理-数据变形 ######
       tabPanel(
         icon=icon('shapes'),
-        '数据变形',
+        'data reshape',
         sidebarLayout(
           sidebarPanel(
             uiOutput('more1_reshape'),
             uiOutput('more2_reshape'),
-            actionBttn('go_reshape','确定')
+            actionBttn('go_reshape','confirm')
           ),
           
           mainPanel(
@@ -5597,12 +5597,12 @@ ui<-fluidPage(
       ###### 数据去重(unique) ######
       tabPanel(
         icon=icon('broom'),
-        '数据去重',
+        'unique',
         sidebarLayout(
           sidebarPanel(
             uiOutput('more1_unique'),
             uiOutput('more2_unique'),
-            actionBttn('go_unique','确定')
+            actionBttn('go_unique','confirm')
           ),
           
           mainPanel(
@@ -5615,12 +5615,12 @@ ui<-fluidPage(
       ###### 数据处理-合并 ######
       tabPanel(
         icon=icon('object-ungroup'),
-        '数据合并',
+        'join and bind',
         sidebarLayout(
           sidebarPanel(
             uiOutput('more1_dataMerge'),
             uiOutput('more2_dataMerge'),
-            actionBttn('go_dataMerge','确定')
+            actionBttn('go_dataMerge','confirm')
           ),
           
           mainPanel(
@@ -5633,12 +5633,12 @@ ui<-fluidPage(
       ###### 数据处理-缺失值填补 ######
       tabPanel(
         icon=icon('paint-roller'),
-        strong('缺失值填补'),
+        strong('na impute'),
         sidebarLayout(
           sidebarPanel(
             uiOutput('more1_naImpute'),
             uiOutput('more2_naImpute'),
-            actionBttn('go_naImpute','确定')
+            actionBttn('go_naImpute','confirm')
           ),
           
           mainPanel(
@@ -5651,12 +5651,12 @@ ui<-fluidPage(
       ###### 数据处理-筛选数据(行(子集，行号)，列(变量)) ######
       tabPanel(
         icon=icon('filter'),
-        '筛选数据',
+        'subsetting data',
         sidebarLayout(
           sidebarPanel(
             uiOutput('more1_dataFilter'),
             uiOutput('more2_dataFilter'),
-            actionBttn('go_dataFilter','确定')
+            actionBttn('go_dataFilter','confirm')
           ),
           
           mainPanel(
@@ -5670,7 +5670,7 @@ ui<-fluidPage(
     ###### 数据处理-导出数据集 ######
     tabPanel(
       icon=icon('download'),
-      '数据导出',
+      'data export',
       sidebarLayout(
         sidebarPanel(
           uiOutput('more1_dataExpt'),
@@ -5729,12 +5729,12 @@ ui<-fluidPage(
     ###### 描述性分析 ######
     tabPanel(
       icon=icon('dice-one'),
-      '单变量描述性分析结果',
+      'descriptive statistic of one variable',
       sidebarLayout(
         sidebarPanel(
           uiOutput('more1_desc'),
           uiOutput('more2_desc'),
-          actionBttn('go_desc','确定')
+          actionBttn('go_desc','confirm')
         ),
         mainPanel(
           uiOutput('more4_desc'),
@@ -5749,16 +5749,16 @@ ui<-fluidPage(
     
     navbarMenu(
       icon=icon('dice-two'),
-      '统计检验',
+      'hypothesis test',
       ###### 单因素(统计检验)分析 ######
       tabPanel(
-        '假设检验',
+        'hypothesis',
         icon=icon('heading'),
         sidebarLayout(
           sidebarPanel(
             uiOutput('more1_hTest'),
             uiOutput('more2_hTest'),
-            actionBttn('go_hTest','确定')
+            actionBttn('go_hTest','confirm')
           ),
           mainPanel(
             uiOutput('more4_hTest'),
@@ -5769,12 +5769,12 @@ ui<-fluidPage(
       ###### 分类统计表制作 ######
       tabPanel(
         icon=icon('table'),
-        '描述性统计表',
+        'table 1',
         sidebarLayout(
           sidebarPanel(
             uiOutput('more1_myTable'),
             uiOutput('more2_myTable'),
-            actionBttn('go_myTable','确定')
+            actionBttn('go_myTable','confirm')
           ),
           mainPanel(
             uiOutput('more3_myTable')
@@ -5785,13 +5785,13 @@ ui<-fluidPage(
     
     ###### 统计图形制作 ######
     tabPanel(
-      '统计图形',
+      'graph',
       icon=icon('chart-pie'),
       sidebarLayout(
         sidebarPanel(
           uiOutput('more1_myGplt'),
           uiOutput('more2_myGplt'),
-          actionBttn('go_myGplt','确定')
+          actionBttn('go_myGplt','confirm')
         ),
         mainPanel(
           uiOutput('more3_myGplt')
@@ -5806,15 +5806,15 @@ ui<-fluidPage(
     ###### 模型 ######
     navbarMenu(
       icon=icon('medium'),
-      '模型分析',
+      'model analysis',
       tabPanel(
-        '线性模型',
+        'glm',
         icon=icon('chart-line'),
         sidebarLayout(
           sidebarPanel(
             uiOutput('more1_myGlm'),
             uiOutput('more2_myGlm'),
-            actionBttn('go_myGlm','确定')
+            actionBttn('go_myGlm','confirm')
           ),
           mainPanel(
             uiOutput('more3_myGlm')
@@ -5824,12 +5824,12 @@ ui<-fluidPage(
       ),
       tabPanel(
         icon=icon('ruler-horizontal'),
-        'COX风险模型',
+        'coxph model',
         sidebarLayout(
           sidebarPanel(
             uiOutput('more1_myCox'),
             uiOutput('more2_myCox'),
-            actionBttn('go_myCox','确定')
+            actionBttn('go_myCox','confirm')
           ),
           mainPanel(
             uiOutput('more3_myCox')
@@ -5837,13 +5837,13 @@ ui<-fluidPage(
         )
       ),
       tabPanel(
-        '决策树模型',
+        'tree model',
         icon=icon('tree'),
         sidebarLayout(
           sidebarPanel(
             uiOutput('more1_myTree'),
             uiOutput('more2_myTree'),
-            actionBttn('go_myTree','确定')
+            actionBttn('go_myTree','confirm')
           ),
           mainPanel(
             uiOutput('more3_myTree')
@@ -5852,12 +5852,12 @@ ui<-fluidPage(
       ),
       tabPanel(
         icon=icon('random'),
-        '混合效应模型',
+        'linear mixed effects model',
         sidebarLayout(
           sidebarPanel(
             uiOutput('more1_myLme'),
             uiOutput('more2_myLme'),
-            actionBttn('go_myLme','确定')
+            actionBttn('go_myLme','confirm')
           ),
           mainPanel(
             uiOutput('more3_myLme')
@@ -5874,15 +5874,15 @@ ui<-fluidPage(
     
     navbarMenu(
       icon=icon('gavel'),
-      '数据挖掘',
+      'data mining',
       tabPanel(
         icon=icon('project-diagram'),
-        '聚类分析',
+        'kmeans',
         sidebarLayout(
           sidebarPanel(
             uiOutput('more1_kmeans'),
             uiOutput('more2_kmeans'),
-            actionBttn('go_kmeans','确定')
+            actionBttn('go_kmeans','confirm')
           ),
           mainPanel(
             uiOutput('more3_kmeans')
@@ -5892,12 +5892,12 @@ ui<-fluidPage(
       
       tabPanel(
         icon=icon('product-hunt'),
-        '主成分分析',
+        'PCA',
         sidebarLayout(
           sidebarPanel(
             uiOutput('more1_pca'),
             uiOutput('more2_pca'),
-            actionBttn('go_pca','确定')
+            actionBttn('go_pca','confirm')
           ),
           mainPanel(
             uiOutput('more3_pca')
@@ -5906,13 +5906,13 @@ ui<-fluidPage(
       ),
       
       tabPanel(
-        '因子分析',
+        'FA',
         icon=icon('facebook-f'),
         sidebarLayout(
           sidebarPanel(
             uiOutput('more1_fa'),
             uiOutput('more2_fa'),
-            actionBttn('go_fa','确定')
+            actionBttn('go_fa','confirm')
           ),
           mainPanel(
             uiOutput('more3_fa')
@@ -5923,12 +5923,12 @@ ui<-fluidPage(
       tabPanel(
         icon=icon('equals'),
         # icon=icon('chart-scatter'),
-        '倾向得分匹配',
+        'PSM',
         sidebarLayout(
           sidebarPanel(
             uiOutput('more1_match'),
             uiOutput('more2_match'),
-            actionBttn('go_match','确定')
+            actionBttn('go_match','confirm')
           ),
           mainPanel(
             uiOutput('more3_match')
@@ -5948,12 +5948,12 @@ ui<-fluidPage(
     ###### 时间序列分析及预测 ######
     tabPanel(
       icon=icon('calendar-alt'),
-      '时间序列',
+      'prophet',
       sidebarLayout(
         sidebarPanel(
           uiOutput('more1_myProphet'),
           uiOutput('more2_myProphet'),
-          actionBttn('go_myProphet','确定')
+          actionBttn('go_myProphet','confirm')
         ),
         mainPanel(
           uiOutput('more3_myProphet')
@@ -5968,18 +5968,18 @@ ui<-fluidPage(
     
     tabPanel(
       icon=icon('th'),
-      '统计表格',
+      'data.table funs',
       sidebarLayout(
         sidebarPanel(
           uiOutput('more1_DT'),
-          actionBttn('go_DT','确定')
+          actionBttn('go_DT','confirm')
         ),
         mainPanel(
           panel(status='primary',
-                heading = '设置表格参数',
+                heading = 'set data.table args',
                 rHandsontableOutput("handsonTB")
           ),
-          panel(status='primary',heading = '表格结果',
+          panel(status='primary',heading = 'results',
                 DT:::dataTableOutput('resMnp')
           )
           
@@ -5998,11 +5998,11 @@ ui<-fluidPage(
     ###### 自动化报告(report) ######
     tabPanel(
       icon=icon('file-pdf'),
-      '生成报告',
+      'generate report',
       sidebarLayout(
         sidebarPanel(
-          radioButtons('format_report', '选择生成的文档类型', c('PDF', 'HTML', 'Word'),inline = TRUE),
-          actionBttn('go_report','确定')
+          radioButtons('format_report', 'file format', c('PDF', 'HTML', 'Word'),inline = TRUE),
+          actionBttn('go_report','confirm')
           
         ),
         mainPanel(
