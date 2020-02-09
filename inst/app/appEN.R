@@ -36,7 +36,7 @@ ifelse(!dir.exists(wd),dir.create(wd),FALSE)
 paste(wd,seed,sep='')->wd2
 dir.create(wd2)
 setwd(wd2)
-file.copy(paste0(sd,'madisReportTemp.Rmd'),'madisReportTemp.Rmd')
+file.copy(paste0(sd,'madisReportTempEN.Rmd'),'madisReportTempEN.Rmd')
 file.copy(paste0(sd,'header.tex'),'header.tex')
 #source(paste0(sd,'script.R'))
 
@@ -187,10 +187,10 @@ server<-function(input,output,session){
   output$more1_dataImpt<-renderUI({
     list(
       panel(status='primary',
-            heading='setting data name and choose vars to keep',
+            heading='setting data name and select vars to keep',
             pickerInput(
               inputId = "varsKeep_dataImpt",
-              label = "choose vars to import",
+              label = "select vars to import",
               choices = names(data_dataImpt()),
               selected =names(data_dataImpt()),
               multiple = TRUE,
@@ -259,10 +259,10 @@ server<-function(input,output,session){
     #?#
     
     list(
-      panel(status='primary',heading='choose data set',
+      panel(status='primary',heading='select data set',
             pickerInput(
               inputId = "dataSel_varName",
-              label = "choose data",
+              label = "select data",
               choices = ls(envMadis)[-which(ls(envMadis)%in%c('envMadis','server','ui','LstMadis'))],
               selected =ls(envMadis)[-which(ls(envMadis)%in%c('envMadis','server','ui','LstMadis'))][1],
               multiple = FALSE,
@@ -286,7 +286,7 @@ server<-function(input,output,session){
       panel(status='primary',heading='rename var name',
             pickerInput(
               inputId = "var_varName",
-              label = "choose var",
+              label = "select var",
               choices = names(data_varName()),
               selected =names(data_varName())[1],
               multiple = FALSE,
@@ -332,10 +332,10 @@ server<-function(input,output,session){
     change_data()
     list(
       panel(status='primary',
-            heading='choose data set',
+            heading='select data set',
             pickerInput(
               inputId = "dataSel_varMnp",
-              label = "choose data",
+              label = "select data",
               choices = ls(envMadis)[-which(ls(envMadis)%in%c('envMadis','server','ui','LstMadis'))],
               selected =ls(envMadis)[-which(ls(envMadis)%in%c('envMadis','server','ui','LstMadis'))][1],
               multiple = FALSE,
@@ -385,7 +385,7 @@ server<-function(input,output,session){
               )
         ),
         panel(status='primary',
-              heading='choose function',
+              heading='select function',
               awesomeCheckbox('usemyFun_varMnp','自定义函数?',FALSE),
               conditionalPanel(
                 condition = "!input['usemyFun_varMnp']",
@@ -462,7 +462,7 @@ server<-function(input,output,session){
                       ),
                       conditionalPanel(
                         condition="input['method_varMnp']=='split'",
-                        numericInput('indexSplit_varMnp','which element to choose after splitting',value=1,min=1,max=100,step=1)
+                        numericInput('indexSplit_varMnp','which element to keep after splitting',value=1,min=1,max=100,step=1)
                       ),
                       conditionalPanel(
                         condition="input['method_varMnp']=='substr'",
@@ -495,7 +495,7 @@ server<-function(input,output,session){
                         condition="input['method_varMnp']=='legalSet'",
                         pickerInput(
                           inputId='legalType_varMnp',
-                          label='choose validate method',
+                          label='select validate method',
                           choices=c(
                             'numeric range'='ranges',
                             'elements'='elements',
@@ -513,7 +513,7 @@ server<-function(input,output,session){
                         condition="input['method_varMnp']=='reCode'",
                         pickerInput(
                           inputId='reCodeType_varMnp',
-                          label='choose regroup method',
+                          label='select regroup method',
                           choices=c(
                             'numeric range'='ranges',
                             'element'='elements',
@@ -742,10 +742,10 @@ server<-function(input,output,session){
     #?#
     list(
       panel(status='primary',
-            heading='choose data set',
+            heading='select data set',
             pickerInput(
               inputId = "dataSel_varClass",
-              label = "choose data",
+              label = "select data",
               choices = ls(envMadis)[-which(ls(envMadis)%in%c('envMadis','server','ui','LstMadis'))],
               selected =ls(envMadis)[-which(ls(envMadis)%in%c('envMadis','server','ui','LstMadis'))][1],
               multiple = FALSE,
@@ -955,10 +955,10 @@ server<-function(input,output,session){
     #?#
     list(
       panel(status='primary',
-            heading='choose data set',
+            heading='select data set',
             pickerInput(
               inputId = "dataSel_reshape",
-              label = "choose data",
+              label = "select data",
               choices = ls(envMadis)[-which(ls(envMadis)%in%c('envMadis','server','ui','LstMadis'))],
               selected =ls(envMadis)[-which(ls(envMadis)%in%c('envMadis','server','ui','LstMadis'))][1],
               multiple = FALSE,
@@ -984,7 +984,7 @@ server<-function(input,output,session){
             heading='way of reshaping',
             pickerInput(
               inputId='reshapeMethod',
-              label='choose method',
+              label='select method',
               choices=c(
                 'Melt'='melt',
                 'Cast'='cast'
@@ -1000,7 +1000,7 @@ server<-function(input,output,session){
               heading='set melting args',
               pickerInput(
                 inputId='idVars',
-                label='choose id vars',
+                label='select id vars',
                 choices=names(dat),
                 #selected =names(dat)[1],
                 multiple=TRUE,
@@ -1008,7 +1008,7 @@ server<-function(input,output,session){
               ),
               pickerInput(
                 inputId='measureVars',
-                label='choose measure vars',
+                label='select measure vars',
                 choices=names(dat),
                 #selected =names(dat)[1],
                 multiple=TRUE,
@@ -1027,7 +1027,7 @@ server<-function(input,output,session){
               heading='set dcast args',
               pickerInput(
                 inputId='lhs_cast',
-                label='choose lhs var',
+                label='select lhs var',
                 choices=names(dat),
                 #selected =names(dat)[1],
                 multiple=TRUE,
@@ -1035,7 +1035,7 @@ server<-function(input,output,session){
               ),
               pickerInput(
                 inputId='rhs_cast',
-                label='choose right var',
+                label='select right var',
                 choices=names(dat),
                 #selected =names(dat)[1],
                 multiple=TRUE,
@@ -1043,7 +1043,7 @@ server<-function(input,output,session){
               ),
               pickerInput(
                 inputId='valueVar_cast',
-                label='choose value var',
+                label='select value var',
                 choices=names(dat),
                 #selected =names(dat)[1],
                 multiple=TRUE,
@@ -1052,7 +1052,7 @@ server<-function(input,output,session){
               textInputAddon(inputId='argsMore_cast','more args, see help(dcast)',value='',placeholder = 'eg:drop=TRUE',addon = icon("pencil")),
               pickerInput(
                 inputId='fnAggre',
-                label='choose aggregating function',
+                label='select aggregating function',
                 choices=c(
                   'minimum value'='min',
                   'maximum value'='max',
@@ -1159,10 +1159,10 @@ server<-function(input,output,session){
     #?#
     list(
       panel(status='primary',
-            heading='choose data set',
+            heading='select data set',
             pickerInput(
               inputId = "dataSel_unique",
-              label = "choose data",
+              label = "select data",
               choices = ls(envMadis)[-which(ls(envMadis)%in%c('envMadis','server','ui','LstMadis'))],
               selected =ls(envMadis)[-which(ls(envMadis)%in%c('envMadis','server','ui','LstMadis'))][1],
               multiple = FALSE,
@@ -1224,10 +1224,10 @@ server<-function(input,output,session){
     #?#
     list(
       panel(status='primary',
-            heading='choose datas to merge or bind',
+            heading='select datas to merge or bind',
             pickerInput(
               inputId = "dataSel1_dataMerge",
-              label = "choose the 1st data",
+              label = "select the 1st data",
               choices = ls(envMadis)[-which(ls(envMadis)%in%c('envMadis','server','ui','LstMadis'))],
               selected =ls(envMadis)[-which(ls(envMadis)%in%c('envMadis','server','ui','LstMadis'))][1],
               multiple = FALSE,
@@ -1235,7 +1235,7 @@ server<-function(input,output,session){
             ),
             pickerInput(
               inputId = "dataSel2_dataMerge",
-              label = "choose the 2nd data",
+              label = "select the 2nd data",
               choices = ls(envMadis)[-which(ls(envMadis)%in%c('envMadis','server','ui','LstMadis'))],
               selected =ls(envMadis)[-which(ls(envMadis)%in%c('envMadis','server','ui','LstMadis'))][1],
               multiple = FALSE,
@@ -1282,7 +1282,7 @@ server<-function(input,output,session){
               condition="input['method_dataMerge']=='Merge'",
               pickerInput(
                 inputId='joinMethod',
-                label='choose mrege method',
+                label='select mrege method',
                 choices=c(
                   'left join'='left',
                   'right join'='right',
@@ -1295,14 +1295,14 @@ server<-function(input,output,session){
               ),
               selectizeInput(
                 inputId='byX',
-                label='choose join by vars of 1st dta',
+                label='select join by vars of 1st dta',
                 choices=names(dat1),
                 multiple=T#,
                 #options = list(`actions-box` = FALSE)
               ),
               selectizeInput(
                 inputId='byY',
-                label='choose join by vars of 2nd dta',
+                label='select join by vars of 2nd dta',
                 choices=names(dat2),
                 multiple=T#,
                 #options = list(`actions-box` = FALSE)
@@ -1397,10 +1397,10 @@ server<-function(input,output,session){
     #?#
     list(
       panel(status='primary',
-            heading='choose data set',
+            heading='select data set',
             pickerInput(
               inputId = "dataSel_naImpute",
-              label = "choose data",
+              label = "select data",
               choices = ls(envMadis)[-which(ls(envMadis)%in%c('envMadis','server','ui','LstMadis'))],
               selected =ls(envMadis)[-which(ls(envMadis)%in%c('envMadis','server','ui','LstMadis'))][1],
               multiple = FALSE,
@@ -1423,10 +1423,10 @@ server<-function(input,output,session){
     data_naImpute()->dat
     list(
       panel(status='primary',
-            heading='choose imputed vars',
+            heading='select imputed vars',
             pickerInput(
               inputId='var_naImpute',
-              label='choose imputed vars',
+              label='select imputed vars',
               choices = names(dat),
               selected =names(dat)[1],
               multiple=TRUE,
@@ -1434,7 +1434,7 @@ server<-function(input,output,session){
             )
       ),
       panel(status='primary',
-            heading='choose impute method',
+            heading='select impute method',
             pickerInput(
               inputId='method_impute',
               label='impute method',
@@ -1461,7 +1461,7 @@ server<-function(input,output,session){
               condition = "input['method_impute']=='treeImpute'",
               pickerInput(
                 inputId='var_treeModel',
-                label='choose vars in tree model',
+                label='select vars in tree model',
                 choices = names(dat),
                 selected =names(dat)[1],
                 multiple=TRUE,
@@ -1485,7 +1485,7 @@ server<-function(input,output,session){
               condition = "input['method_impute']=='MICE'",
               pickerInput(
                 inputId='method_MICE',
-                label='choose mice method',
+                label='select mice method',
                 choices = c(
                   'pmm',
                   'cart',
@@ -1627,10 +1627,10 @@ server<-function(input,output,session){
     #?#
     list(
       panel(status='primary',
-            heading='choose data set',
+            heading='select data set',
             pickerInput(
               inputId = "dataSel_dataFilter",
-              label = "choose data",
+              label = "select data",
               choices = ls(envMadis)[-which(ls(envMadis)%in%c('envMadis','server','ui','LstMadis'))],
               selected =ls(envMadis)[-which(ls(envMadis)%in%c('envMadis','server','ui','LstMadis'))][1],
               multiple = FALSE,
@@ -1653,7 +1653,7 @@ server<-function(input,output,session){
     data_dataFilter()->dat
     list(
       panel(status='primary',
-            heading='choose sub data',
+            heading='select sub data',
             pickerInput(
               inputId='method_dataFilter',
               label='method for subsetting data',
@@ -1669,7 +1669,7 @@ server<-function(input,output,session){
               condition = "input['method_dataFilter']=='vars_dataFilter'",
               pickerInput(
                 inputId='varsKeep_dataFilter',
-                label='choose vars to keep',
+                label='select vars to keep',
                 choices = names(dat),
                 selected =names(dat),
                 multiple = TRUE,
@@ -1759,10 +1759,10 @@ server<-function(input,output,session){
     #?#
     list(
       panel(status='primary',
-            heading='choose data set',
+            heading='select data set',
             pickerInput(
               inputId = "dataSel_dataExpt",
-              label = "choose data",
+              label = "select data",
               choices = ls(envMadis)[-which(ls(envMadis)%in%c('envMadis','server','ui','LstMadis'))],
               selected =ls(envMadis)[-which(ls(envMadis)%in%c('envMadis','server','ui','LstMadis'))][1],
               multiple = FALSE,
@@ -1930,10 +1930,10 @@ server<-function(input,output,session){
     
     list(
       panel(status='primary',
-            heading='choose data set',
+            heading='select data set',
             pickerInput(
               inputId = "dataSel_myTable",
-              label = "choose data",
+              label = "select data",
               choices = ls(envMadis)[-which(ls(envMadis)%in%c('envMadis','server','ui','LstMadis'))],
               selected =ls(envMadis)[-which(ls(envMadis)%in%c('envMadis','server','ui','LstMadis'))][1],
               multiple = FALSE,
@@ -1954,10 +1954,10 @@ server<-function(input,output,session){
   output$more2_myTable<-renderUI({
     list(
       panel(status='primary',
-            heading='choost group vars',
+            heading='select group vars',
             pickerInput(
               inputId='lht_myTable',
-              label='choose group vars',
+              label='select group vars',
               choices = c('无'='',names(data_myTable())),
               selected='',
               multiple = TRUE,
@@ -1966,7 +1966,7 @@ server<-function(input,output,session){
             
             pickerInput(
               inputId='rht_myTable',
-              label='choose statisc vars',
+              label='select statisc vars',
               choices = names(data_myTable()),
               selected='',
               multiple = TRUE,
@@ -2043,10 +2043,10 @@ server<-function(input,output,session){
     
     list(
       panel(status='primary',
-            heading='choose data set',
+            heading='select data set',
             pickerInput(
               inputId = "dataSel_myGplt",
-              label = "choose data",
+              label = "select data",
               choices = ls(envMadis)[-which(ls(envMadis)%in%c('envMadis','server','ui','LstMadis'))],
               selected =ls(envMadis)[-which(ls(envMadis)%in%c('envMadis','server','ui','LstMadis'))][1],
               multiple = FALSE,
@@ -2071,7 +2071,7 @@ server<-function(input,output,session){
               heading='set aes in ggplot2',
               pickerInput(
                 inputId='xvar_myGplt',
-                label='choose x var',
+                label='select x var',
                 choices = c('NULL'='NULL',names(data_myGplt())),
                 selected='NULL',
                 multiple = FALSE,
@@ -2080,7 +2080,7 @@ server<-function(input,output,session){
               
               pickerInput(
                 inputId='yvar_myGplt',
-                label='choose y var',
+                label='select y var',
                 choices = c('NULL'='NULL',names(data_myGplt())),
                 selected='NULL',
                 multiple = FALSE,
@@ -2089,7 +2089,7 @@ server<-function(input,output,session){
               
               pickerInput(
                 inputId='size_myGplt',
-                label='choose size var',
+                label='select size var',
                 choices = c('NULL'='NULL',names(data_myGplt())),
                 selected='NULL',
                 multiple = FALSE,
@@ -2098,7 +2098,7 @@ server<-function(input,output,session){
               
               pickerInput(
                 inputId='color_myGplt',
-                label='choose colour var',
+                label='select colour var',
                 choices = c('NULL'='NULL',names(data_myGplt())),
                 selected='NULL',
                 multiple = FALSE,
@@ -2107,7 +2107,7 @@ server<-function(input,output,session){
               
               pickerInput(
                 inputId='fill_myGplt',
-                label='choose fill var',
+                label='select fill var',
                 choices = c('NULL'='NULL',names(data_myGplt())),
                 selected='NULL',
                 multiple = FALSE,
@@ -2116,7 +2116,7 @@ server<-function(input,output,session){
               
               pickerInput(
                 inputId='shape_myGplt',
-                label='choose shape var',
+                label='select shape var',
                 choices = c('NULL'='NULL',names(data_myGplt())),
                 selected='NULL',
                 multiple = FALSE,
@@ -2125,7 +2125,7 @@ server<-function(input,output,session){
               
               pickerInput(
                 inputId='alpha_myGplt',
-                label='choose alpha var',
+                label='select alpha var',
                 choices = c('NULL'='NULL',names(data_myGplt())),
                 selected='NULL',
                 multiple = FALSE,
@@ -2157,7 +2157,7 @@ server<-function(input,output,session){
           flowLayout(
             pickerInput(
               inputId='geom_myGplt',
-              label='choose layer',
+              label='select layer',
               choices = c(
                 'box plot'='box',
                 'histogram'='hist',
@@ -2176,7 +2176,7 @@ server<-function(input,output,session){
             #   condition = "'smooth'%in%input['geom_myGplt']",
             pickerInput(
               inputId='smoothMethod_myGplt',
-              label='choose smoothing method',
+              label='select smoothing method',
               choices = c(
                 'linear model'='lm',
                 'GAM model'='gam',
@@ -2221,7 +2221,7 @@ server<-function(input,output,session){
             
             pickerInput(
               inputId='facetVar_myGplt',
-              label='choose facet vars',
+              label='select facet vars',
               choices = c('NULL'='NULL',names(data_myGplt())),
               selected='NULL',
               multiple = TRUE,
@@ -2402,10 +2402,10 @@ server<-function(input,output,session){
     #?#
     list(
       panel(status='primary',
-            heading='choose data set',
+            heading='select data set',
             pickerInput(
               inputId = "dataSel_desc",
-              label = "choose data",
+              label = "select data",
               choices = ls(envMadis)[-which(ls(envMadis)%in%c('envMadis','server','ui','LstMadis'))],
               selected =ls(envMadis)[-which(ls(envMadis)%in%c('envMadis','server','ui','LstMadis'))][1],
               multiple = FALSE,
@@ -2428,10 +2428,10 @@ server<-function(input,output,session){
   output$more2_desc<-renderUI({
     list(
       panel(status='primary',
-            heading='choose vars to analysis',
+            heading='select vars to analysis',
             pickerInput(
               inputId='vars_desc',
-              label='choose vars',
+              label='select vars',
               choices = names(data_desc()),
               selected=names(data_desc())[1],
               multiple = TRUE,
@@ -2499,10 +2499,10 @@ server<-function(input,output,session){
   output$more4_desc<-renderUI({
     list(
       panel(status='primary',
-            heading='choose result to show',
+            heading='select result to show',
             pickerInput(
               inputId='Res_desc',
-              label='choose result',
+              label='select result',
               choices = input$vars_desc,
               selected=input$vars_desc[1],
               multiple = FALSE,
@@ -2559,10 +2559,10 @@ server<-function(input,output,session){
     change_data()
     list(
       panel(status='primary',
-            heading='choose data set',
+            heading='select data set',
             pickerInput(
               inputId = "dataSel_hTest",
-              label = "choose data",
+              label = "select data",
               choices = ls(envMadis)[-which(ls(envMadis)%in%c('envMadis','server','ui','LstMadis'))],
               selected =ls(envMadis)[-which(ls(envMadis)%in%c('envMadis','server','ui','LstMadis'))][1],
               multiple = FALSE,
@@ -2582,10 +2582,10 @@ server<-function(input,output,session){
   output$more2_hTest<-renderUI({
     list(
       panel(status='primary',
-            heading='choose vars',
+            heading='select vars',
             pickerInput(
               inputId='varsx_hTest',
-              label='choose x vars',
+              label='select x vars',
               choices = names(data_hTest()),
               selected=names(data_hTest())[1],
               multiple = TRUE,
@@ -2593,7 +2593,7 @@ server<-function(input,output,session){
             ),
             pickerInput(
               inputId='varsy_hTest',
-              label='choose y vars',
+              label='select y vars',
               choices = c('no'='',names(data_hTest())),
               selected='',
               multiple = TRUE,
@@ -2603,7 +2603,7 @@ server<-function(input,output,session){
               condition = "!input['myFun_hTest']",
               pickerInput(
                 inputId='alter_hTest',
-                label='choose alternative hypothesis',
+                label='select alternative hypothesis',
                 choices = c(
                   'equal'='two.sided',
                   'greater than'='greater',
@@ -2692,10 +2692,10 @@ server<-function(input,output,session){
   output$more4_hTest<-renderUI({
     list(
       panel(status='primary',
-            heading='choose result to shows',
+            heading='select result to shows',
             pickerInput(
               inputId='Res_hTest',
-              label='choose result',
+              label='select result',
               choices = apply(expand.grid(input$varsx_hTest,input$varsy_hTest),1,function(x)paste(x,collapse=','))
             )
       )
@@ -2734,10 +2734,10 @@ server<-function(input,output,session){
     change_data()
     list(
       panel(status='primary',
-            heading='choose data set',
+            heading='select data set',
             pickerInput(
               inputId = "dataSel_myGlm",
-              label = "choose data",
+              label = "select data",
               choices = ls(envMadis)[-which(ls(envMadis)%in%c('envMadis','server','ui','LstMadis'))],
               selected =ls(envMadis)[-which(ls(envMadis)%in%c('envMadis','server','ui','LstMadis'))][1],
               multiple = FALSE,
@@ -2760,7 +2760,7 @@ server<-function(input,output,session){
             heading='set GLM args',
             pickerInput(
               inputId='varsy_myGlm',
-              label='choose y var',
+              label='select y var',
               choices = names(data_myGlm()),
               selected=names(data_myGlm())[1],
               multiple = FALSE,
@@ -2768,7 +2768,7 @@ server<-function(input,output,session){
             ),
             pickerInput(
               inputId='varsx_myGlm',
-              label='choose x vars',
+              label='select x vars',
               choices = c('NULL'='',names(data_myGlm())),
               selected='',
               multiple = TRUE,
@@ -2776,7 +2776,7 @@ server<-function(input,output,session){
             ),
             pickerInput(
               inputId='family_myGlm',
-              label='choose family',
+              label='select family',
               choices = c('gaussian'='gaussian','binomial'='binomial','poisson'='poisson'),
               selected='gaussian',
               multiple=FALSE,
@@ -2809,7 +2809,7 @@ server<-function(input,output,session){
               list(
                 pickerInput(
                   inputId='weightsVar_myGlm',
-                  label='choose weight var',
+                  label='select weight var',
                   choices = names(data_myGlm()),
                   selected=names(data_myGlm())[1],
                   multiple = FALSE,
@@ -3064,10 +3064,10 @@ server<-function(input,output,session){
     change_data()
     list(
       panel(status='primary',
-            heading='choose data set',
+            heading='select data set',
             pickerInput(
               inputId = "dataSel_myTree",
-              label = "choose data",
+              label = "select data",
               choices = ls(envMadis)[-which(ls(envMadis)%in%c('envMadis','server','ui','LstMadis'))],
               selected =ls(envMadis)[-which(ls(envMadis)%in%c('envMadis','server','ui','LstMadis'))][1],
               multiple = FALSE,
@@ -3089,7 +3089,7 @@ server<-function(input,output,session){
       panel(status='primary',
             heading='set tree model args',
             panel(status='primary',
-                  heading='choose y var',
+                  heading='select y var',
                   awesomeCheckbox(
                     inputId = 'surv_myTree',
                     label='survival object?',
@@ -3122,7 +3122,7 @@ server<-function(input,output,session){
                     list(
                       pickerInput(
                         inputId='varsy_myTree',
-                        label='choose y var',
+                        label='select y var',
                         choices = names(data_myTree()),
                         selected=names(data_myTree())[1],
                         multiple = FALSE,
@@ -3134,7 +3134,7 @@ server<-function(input,output,session){
             
             pickerInput(
               inputId='varsx_myTree',
-              label='choose x vars',
+              label='select x vars',
               choices = c('no'='',names(data_myTree())),
               selected='',
               multiple = TRUE,
@@ -3369,10 +3369,10 @@ server<-function(input,output,session){
     change_data()
     list(
       panel(status='primary',
-            heading='choose data set',
+            heading='select data set',
             pickerInput(
               inputId = "dataSel_myCox",
-              label = "choose data",
+              label = "select data",
               choices = ls(envMadis)[-which(ls(envMadis)%in%c('envMadis','server','ui','LstMadis'))],
               selected =ls(envMadis)[-which(ls(envMadis)%in%c('envMadis','server','ui','LstMadis'))][1],
               multiple = FALSE,
@@ -3395,7 +3395,7 @@ server<-function(input,output,session){
             heading='set model args',
             pickerInput(
               inputId='timeVar_myCox',
-              label='choose time var',
+              label='select time var',
               choices = names(data_myCox()),
               selected=names(data_myCox())[1],
               multiple = FALSE,
@@ -3403,7 +3403,7 @@ server<-function(input,output,session){
             ),
             pickerInput(
               inputId='centVar_myCox',
-              label='choose event var',
+              label='select event var',
               choices = c('no'='',names(data_myCox())),
               selected='',
               multiple = FALSE,
@@ -3411,7 +3411,7 @@ server<-function(input,output,session){
             ),
             pickerInput(
               inputId='varsx_myCox',
-              label='choose x vars',
+              label='select x vars',
               choices = c('no'='',names(data_myCox())),
               selected='',
               multiple = TRUE,
@@ -3419,7 +3419,7 @@ server<-function(input,output,session){
             ),
             pickerInput(
               inputId='strataVar_myCox',
-              label='choose group var',
+              label='select group var',
               choices = c('no'='1',names(data_myCox())),
               selected='1',
               multiple=FALSE,
@@ -3452,7 +3452,7 @@ server<-function(input,output,session){
               list(
                 pickerInput(
                   inputId='weightsVar_myCox',
-                  label='choose weight var',
+                  label='select weight var',
                   choices = names(data_myCox()),
                   selected=names(data_myCox())[1],
                   multiple = FALSE,
@@ -3692,10 +3692,10 @@ server<-function(input,output,session){
     change_data()
     list(
       panel(status='primary',
-            heading='choose data set',
+            heading='select data set',
             pickerInput(
               inputId = "dataSel_myLme",
-              label = "choose data",
+              label = "select data",
               choices = ls(envMadis)[-which(ls(envMadis)%in%c('envMadis','server','ui','LstMadis'))],
               selected =ls(envMadis)[-which(ls(envMadis)%in%c('envMadis','server','ui','LstMadis'))][1],
               multiple = FALSE,
@@ -3718,7 +3718,7 @@ server<-function(input,output,session){
             heading='set mixed model args',
             pickerInput(
               inputId='varsy_fixed',
-              label='choose y var in fixed effects',
+              label='select y var in fixed effects',
               choices = names(data_myLme()),
               selected=names(data_myLme())[1],
               multiple = FALSE,
@@ -3727,7 +3727,7 @@ server<-function(input,output,session){
             
             pickerInput(
               inputId='varsx_fixed',
-              label='choose x vars in fixed effects',
+              label='select x vars in fixed effects',
               choices = c('NULL'='',names(data_myLme())),
               selected='',
               multiple = TRUE,
@@ -3925,10 +3925,10 @@ server<-function(input,output,session){
     change_data()
     list(
       panel(status='primary',
-            heading='choose data set',
+            heading='select data set',
             pickerInput(
               inputId = "dataSel_kmeans",
-              label = "choose data",
+              label = "select data",
               choices = ls(envMadis)[-which(ls(envMadis)%in%c('envMadis','server','ui','LstMadis'))],
               selected =ls(envMadis)[-which(ls(envMadis)%in%c('envMadis','server','ui','LstMadis'))][1],
               multiple = FALSE,
@@ -3951,7 +3951,7 @@ server<-function(input,output,session){
             heading='set kmeans args',
             pickerInput(
               inputId='vars_kmeans',
-              label='choose vars',
+              label='select vars',
               choices = names(data_kmeans()),
               selected=names(data_kmeans())[1],
               multiple = TRUE,
@@ -4221,10 +4221,10 @@ server<-function(input,output,session){
     change_data()
     list(
       panel(status='primary',
-            heading='choose data set',
+            heading='select data set',
             pickerInput(
               inputId = "dataSel_pca",
-              label = "choose data",
+              label = "select data",
               choices = ls(envMadis)[-which(ls(envMadis)%in%c('envMadis','server','ui','LstMadis'))],
               selected =ls(envMadis)[-which(ls(envMadis)%in%c('envMadis','server','ui','LstMadis'))][1],
               multiple = FALSE,
@@ -4247,7 +4247,7 @@ server<-function(input,output,session){
             heading='set pca args',
             pickerInput(
               inputId='vars_pca',
-              label='choose vars',
+              label='select vars',
               choices = names(data_pca()),
               selected=names(data_pca())[1],
               multiple = TRUE,
@@ -4447,10 +4447,10 @@ server<-function(input,output,session){
     change_data()
     list(
       panel(status='primary',
-            heading='choose data set',
+            heading='select data set',
             pickerInput(
               inputId = "dataSel_fa",
-              label = "choose data",
+              label = "select data",
               choices = ls(envMadis)[-which(ls(envMadis)%in%c('envMadis','server','ui','LstMadis'))],
               selected =ls(envMadis)[-which(ls(envMadis)%in%c('envMadis','server','ui','LstMadis'))][1],
               multiple = FALSE,
@@ -4473,7 +4473,7 @@ server<-function(input,output,session){
             heading='set fa args',
             pickerInput(
               inputId='vars_fa',
-              label='choose vars',
+              label='select vars',
               choices = names(data_fa()),
               selected=names(data_fa())[1],
               multiple = TRUE,
@@ -4697,10 +4697,10 @@ server<-function(input,output,session){
     change_data()
     list(
       panel(status='primary',
-            heading='choose data set',
+            heading='select data set',
             pickerInput(
               inputId = "dataSel_match",
-              label = "choose data",
+              label = "select data",
               choices = ls(envMadis)[-which(ls(envMadis)%in%c('envMadis','server','ui','LstMadis'))],
               selected =ls(envMadis)[-which(ls(envMadis)%in%c('envMadis','server','ui','LstMadis'))][1],
               multiple = FALSE,
@@ -4723,7 +4723,7 @@ server<-function(input,output,session){
             heading='vars in PSM',
             pickerInput(
               inputId='vary_match',
-              label='choose group var',
+              label='select group var',
               choices = names(data_match()),
               selected=names(data_match())[1],
               multiple = FALSE,
@@ -4733,7 +4733,7 @@ server<-function(input,output,session){
             
             pickerInput(
               inputId='varx_match',
-              label='choose matching vars',
+              label='select matching vars',
               choices = names(data_match()),
               selected=names(data_match())[1],
               multiple = TRUE,
@@ -4901,10 +4901,10 @@ server<-function(input,output,session){
     
     list(
       panel(status='primary',
-            heading='choose data set',
+            heading='select data set',
             pickerInput(
               inputId = "dataSel_myProphet",
-              label = "choose data",
+              label = "select data",
               choices = ls(envMadis)[-which(ls(envMadis)%in%c('envMadis','server','ui','LstMadis'))],
               selected =ls(envMadis)[-which(ls(envMadis)%in%c('envMadis','server','ui','LstMadis'))][1],
               multiple = FALSE,
@@ -4929,7 +4929,7 @@ server<-function(input,output,session){
               heading='set args in prophet',
               pickerInput(
                 inputId='tsvar_myProphet',
-                label='choose datetime var',
+                label='select datetime var',
                 choices = c(names(data_myProphet())),
                 selected='NULL',
                 multiple = FALSE,
@@ -4967,7 +4967,7 @@ server<-function(input,output,session){
               
               pickerInput(
                 inputId='measurevars_myProphet',
-                label='choose measure vars',
+                label='select measure vars',
                 choices = c(names(data_myProphet())),
                 selected='NULL',
                 multiple = TRUE,
@@ -4976,7 +4976,7 @@ server<-function(input,output,session){
               
               pickerInput(
                 inputId='groupvars_myProphet',
-                label='choose subgroup vars',
+                label='select subgroup vars',
                 choices = c('NULL'='1',names(data_myProphet())),
                 selected='1',
                 multiple = TRUE,
@@ -4985,7 +4985,7 @@ server<-function(input,output,session){
               
               pickerInput(
                 inputId='period_myProphet',
-                label='choose periods',
+                label='select periods',
                 choices = c(
                   'days'='days',
                   'weeks'='weeks',
@@ -5235,10 +5235,10 @@ server<-function(input,output,session){
     change_data()
     list(
       panel(status='primary',
-            heading='choose data set',
+            heading='select data set',
             pickerInput(
               inputId = "dataSel_DT",
-              label = "choose data",
+              label = "select data",
               choices = ls(envMadis)[-which(ls(envMadis)%in%c('envMadis','server','ui','LstMadis'))],
               selected =ls(envMadis)[-which(ls(envMadis)%in%c('envMadis','server','ui','LstMadis'))][1],
               multiple = FALSE,
@@ -5396,7 +5396,7 @@ server<-function(input,output,session){
   
   observeEvent(input$go_report,{
     isolate({
-      out <- render('madisReportTemp.Rmd', switch(
+      out <- render('madisReportTempEN.Rmd', switch(
         input$format_report,
         PDF = pdf_document(latex_engine ='xelatex',toc=T,toc_depth=4,includes=includes(in_header='header.tex')), HTML = html_document(toc=T,toc_detpth=4), Word = word_document()
       ))

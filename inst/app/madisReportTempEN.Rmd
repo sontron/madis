@@ -1,15 +1,15 @@
 ---
-  title: "auto generated report by madis"
+title: "auto generated report by madis"
 author: "Powered By madis"
 output:
   pdf_document:
-  includes:
-  in_header: header.tex
-keep_tex: yes
-latex_engine: xelatex
-toc: yes
-html_document: default
-word_document: default
+    includes:
+      in_header: header.tex
+    keep_tex: yes
+    latex_engine: xelatex
+    toc: yes
+  html_document: default
+  word_document: default
 ---
 
 # Introduction
@@ -431,7 +431,7 @@ if(!all(is.na(myKmeansParms$data))){
 
 
 
-## 因子分析结果部分
+## 主成分分析结果部分
 
 LstMadis$pca->mypcaParms
 if(!all(is.na(mypcaParms$data))){
@@ -528,48 +528,48 @@ if(!all(is.na(myfaParms$data))){
 
 ## 主成分分析结果部分
 
-LstMadis$pca->mypcaParms
-if(!all(is.na(mypcaParms$data))){
-  cat('\n')
-  cat('# 主成分分析结果')
-  cat('\n')
-  cat('\n')
-  # cat('主成分分析采用R psych包的principal函数进行分析。')
-  cat('\n')
-  
-  
-  cat('## 结果部分')
-  cat('\n')
-  for(i in 1:nrow(mypcaParms)){
-    cat('\n')
-    cat(paste0('### 第',i,'个模型的结果：'))
-    cat('\n')
-    
-    pcaS(
-      data=LstMadis$Data[[mypcaParms$data[i]]],
-      vars=mypcaParms$vars[i],
-      nfcts=mypcaParms$nfcts[i],
-      Rotate=mypcaParms$Rotate[i],
-      Scores=mypcaParms$Scores[i],
-      subset=mypcaParms$subset[i],
-      pcaVarName=mypcaParms$pcaVarName[i])->res
-    
-    cat('\n')
-    cat(paste0('#### 第',i,'主成分分析图形结果：'))
-    cat('\n')
-    plot(scree(res$dataScree))
-    cat('\n')
-    cat('\n')
-    cat(paste0('#### 第',i,'主成分分析因子载荷结果：'))
-    cat('\n')
-    cat(pander::pander(res$resPCA$loadings[],split.table=Inf))
-    cat('\n')
-    cat('\n')
-    cat(pander::pander(res$cumVar,split.table=Inf))
-    cat('\n')
-  }
-  
-}
+# LstMadis$pca->mypcaParms
+# if(!all(is.na(mypcaParms$data))){
+#   cat('\n')
+#   cat('# 主成分分析结果')
+#   cat('\n')
+#   cat('\n')
+#   # cat('主成分分析采用R psych包的principal函数进行分析。')
+#   cat('\n')
+#   
+#   
+#   cat('## 结果部分')
+#   cat('\n')
+#   for(i in 1:nrow(mypcaParms)){
+#     cat('\n')
+#     cat(paste0('### 第',i,'个模型的结果：'))
+#     cat('\n')
+#     
+#     pcaS(
+#       data=LstMadis$Data[[mypcaParms$data[i]]],
+#       vars=mypcaParms$vars[i],
+#       nfcts=mypcaParms$nfcts[i],
+#       Rotate=mypcaParms$Rotate[i],
+#       Scores=mypcaParms$Scores[i],
+#       subset=mypcaParms$subset[i],
+#       pcaVarName=mypcaParms$pcaVarName[i])->res
+#     
+#     cat('\n')
+#     cat(paste0('#### 第',i,'主成分分析图形结果：'))
+#     cat('\n')
+#     plot(scree(res$dataScree))
+#     cat('\n')
+#     cat('\n')
+#     cat(paste0('#### 第',i,'主成分分析因子载荷结果：'))
+#     cat('\n')
+#     cat(pander::pander(res$resPCA$loadings[],split.table=Inf))
+#     cat('\n')
+#     cat('\n')
+#     cat(pander::pander(res$cumVar,split.table=Inf))
+#     cat('\n')
+#   }
+#   
+# }
 
 
 
