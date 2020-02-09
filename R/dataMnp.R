@@ -1,8 +1,31 @@
 #' dataMnp
 #' 
-#' a function provides data manipulating procedures
+#' a function provides data manipulating procedures, mainly based on data.table.
 #' 
-#' add order param!!
+#' @param data  data.frame
+#' @param subset  character string could be parsed as a logical expression or NA, eg. subset="sex==1"
+#' @param newVars  new vars names, could be character string or NA, eg. newVars='ageNew'
+#' @param newVarsFormulas character string could be parsed as formulas or NA, eg. "sum(age)"
+#' @param newVarsBy  groupby var name or NA
+#' @param indexNames  variable names generated in the jth procedre as data.table.
+#' @param Formulas  character string could be parsed as expression, and seperated with ";" eg. "mean(disp);sum(disp)"
+#' @param dimVars  group by variable names, same as k in data.table
+#' @param dimNames rename the dimVars
+#' @param dateVar  set the dateVar in the data.frame if any
+#' @param dtOrders  set the date variable format, could be 'ymd', 'mdy', 'ymd hms', please refer to lubridate::parse_date_time for more detail.
+#' @param margin  calculate margin results. 0 means no margin results should calculated, 1 for the first 1 dimVars, 2 for the first 2 dimVars, etc.
+#' @param revisedNames new variable name generated using the results
+#' @param revisedFormulas formulas corresponding to revisedNames
+#' @param revisedMargin same as margin but only for revised vars
+#' @param orderVars  please refer to data.table::setorderv for more detail.
+#' @param orders please refer to data.table::setorderv for more detail.
+#' @param Digits  set digits
+#' @param tbVars vars needed to calculate tongbi(chinese, means Year over Year) index.
+#' @param hbVars  vars needed to calculate huanbi(chinese, means month over month, quater over quater, etc.)
+#' @param colOrder reorder column orders.
+#' 
+#' 
+#' 
 #' 
 #' 
 #' @examples 
@@ -11,7 +34,15 @@
 #' dt<-data.frame(ts=date,grp1=sample(letters[1:5],length(date),rep=T),y=rnorm(length(date)))
 #' dataMnp(data=dt,indexNames=c('a','b','c'),Formulas='mean(y);sd(y);sd(y)/mean(y)',dimVars='year(ts);month(ts);grp1',dimNames = 'year;month;grp',dateVar = 'ts',dtOrders = 'ymd',orderVars = 'grp',orders='1',tbVars='a;b',hbVars=c('c','tt'),revisedNames = 'tt',revisedFormulas = 'a+b',colOrder='1;2;3;4;5;6;8;9')->res
 #' 
+#' # generate new variable 
+#' dataMnp(data=mtcars,subset='vs==1',newVars='test',newVarsFormulas='mpg+disp',indexNames='sumMPG',Formulas='sum(mpg)',dimVars='gear',dimNames='VS')
 #' 
+#' # revise the result using revisedNames, revisedFormulas,revisedMargin args. it's same as DT[i,j,k][c('revisedvars'):=list(...),by=.(...)]
+#' # the revisedMargin means groupby which dimVars, eg. 1 means the first 1 dimVars, and 2 means the first 2 dimVars, 0 means no groupby variables.
+#' 
+#' dataMnp(data=mtcars,newVarsFormulas='mpg+disp',indexNames='sumMPG',Formulas='sum(mpg)',dimVars='vs;gear',dimNames='VS;Gear',revisedNames='x',revisedFormulas='sum(sumMPG)',revisedMargin=o)
+#' dataMnp(data=mtcars,newVarsFormulas='mpg+disp',indexNames='sumMPG',Formulas='sum(mpg)',dimVars='vs;gear',dimNames='VS;Gear',revisedNames='x',revisedFormulas='sum(sumMPG)',revisedMargin=1)
+#' dataMnp(data=mtcars,newVarsFormulas='mpg+disp',indexNames='sumMPG',Formulas='sum(mpg)',dimVars='vs;gear',dimNames='VS;Gear',revisedNames='x',revisedFormulas='sum(sumMPG)',revisedMargin=2)
 #' 
 #' 
 #' @export
@@ -22,7 +53,7 @@ dataMnp<-function(data,
                   newVars=NA,
                   newVarsFormulas=NA,
                   newVarsBy=NA,
-                  newVarsMargin=NA,
+                  # newVarsMargin=NA,
                   indexNames,
                   Formulas,
                   dimVars,
@@ -30,10 +61,10 @@ dataMnp<-function(data,
                   dateVar=NA,
                   dtOrders='ymd',
                   margin=0,   #汇总结果值标边际
-                  #revisedVars=NA, ## 新增指标计算列(暂时不用！)
-                  revisedMargin=0,  ## 新增指标边际
+                  #revisedVars=NA, ## 
                   revisedNames=NA,  ## 重命名新增指标,
                   revisedFormulas=NA,  ##新增指标公式
+                  revisedMargin=0,  ## 新增指标边际
                   orderVars=NA,   ## 排序变量
                   orders=NA,   ## 排序
                   Digits=2,      ## 有效位数
@@ -186,7 +217,7 @@ dataMnp<-function(data,
     if(!all(is.na(hbVars))){
       setdiff(unlist(stri_split_fixed(hbVars,';')),NA)->hbVars
       
-      res[,c(paste(hbVars,'环比',sep='_')):=lapply(
+      res[,c(paste(hbVars,'hb',sep='_')):=lapply(
         .SD,function(i)100*(i-shift(i,1,type='lag'))/shift(i,1,type='lag')
       ),.SDcols=hbVars,by=as.data.table(sapply(dimNames2,function(ii)res[,eval(parse(text=ii))]))]
     }
@@ -197,7 +228,7 @@ dataMnp<-function(data,
                     ifelse(any(stri_detect_fixed(dimVars,'week')),52,1)))->TB
       
       setdiff(unlist(stri_split_fixed(tbVars,';')),NA)->tbVars
-      res[,c(paste(tbVars,'同比',sep='_')):=lapply(
+      res[,c(paste(tbVars,'tb',sep='_')):=lapply(
         .SD,function(i)100*(i-shift(i,TB,type='lag'))/shift(i,TB,type='lag')
       ),.SDcols=tbVars,by=as.data.table(sapply(dimNames2,function(ii)res[,eval(parse(text=ii))]))]
     }

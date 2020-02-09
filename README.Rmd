@@ -1,6 +1,6 @@
-# madis - Medical analytics using R and Shiny
+# madis - Manipulating and Analyzing Data Interactively with Shiny
 
-madis is an open-source platform-independent browser-based interface for medical statistical analytics in [R](http://www.r-project.org/). The application is based on the [Shiny](http://www.rstudio.com/shiny/) package and can be run locally or on a server. madis was developed by Sontron. Please use the issue tracker on GitHub to suggest enhancements or report problems: http://github.com/. For other questions and comments please use hw4m14@soton.ac.uk.
+madis is an open-source platform-independent browser-based interface for data manipulating and analyzing in [R](http://www.r-project.org/). The application is based on [Shiny](http://www.rstudio.com/shiny/) and can be run locally or on a server. Please use the issue tracker on GitHub to suggest enhancements or report problems. 
 
 ## Key features
 
@@ -27,7 +27,7 @@ To conduct high-quality analysis, statistical model should be used. In madis, yo
 
 #### Programming
 
-Although madis's web-interface can handle quite a few daa and analysis tasks, you may prefer to write your own R-code. madis provides a bridge to progamming in R(studio) by exporting the functions used for analysis (i.e., you can select the button `Custom function?` to create your own function in madis).
+Although madis's web-interface can handle quite a few data and analysis tasks, you may prefer to write your own R-code. madis provides a bridge to progamming in R(studio) by exporting the functions used for analysis (i.e., you can select the button `Custom function?` to create your own function in madis).
 
 #### Customize
 
@@ -38,18 +38,18 @@ madis can create a report (PDF,Word,and HTML)  using [Rmarkdown](http://rmarkdow
 
 - Required: [R](https://cran.rstudio.com/) version 3.3.0 or later
 - Required: A modern browser (e.g., [Chrome](https://www.google.com/intl/en/chrome/browser/desktop/) or Safari). Internet Explorer (version 11 or higher) should work as well
-- Required: [Rstudio](http://www.rstudio.com/products/rstudio/download/)
+- Required: latex or miketex if you want generate a pdf report.
 
 To install the latest version of madis for Windows or Mac, with complete documentation for off-line access, open R(studio) and copy-and-paste the command below:
 
 ```r
-install.packages("madis", repos = "https://radiant-rstats.github.io/minicran/", type = 'binary')
+devtools::install_github("sontron/madis")
 ```
 
 Once all packages are installed use the command below to launch the app:
 
 ```r
-madis()
+Madis(wd='/home/tmp',lang='en')  # where lang could be en(english version) or cn(chinese version).
 ```
 
 
@@ -58,15 +58,8 @@ madis()
 
 #### Reporting issues
 
-Please use the GitHub issue tracker at <a href="https://github.com/radiant-rstats/radiant/issues" target="_blank">github.com/radiant-rstats/radiant/issues</a> if you have any problems using madis.
+Please use the GitHub issue tracker at <a href="https://github.com/sontron/madis/issues" target="_blank">github.com/radiant-rstats/radiant/issues</a> if you have any problems using madis.
 
-## Online
-
-## Running Radiant on shinyapps.io/ shiny-server
-
-## Saving and loading state
-
-## Source code
 
 ## Credits
 

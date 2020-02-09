@@ -50,11 +50,11 @@ if(!all(is.na(descParams$xvars))){
   cat('\n')
   
   cat('\n')
-  cat('## results')
+  # cat('## results')
   cat('\n')
   for(i in 1:nrow(descParams)){
     cat('\n')
-    cat(paste0('### ',descParams$xvars[i],' result as follow '))
+    cat(paste0('### ',descParams$xvars[i],' '))
     cat('\n')
     #print(pander(resDesc[[i]]$resTabDesc))
     uniVar(data=LstMadis$Data[[descParams$dataName[i]]],xvars=descParams$xvars[i],Digits=descParams$Digits[i])->res
@@ -88,11 +88,11 @@ if(!all(is.na(hTestParams$xvars))){
   cat('\n')
   cat('\n')
   
-  cat('## results')
+  # cat('## results')
   cat('\n')
   for(i in 1:nrow(hTestParams)){
     cat('\n')
-    cat(paste0('### ',hTestParams$xvars[i],' & ',hTestParams$yvars[i],' test result as follow '))
+    cat(paste0('### ',hTestParams$xvars[i],' & ',hTestParams$yvars[i],' '))
     cat('\n')
     #print(pander(resDesc[[i]]$resTabDesc))
     hTest(data=LstMadis$Data[[hTestParams$dataName[i]]],xvars=hTestParams$xvars[i],yvars=hTestParams$yvars[i],alter=hTestParams$alter[i],paired=hTestParams$paired[i],confLevel=hTestParams$confLevel[i],nullHyp=hTestParams$nullHyp[i])->res
@@ -119,11 +119,11 @@ if(!all(is.na(myGlmParms$data))){
   cat('\n')
   cat('\n')
   
-  cat('## 结果部分')
+  # cat('## results')
   cat('\n')
   for(i in 1:nrow(myGlmParms)){
     cat('\n')
-    cat(paste0('### ',i,' model results '))
+    cat(paste0('### model ',i,' results '))
     cat('\n')
     
     glmS(Formula=myGlmParms$Formula[i],
@@ -134,7 +134,7 @@ if(!all(is.na(myGlmParms$data))){
          lower=myGlmParms$lower[i])->res
     
     cat('\n')
-    cat(paste0('#### ',i,' Full model results '))
+    cat(paste0('#### Full model ',i,' results '))
     if(myGlmParms$Family[i]=='binomial'){
       cat('\n')
       cat('\n')
@@ -152,7 +152,7 @@ if(!all(is.na(myGlmParms$data))){
     }
     cat('\n')
     
-    cat(paste0('#### ',i,' Full model diagnostic results '))
+    cat(paste0('#### Full model ',i,' diagnostic results '))
     cat('\n')
     print(autoplot(res$glmResFull))
     cat('\n')
@@ -176,7 +176,7 @@ if(!all(is.na(myGlmParms$data))){
       cat('\n')
     }
     cat('\n')
-    cat(paste0('#### ',i,' Step model results '))
+    cat(paste0('#### Step model ',i,' results '))
     # cat('\n')
     # cat(pander(summary(res$glmResStep)))
     # cat('\n')
@@ -203,7 +203,7 @@ if(!all(is.na(myGlmParms$data))){
     cat('\n')
     
     cat('\n')
-    cat(paste0('#### ',i,' Step model diagnostic result '))
+    cat(paste0('#### Step model ',i,' diagnostic result '))
     cat('\n')
     print(autoplot(res$glmResStep))
     cat('\n')
@@ -246,11 +246,11 @@ if(!all(is.na(myTreeParms$data))){
   cat('\n')
   
   cat('\n')
-  cat('## results ')
+  # cat('## results ')
   cat('\n')
   for(i in 1:nrow(myTreeParms)){
     cat('\n')
-    cat(paste0('### ',i,' model results '))
+    cat(paste0('### Tree model ',i,' results '))
     cat('\n')
     
     treeS(Formula=myTreeParms$Formula[i],
@@ -288,11 +288,11 @@ if(!all(is.na(myCoxParms$data))){
   cat('\n')
   
   cat('\n')
-  cat('## results')
+  # cat('## results')
   cat('\n')
   for(i in 1:nrow(myCoxParms)){
     cat('\n')
-    cat(paste0('### ',i,' model results '))
+    cat(paste0('### model ',i,' results '))
     cat('\n')
     
     coxS(Formula=myCoxParms$Formula[i],
@@ -303,24 +303,24 @@ if(!all(is.na(myCoxParms$data))){
          lower=myCoxParms$lower[i])->res
     
     cat('\n')
-    cat(paste0('#### ',i,' Full model results '))
+    cat(paste0('#### Full model ',i,' results '))
     cat('\n')
     cat(pander::pander(summary(res$coxResFull),split.table=Inf))
     cat('\n')
-    cat(paste0('#### ',i,' Full model diagnostic results '))
+    cat(paste0('#### Full model ',i,'  diagnostic results '))
     cat('\n')
     print(autoplot(survfit(res$coxResFull)))
     cat('\n')
-    cat(paste0('#### ',i,' Step model results'))
+    cat(paste0('#### Step model ',i,' results'))
     cat('\n')
     cat(pander::pander(summary(res$coxResStep),split.table=Inf))
     cat('\n')
-    cat(paste0('#### ',i,' Step model diagnostic results'))
+    cat(paste0('#### Step model ',i,' diagnostic results'))
     cat('\n')
     print(autoplot(survfit(res$coxResStep)))
     cat('\n')
     cat('\n')
-    cat(paste0('#### ',i,' coxph model curves '))
+    cat(paste0('#### model ',i,' survival curves '))
     cat('\n')
     print(autoplot(res$fitStrata))
     cat('\n')
@@ -346,11 +346,11 @@ if(!all(is.na(myLmeParms$data))){
   cat('\n')
   
   
-  cat('## results')
+  # cat('## results')
   cat('\n')
   for(i in 1:nrow(myLmeParms)){
     cat('\n')
-    cat(paste0('### ',i,' model results'))
+    cat(paste0('### model ',i,' results'))
     cat('\n')
     
     lmeS(formulaFixed=myLmeParms$formulaFixed[i],
@@ -360,12 +360,12 @@ if(!all(is.na(myLmeParms$data))){
          subset=myLmeParms$subset[i])->res
     
     cat('\n')
-    cat(paste0('#### ',i,' Full model results'))
+    cat(paste0('#### Full model ',i,' results'))
     cat('\n')
     cat(pander::pander(res$lmeResFull,split.table=Inf))
     cat('\n')
     cat('\n')
-    cat(paste0('#### ',i,' Step model results'))
+    cat(paste0('#### Step model ',i,' results'))
     cat('\n')
     cat(pander::pander(res$lmeResStep,split.table=Inf))
     cat('\n')
@@ -390,11 +390,11 @@ if(!all(is.na(myKmeansParms$data))){
   cat('\n')
   
   
-  cat('## results')
+  # cat('## results')
   cat('\n')
   for(i in 1:nrow(myKmeansParms)){
     cat('\n')
-    cat(paste0('### ',i,' kmeans results '))
+    cat(paste0('### Kmeans analyzing ',i,' results '))
     cat('\n')
     
     Kmeans(
@@ -412,7 +412,7 @@ if(!all(is.na(myKmeansParms$data))){
       seed=myKmeansParms$seed[i])->res
     
     cat('\n')
-    cat(paste0('#### ',i,' graph results of kmeans'))
+    cat(paste0('#### Kmeans analyzing ',i,' graph results'))
     cat('\n')
     plot(res$graphCrit)
     cat('\n')
@@ -443,11 +443,11 @@ if(!all(is.na(mypcaParms$data))){
   cat('\n')
   
   
-  cat('## results')
+  # cat('## results')
   cat('\n')
   for(i in 1:nrow(mypcaParms)){
     cat('\n')
-    cat(paste0('### ',i,' PCA results '))
+    cat(paste0('### PCA ',i,' results '))
     cat('\n')
     
     pcaS(
@@ -460,12 +460,12 @@ if(!all(is.na(mypcaParms$data))){
       pcaVarName=mypcaParms$pcaVarName[i])->res
     
     cat('\n')
-    cat(paste0('#### ',i,' graph results of PCA'))
+    cat(paste0('#### PCA ',i,' graph results'))
     cat('\n')
     plot(scree(res$dataScree))
     cat('\n')
     cat('\n')
-    cat(paste0('#### ',i,' loadings of PCA'))
+    cat(paste0('#### PCA ',i,' loadings results'))
     cat('\n')
     cat(pander::pander(res$resPCA$loadings[],split.table=Inf))
     cat('\n')
@@ -490,11 +490,11 @@ if(!all(is.na(myfaParms$data))){
   cat('\n')
   
   
-  cat('## results')
+  # cat('## results')
   cat('\n')
   for(i in 1:nrow(myfaParms)){
     cat('\n')
-    cat(paste0('### ',i,' FA results'))
+    cat(paste0('### FA ',i,' results'))
     cat('\n')
     
     faS(
@@ -508,12 +508,12 @@ if(!all(is.na(myfaParms$data))){
       faVarName=myfaParms$faVarName[i])->res
     
     cat('\n')
-    cat(paste0('#### ',i,' graph results of FA'))
+    cat(paste0('#### FA ',i,' graph results '))
     cat('\n')
     plot(scree(res$dataScree))
     cat('\n')
     cat('\n')
-    cat(paste0('#### ',i,' loadings results of FA'))
+    cat(paste0('#### FA ',i,' loadings results '))
     cat('\n')
     cat(pander::pander(res$resFA$loadings[],split.table=Inf))
     cat('\n')
@@ -585,11 +585,11 @@ if(!all(is.na(myProphetParms$data))){
   cat('\n')
   
   
-  cat('## results')
+  # cat('## results')
   cat('\n')
   for(i in 1:nrow(myProphetParms)){
     cat('\n')
-    cat(paste0('### ',i,' prophet model results'))
+    cat(paste0('### prohpet model ',i,' results'))
     cat('\n')
     
     prophetS(data=LstMadis$Data[[myProphetParms$data[i]]],
@@ -608,23 +608,23 @@ if(!all(is.na(myProphetParms$data))){
              weeklyS = myProphetParms$weeklyS[i])->res
     
     cat('\n')
-    cat(paste0('#### ',i,' historical data results'))
+    cat(paste0('#### historical data results ',i,' '))
     cat('\n')
     cat(pander::pander(res$tabRes,split.table=Inf))
     cat('\n')
-    cat(paste0('#### ',i,' graph results of historical data '))
+    cat(paste0('#### graph of historical data ',i,' '))
     cat('\n')
     cat('\n')
     print(res$graphRes)
     cat('\n')
     
-    cat(paste0('#### ',i,' predicted results'))
+    cat(paste0('#### predicted results',i,' '))
     cat('\n')
     cat('\n')
     print(res$tabPred)
     cat('\n')
     cat('\n')
-    cat(paste0('#### ',i,'graph of predicted results '))
+    cat(paste0('#### graph of predicted results ',i,' '))
     cat('\n')
     cat('\n')
     print(res$graphPredict)
@@ -642,16 +642,16 @@ if(!all(is.na(myProphetParms$data))){
 LstMadis$myTable->myTableParms
 if(!all(is.na(myTableParms$data))){
   cat('\n')
-  cat('# table1')
+  cat('# table one')
   cat('\n')
   cat('\n')
   
   
-  cat('## results')
+  # cat('## results')
   cat('\n')
   for(i in 1:nrow(myTableParms)){
     cat('\n')
-    cat(paste0('### the ',i,'th table'))
+    cat(paste0('### the ',i,'th table one'))
     cat('\n')
     cat(pander::pander(descTab(Formula=myTableParms$Formula[i],data=LstMadis$Data[[myTableParms$data[i]]]),split.table=Inf))
     cat('\n')
@@ -673,7 +673,7 @@ if(!all(is.na(dataMnpParms$data))){
   cat('\n')
   
   
-  cat('## results')
+  # cat('## results')
   cat('\n')
   for(i in 1:nrow(dataMnpParms)){
     cat('\n')
@@ -722,7 +722,7 @@ if(!all(is.na(myGpltParms$data))){
   cat('\n')
   
   
-  cat('## results')
+  # cat('## results')
   cat('\n')
   for(i in 1:nrow(myGpltParms)){
     cat('\n')

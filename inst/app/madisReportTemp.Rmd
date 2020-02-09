@@ -49,7 +49,7 @@ if(!all(is.na(descParams$xvars))){
   cat('\n')
   
   cat('\n')
-  cat('## 结果部分')
+  # cat('## 结果部分')
   cat('\n')
     for(i in 1:nrow(descParams)){
     cat('\n')
@@ -87,7 +87,7 @@ if(!all(is.na(hTestParams$xvars))){
   cat('\n')
   cat('\n')
   
-  cat('## 结果部分')
+  # cat('## 结果部分')
   cat('\n')
     for(i in 1:nrow(hTestParams)){
     cat('\n')
@@ -118,7 +118,7 @@ if(!all(is.na(myGlmParms$data))){
   cat('\n')
   cat('\n')
   
-  cat('## 结果部分')
+  # cat('## 结果部分')
   cat('\n')
     for(i in 1:nrow(myGlmParms)){
     cat('\n')
@@ -245,7 +245,7 @@ if(!all(is.na(myTreeParms$data))){
   cat('\n')
   
   cat('\n')
-  cat('## 结果部分')
+  # cat('## 结果部分')
   cat('\n')
     for(i in 1:nrow(myTreeParms)){
     cat('\n')
@@ -287,7 +287,7 @@ if(!all(is.na(myCoxParms$data))){
   cat('\n')
   
   cat('\n')
-  cat('## 结果部分')
+  # cat('## 结果部分')
   cat('\n')
   for(i in 1:nrow(myCoxParms)){
     cat('\n')
@@ -345,7 +345,7 @@ if(!all(is.na(myLmeParms$data))){
   cat('\n')
   
   
-  cat('## 结果部分')
+  # cat('## 结果部分')
   cat('\n')
   for(i in 1:nrow(myLmeParms)){
     cat('\n')
@@ -389,7 +389,7 @@ if(!all(is.na(myKmeansParms$data))){
   cat('\n')
   
   
-  cat('## 结果部分')
+  # cat('## 结果部分')
   cat('\n')
   for(i in 1:nrow(myKmeansParms)){
     cat('\n')
@@ -442,7 +442,7 @@ if(!all(is.na(mypcaParms$data))){
   cat('\n')
   
   
-  cat('## 结果部分')
+  # cat('## 结果部分')
   cat('\n')
   for(i in 1:nrow(mypcaParms)){
     cat('\n')
@@ -489,7 +489,7 @@ if(!all(is.na(myfaParms$data))){
   cat('\n')
   
   
-  cat('## 结果部分')
+  # cat('## 结果部分')
   cat('\n')
   for(i in 1:nrow(myfaParms)){
     cat('\n')
@@ -584,7 +584,7 @@ if(!all(is.na(myProphetParms$data))){
   cat('\n')
   
   
-  cat('## 结果部分')
+  # cat('## 结果部分')
   cat('\n')
   for(i in 1:nrow(myProphetParms)){
     cat('\n')
@@ -646,7 +646,7 @@ if(!all(is.na(myTableParms$data))){
   cat('\n')
   
   
-  cat('## 结果部分')
+  # cat('## 结果部分')
   cat('\n')
     for(i in 1:nrow(myTableParms)){
     cat('\n')
@@ -672,7 +672,7 @@ if(!all(is.na(dataMnpParms$data))){
   cat('\n')
   
   
-  cat('## 结果部分')
+  # cat('## 结果部分')
   cat('\n')
     for(i in 1:nrow(dataMnpParms)){
     cat('\n')
@@ -721,7 +721,7 @@ if(!all(is.na(myGpltParms$data))){
   cat('\n')
   
   
-  cat('## 结果部分')
+  # cat('## 结果部分')
   cat('\n')
     for(i in 1:nrow(myGpltParms)){
     cat('\n')
