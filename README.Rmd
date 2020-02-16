@@ -1,3 +1,13 @@
+---
+title: "madis"
+author: Son Tron
+date: Feb 16, 2020
+output:
+  md_document:
+    variant: markdown_github
+---
+
+
 # madis - Manipulating and Analyzing Data Interactively with Shiny
 
 madis is an open-source platform-independent browser-based interface for data manipulating and analyzing in [R](http://www.r-project.org/). The application is based on [Shiny](http://www.rstudio.com/shiny/) and can be run locally or on a server. Please use the issue tracker on GitHub to suggest enhancements or report problems. 
