@@ -12,11 +12,11 @@ launch app
 
 There are chinese and english versions.
 
-`Madis(wd='tmp',lang='ch')` for chinese version.
+`Madis(wd=getwd(),lang='ch')` for chinese version.
 
 <img src="docs/launch_ch.png" width = "450px;" alt="regexplain in the Rstudio Addins dropdown">
 
-`Madis(wd='tmp',lang='en')` for english version.
+`Madis(wd=getwd(),lang='en')` for english version.
 
 <img src="docs/launch_en.png" width = "450px;" alt="regexplain in the Rstudio Addins dropdown">
 
@@ -122,7 +122,7 @@ devtools::install_github("sontron/madis")
 Once all packages are installed use the command below to launch the app:
 
 ``` r
-Madis(wd='/home/tmp',lang='en')  # where lang could be en(english version) or cn(chinese version).
+Madis(wd=getwd(),lang='en')  # where lang could be en(english version) or cn(chinese version).
 ```
 
 Reporting issues
@@ -148,8 +148,6 @@ License
 If you are interested in using madis please email me at
 <a href="mailto:sontron@foxmail.com" class="email">sontron@foxmail.com</a>
 
-################# 
-
 madis - Manipulating and Analyzing Data Interactively with Shiny
 ================================================================
 
@@ -160,11 +158,11 @@ madis目前是基于[R](http://www.r-project.org/)和[Shiny](http://www.rstudio.
 
 madis包含了中文和英文版本， 参数lang分别定义了两种语言的版本。
 
-中文版本请运行`Madis(wd='tmp',lang='ch')` .
+中文版本请运行`Madis(wd=getwd(),lang='ch')` .
 
 <img src="docs/launch_ch.png" width = "450px;" alt="regexplain in the Rstudio Addins dropdown">
 
-若使用英文版本请运行`Madis(wd='tmp',lang='en')` .
+若使用英文版本请运行`Madis(wd=getwd(),lang='en')` .
 
 <img src="docs/launch_en.png" width = "450px;" alt="regexplain in the Rstudio Addins dropdown">
 
@@ -241,5 +239,5 @@ devtools::install_github("sontron/madis")
 ```
 
 ``` r
-Madis(wd='/home/tmp',lang='ch')  
+Madis(wd=getwd(),lang='ch')  
 ```
