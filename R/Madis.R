@@ -1,10 +1,13 @@
-
 #' Madis
 #'
-#' is a launcher function
+#' launcher function
+#' @param wd  set working directory.
+#' @param lang en for english, cn for chinese version
+#' @param ...  more args used in runApp, eg. launch.browser=T
+#'
 #'
 #' @export
-Madis <- function(wd=paste0(getwd(),'/'),lang=c('ch','en')[1],Encod='utf8') {
+Madis <- function(wd=paste0(getwd(),'/'),lang=c('ch','en')[1],Encod='utf8',...) {
   #setwd(wd)
   #dir.create('app')
   sd=paste(path.package('madis'),'/app/',sep='')
@@ -23,7 +26,7 @@ Madis <- function(wd=paste0(getwd(),'/'),lang=c('ch','en')[1],Encod='utf8') {
   library(shiny)
   
   
-  runApp(system.file("app", package = "madis"), launch.browser = TRUE)
+  runApp(system.file("app", package = "madis"), ...)
 }
 
 

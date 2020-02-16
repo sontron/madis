@@ -386,7 +386,7 @@ server<-function(input,output,session){
         ),
         panel(status='primary',
               heading='select function',
-              awesomeCheckbox('usemyFun_varMnp','自定义函数?',FALSE),
+              awesomeCheckbox('usemyFun_varMnp','user defined function',FALSE),
               conditionalPanel(
                 condition = "!input['usemyFun_varMnp']",
                 pickerInput(
@@ -1067,7 +1067,7 @@ server<-function(input,output,session){
               ),
               conditionalPanel(
                 condition = "input['fnAggre']=='myFun'",
-                textInputAddon(inputId='myFunAggre','write your own function',value='',placeholder = 'eg:function(x)mean(x)',addon = icon("pencil"))
+                textInputAddon(inputId='myFunAggre','user defined function',value='',placeholder = 'eg:function(x)mean(x)',addon = icon("pencil"))
               )
         )
       ),
@@ -1455,7 +1455,7 @@ server<-function(input,output,session){
             ),
             conditionalPanel(
               condition = "input['method_impute']=='myFun'",
-              textInputAddon(inputId='funImpute',label='write your own function',value='',placeholder = 'eg:function(x)mean(x)',addon = icon('pencil'))
+              textInputAddon(inputId='funImpute',label='user defined function',value='',placeholder = 'eg:function(x)mean(x)',addon = icon('pencil'))
             ),
             conditionalPanel(
               condition = "input['method_impute']=='treeImpute'",
@@ -2448,7 +2448,7 @@ server<-function(input,output,session){
               condition = "input['myFun_desc']",
               textInputAddon('textFun_desc','function in R code',value='',placeholder = 'eg:function(x)mean(x)',addon = icon('pencil'))
             ),
-            awesomeCheckbox('myFun_desc','write your own function',FALSE),
+            awesomeCheckbox('myFun_desc','user defined function',FALSE),
             awesomeCheckbox('export_desc','export to report',FALSE)
       )
     )
@@ -2618,7 +2618,7 @@ server<-function(input,output,session){
               awesomeCheckbox('paired_hTest','matched?',FALSE)
               # numericInput('colsPlot_hTest','多个图形排放列数',min=1,max=10,value=2)
             ),
-            awesomeCheckbox('myFun_hTest','write your own function?',FALSE),
+            awesomeCheckbox('myFun_hTest','user defined function',FALSE),
             conditionalPanel(
               condition = "input['myFun_hTest']",
               aceEditor("textFun_hTest", mode="r", value="#The data name is dat",height='100px')
@@ -5729,7 +5729,7 @@ ui<-fluidPage(
     ###### 描述性分析 ######
     tabPanel(
       icon=icon('dice-one'),
-      'descriptive statistic of one variable',
+      'univariate analysis',
       sidebarLayout(
         sidebarPanel(
           uiOutput('more1_desc'),
@@ -5749,10 +5749,10 @@ ui<-fluidPage(
     
     navbarMenu(
       icon=icon('dice-two'),
-      'hypothesis test',
+      'bivariate analysis',
       ###### 单因素(统计检验)分析 ######
       tabPanel(
-        'hypothesis',
+        'hypothesis test',
         icon=icon('heading'),
         sidebarLayout(
           sidebarPanel(

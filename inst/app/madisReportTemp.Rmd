@@ -21,7 +21,7 @@ output:
 ```{r,message=F,warning=F,echo=F,error=F}
 library(shiny)
 options(digits=4,knitr.table.format='markdown')
-library(reshape2);library(plotly);library(knitr);library(zoo);library(xts);library(rpart);library(partykit);library(showtext);library(ggplot2);library(rms);library(Hmisc);library(mgcv);library(stringi);library(fBasics);library(vcdExtra);library(ROCR);library(survival);library(pander);library(ggfortify);library(madis);library(prophet);library(MASS)
+library(reshape2);library(plotly);library(knitr);library(zoo);library(xts);library(rpart);library(partykit);library(showtext);library(ggplot2);library(rms);library(Hmisc);library(mgcv);library(stringi);library(fBasics);library(vcdExtra);library(ROCR);library(survival);library(pander);library(ggfortify);library(madis);library(prophet);library(MASS);library(survminer)
 
 opts_chunk$set(echo=F,message=F,warning=F,results='asis',comment=NA,fig.showtext=TRUE,fig.width=7,fig.height=5,knitr.table.format='markdown')
 
@@ -308,7 +308,10 @@ if(!all(is.na(myCoxParms$data))){
     cat('\n')
     cat(paste0('#### 第',i,'个模型的全模型图结果：'))
     cat('\n')
-    print(autoplot(survfit(res$coxResFull)))
+    # print(autoplot(survfit(res$coxResFull)))
+    cat('\n')
+    cat('\n')
+    print(ggforest(res$coxResFull,LstMadis$Data[[myCoxParms$data[i]]]))
     cat('\n')
     cat(paste0('#### 第',i,'个模型的逐步回归模型结果：'))
     cat('\n')
@@ -316,7 +319,10 @@ if(!all(is.na(myCoxParms$data))){
     cat('\n')
     cat(paste0('#### 第',i,'个模型的逐步回归模型诊断图结果：'))
     cat('\n')
-    print(autoplot(survfit(res$coxResStep)))
+    # print(autoplot(survfit(res$coxResStep)))
+    cat('\n')
+    cat('\n')
+    print(ggforest(res$coxResStep,LstMadis$Data[[myCoxParms$data[i]]]))
     cat('\n')
     cat('\n')
     cat(paste0('#### 第',i,'个模型的分层生存曲线：'))

@@ -5,8 +5,15 @@
 \title{Madis}
 \usage{
 Madis(wd = paste0(getwd(), "/"), lang = c("ch", "en")[1],
-  Encod = "utf8")
+  Encod = "utf8", ...)
+}
+\arguments{
+\item{wd}{set working directory.}
+
+\item{lang}{en for english, cn for chinese version}
+
+\item{...}{more args used in runApp, eg. launch.browser=T}
 }
 \description{
-is a launcher function
+launcher function
 }

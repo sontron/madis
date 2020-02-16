@@ -5749,7 +5749,7 @@ ui<-fluidPage(
     
     navbarMenu(
       icon=icon('dice-two'),
-      '统计检验',
+      '双变量分析',
       ###### 单因素(统计检验)分析 ######
       tabPanel(
         '假设检验',
