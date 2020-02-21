@@ -22,6 +22,7 @@ library(madis)
 library(rio)
 library(rhandsontable)
 library(ROCR)
+library(mice)
 
 
 
@@ -1581,8 +1582,9 @@ server<-function(input,output,session){
       if(input$method_impute=='MICE'){
         A<-is.na(dat)
         A[,-which(names(dat)%in%input$var_naImpute)]<-F
-        mice(dat,where=A,method=input$method_MICE)->res
-        complete(res)->dat
+        miceChar(dat,Where=A,Method=input$method_MICE)->res
+        # complete(res)->dat
+        res->dat
       }
       
       if(!input$method_impute%in%c('treeImpute','MICE')){

@@ -14,7 +14,7 @@ output:
 
 # 系统说明
 
-本报告由madis包生成。 统计软件（语言）及版本号为`r paste(version$version.string)`。
+本报告由madis包生成。 统计软件（语言）及版本号为`r paste(base:::version$version.string)`。
 
 
 

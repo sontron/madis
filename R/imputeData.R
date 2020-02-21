@@ -82,3 +82,29 @@ imputeData<-function(data,impVars,modelVars,seed=1,treeParams=list(),method=c('s
   rm(dat,envir = .GlobalEnv)
   return(data)
 }
+
+
+
+#' miceChar
+#' 
+#' revised function of mice
+#' 
+#' 
+#' 
+#' @export
+
+miceChar<-function(data,Where,Method){
+  sapply(data,class)->varClass
+  which(varClass=='character')->indChar
+  for(i in indChar){
+    as.factor(data[,i])->data[,i]
+  }
+  mice(data,where=Where,method=Method)->res
+  complete(res)->Res
+  for(i in indChar){
+    as.factor(Res[,i])->Res[,i]
+  }
+  
+  return(Res)
+  
+}
