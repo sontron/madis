@@ -18,11 +18,11 @@ There are chinese and english versions.
 
 ` Madis(wd=getwd(),lang='ch')` for chinese version. 
 
-<img src="docs/launch_ch.png" width = "450px;" alt="regexplain in the Rstudio Addins dropdown">
+<img src="docs/launch_ch.png" width = "450px;">
 
 ` Madis(wd=getwd(),lang='en')` for english version. 
 
-<img src="docs/launch_en.png" width = "450px;" alt="regexplain in the Rstudio Addins dropdown">
+<img src="docs/launch_en.png" width = "450px;">
 
 
 
@@ -51,7 +51,7 @@ You could use several data manipulating functions in `data manipulation` menu.
 - impute na value using mice function.
 - subsetting the data
 
-<img src="docs/data_manipulating_en.png" width = "450px;" alt="regexplain in the Rstudio Addins dropdown">
+<img src="docs/data_manipulating_en.png" width = "450px;">
 
 
 ### Univariate analysis
@@ -59,14 +59,14 @@ You could use several data manipulating functions in `data manipulation` menu.
 The univaraite analysis provides basic univariate descriptive analysis. The results are automaticlly generated according to the distribution of the selected variable.
 
 
-<img src="docs/univariate_en.png" width = "450px;" alt="regexplain in the Rstudio Addins dropdown">
+<img src="docs/univariate_en.png" width = "450px;">
 
 
 ### Bivariate analysis
 
 Bivariate analysis provides automaticlly hypothesis test for two (or one) variables, including hypothesis test for one sample, two independent samples or matched samples. Different hypothesis test methods are used according to the distribution of the sample. You could see `help(hTest)`  for more detail.
 
-<img src="docs/bivariate_en.png" width = "450px;" alt="regexplain in the Rstudio Addins dropdown">
+<img src="docs/bivariate_en.png" width = "450px;">
 
 
 
@@ -74,7 +74,7 @@ Bivariate analysis provides automaticlly hypothesis test for two (or one) variab
 
 To conduct high-quality analysis, statistical model should be used. In madis, you can select models such as linear model, cox proportional hazards model, decision tree model, mixed model, clustering analysis, principal component analysis, factor analysis, propensity score matching, and time-series model to find deep relationships between independent variables and dependent variable.
 
-<img src="docs/model_en.png" width = "450px;" alt="regexplain in the Rstudio Addins dropdown">
+<img src="docs/model_en.png" width = "450px;">
 
 
 
@@ -141,11 +141,11 @@ madis包含了中文和英文版本， 参数lang分别定义了两种语言的�
 
 中文版本请运行` Madis(wd=getwd(),lang='ch')` . 
 
-<img src="docs/launch_ch.png" width = "450px;" alt="regexplain in the Rstudio Addins dropdown">
+<img src="docs/launch_ch.png" width = "450px;">
 
 若使用英文版本请运行` Madis(wd=getwd(),lang='en')` . 
 
-<img src="docs/launch_en.png" width = "450px;" alt="regexplain in the Rstudio Addins dropdown">
+<img src="docs/launch_en.png" width = "450px;">
 
 
 
@@ -174,7 +174,7 @@ madis包含了中文和英文版本， 参数lang分别定义了两种语言的�
 - 缺失值填补（mice包）
 - 数据的截取
 
-<img src="docs/data_manipulating_ch.png" width = "450px;" alt="regexplain in the Rstudio Addins dropdown">
+<img src="docs/data_manipulating_ch.png" width = "450px;">
 
 
 ### 单变量描述性分析
@@ -182,18 +182,18 @@ madis包含了中文和英文版本， 参数lang分别定义了两种语言的�
 单变量分析主要提供单变量的描述性分析结果，主要包含常见的均值、标准差、中位数、四分位数间距、频数表；直方图、条图等
 
 
-<img src="docs/univariate_ch.png" width = "450px;" alt="regexplain in the Rstudio Addins dropdown">
+<img src="docs/univariate_ch.png" width = "450px;">
 
 
 ### 双变量描述性分析
 
 双变量分析主要提供了常见的假设检验方法，并能根据数据的类型和数据的分布进行统计方法的自动选择。统计方法包括：t检验、方差分析、wilcoxon秩和检验、相关性检验、配对t检验、配对秩和检验，卡方检验、fisher检验，CMH检验等方法。
 
-<img src="docs/bivariate_ch.png" width = "450px;" alt="regexplain in the Rstudio Addins dropdown">
+<img src="docs/bivariate_ch.png" width = "450px;">
 
 描述性统计表提供了一键生成汇总统计表的功能，常见于各类期刊的table1.
 
-<img src="docs/table1_ch.png" width = "450px;" alt="regexplain in the Rstudio Addins dropdown">
+<img src="docs/table1_ch.png" width = "450px;">
 
 
 
@@ -202,7 +202,7 @@ madis包含了中文和英文版本， 参数lang分别定义了两种语言的�
 
 模型分析包含了线性模型（普通线性模型、logistic模型、泊松回归模型）、决策树模型、cox模型和混合效应模型。
 
-<img src="docs/model_ch.png" width = "450px;" alt="regexplain in the Rstudio Addins dropdown">
+<img src="docs/model_ch.png" width = "450px;">
 
 
 
