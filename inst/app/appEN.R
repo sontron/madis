@@ -1371,10 +1371,10 @@ server<-function(input,output,session){
       
       if(input$dataName_dataMerge==''){
         assign(paste0(input$dataSel1_dataMerge,input$dataSel2_dataMerge),datMerge,envMadis)
-        LstMadis$Data[[paste0(input$dataSel1_dataMerge,input$dataSel2_dataMerge)]]<-dat
+        LstMadis$Data[[paste0(input$dataSel1_dataMerge,input$dataSel2_dataMerge)]]<-datMerge
       } else {
         assign(input$dataName_dataMerge,datMerge,envMadis)
-        LstMadis$Data[[input$dataName_dataMerge]]<-dat
+        LstMadis$Data[[input$dataName_dataMerge]]<-datMerge
       }
       #LstMadis$Data[[input$dataName_varMnp]]<-dat
       assign('LstMadis',LstMadis,envir=envMadis)
