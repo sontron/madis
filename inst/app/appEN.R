@@ -49,7 +49,7 @@ LstMadis$hTest<-data.frame(xvars=NA,yvars=NA,alter=NA,paired=NA,nullHyp=NA,confL
 LstMadis$myGlm<-data.frame(Formula=NA,data=NA,weightsVar=NA,subset=NA,Family=NA,lower=NA)
 LstMadis$myTree<-data.frame(Formula=NA,data=NA,subset=NA,treeMethod=NA,Minsplit=NA,Minbucket=NA,Maxdepth=NA,CP=NA,Mincrit=NA)
 LstMadis$myCox<-data.frame(Formula=NA,data=NA,weightsVar=NA,subset=NA,strataVar=NA,lower=NA)
-LstMadis$myTable<-data.frame(Formula=NA,data=NA)
+LstMadis$myTable<-data.frame(data=NA,grpVars=NA,testVars=NA)
 LstMadis$myGplt<-data.frame(data=NA,x=NA,y=NA,size=NA,fill=NA,color=NA,shape=NA,alpha=NA,facetVar=NA,
                             geom=NA,smoothMethod=NA,barPos=NA,labx=NA,laby=NA,title=NA,Bins=NA,theme=NA,Width=NA,
                             Colour=NA,Fill=NA,Size=NA,Alpha=NA,Shape=NA)
@@ -1996,10 +1996,11 @@ server<-function(input,output,session){
     req(input$go_myTable)
     # isolate({
     data_myTable()->dat
-    paste(input$lht_myTable,collapse='+')->lhtV
-    paste(input$rht_myTable,collapse='+')->rhtV
-    paste(lhtV,rhtV,sep='~')->Formula
-    descTab(Formula,dat)->res
+    # paste(input$lht_myTable,collapse='+')->lhtV
+    # paste(input$rht_myTable,collapse='+')->rhtV
+    # paste(lhtV,rhtV,sep='~')->Formula
+    # descTab(Formula,dat)->res
+    table1(data=dat,grpVars=input$lht_myTable,testVars=input$rht_myTable)->res
     return(res)
     # })
   })
@@ -2012,10 +2013,12 @@ server<-function(input,output,session){
         data_myTable()->dat
         LstMadis<-get('LstMadis',envMadis)
         #LstMadis$Data[[input$dataSel_myTable]]<-dat
-        paste(input$lht_myTable,collapse='+')->lhtV
-        paste(input$rht_myTable,collapse='+')->rhtV
-        paste(lhtV,rhtV,sep='~')->Formula
-        dat_myTable<-data.frame(Formula=Formula,data=input$dataSel_myTable)
+        # paste(input$lht_myTable,collapse='+')->lhtV
+        # paste(input$rht_myTable,collapse='+')->rhtV
+        # paste(lhtV,rhtV,sep='~')->Formula
+        paste(input$lht_myTable,collapse=';')->lhtV
+        paste(input$rht_myTable,collapse=';')->rhtV
+        dat_myTable<-data.frame(data=input$dataSel_myTable,grpVars=lhtV,testVars=rhtV)
         LstMadis$myTable<-unique(rbind(LstMadis$myTable,dat_myTable))
         subset(LstMadis$myTable,!is.na(data))->LstMadis$myTable
         assign('LstMadis',LstMadis,envir=envMadis)

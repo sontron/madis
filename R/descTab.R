@@ -2,7 +2,8 @@
 #' 
 #' this function is a revised version of mytable in moonBook package.
 #' mytable(moonBook) can deal no more than two group variables. in descTab function, when there are more than two grouping 
-#' variables, they are pasted together as one single variable
+#' variables, they are pasted together as one single variable.(use table1 instead!)
+#' 
 #' 
 #' @examples
 #' descTab(Formula='vs+gear+am~disp+mpg',data=mtcars)
@@ -58,3 +59,6 @@ descTab<-function(Formula,data){
   return(res2)
   
 }
+
+
+

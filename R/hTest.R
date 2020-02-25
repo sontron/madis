@@ -42,13 +42,13 @@ hTest<-function(data,xvars,yvars='',alter=c('two.sided','less','greater')[1],pai
     if(class(dt$x)[1]%in%c('character','ordered','factor')){
       table(dt$x)->Tab
       sum(Tab,na.rm=T)->sumTab
-      uniVar(data=dt,xvars='x',varType='character')$resTabDesc->DescResult
+      uniVar(data=dt,xvars='x',varType='character')$resDesc$resTabDesc->DescResult
       hTestRes<-list(DescResult=DescResult,hTestResult=prop.test(as.numeric(Tab),rep(sumTab,length(Tab)),alternative=alter,conf.level=confLevel))
       hTestGraph<-ggplot(dt,aes(x))+geom_bar(width=0.35,color='white')+labs(x=nameX)+theme_bw()
     } else {
       #pvalShapiro<-ifelse(obsNo>5000,shapiro.test(dt$x[sample(1:obsNo,5000)])$p.value,shapiro.test(dt$x)$p.value) ## 采用ksnormTest 见下行
       pvalShapiro<-ksnormTest(dt$x)@test$p.value[1]
-      uniVar(data=dt,xvars='x',varType='numeric')$resTabDesc->DescResult
+      uniVar(data=dt,xvars='x',varType='numeric')$resDesc$resTabDesc->DescResult
       if(pvalShapiro>0.05|obsNo>normalSampleSize){
         hTestRes<-list(DescResult=DescResult,hTestResult=t.test(dt$x,alternative=alter,mu=nullHyp,conf.level=confLevel))
       } else {
@@ -96,6 +96,10 @@ hTest<-function(data,xvars,yvars='',alter=c('two.sided','less','greater')[1],pai
     
     if(class(dt$x)[1]%in%c('character','ordered','factor')&class(dt$y)[1]%in%c('character','ordered','factor')){
       table(dt$x,dt$y)->tab
+      
+      as.table(apply(tab,2,function(x)paste(x,paste('(',round(100*x/sum(x),3),'%',')',sep=''))))->tab2
+      row.names(tab2)<-row.names(tab)
+      
       if(paired){
         hTestRes<-list(DescResult=tab,hTestResult=mcnemar.test(tab))
       } else {
@@ -105,16 +109,16 @@ hTest<-function(data,xvars,yvars='',alter=c('two.sided','less','greater')[1],pai
           
           tryCatch(fisher.test(tab,alternative = alter,conf.level = confLevel),error=function(e)fisher.test(tab,simulate.p.value = T,B=1e+7,alternative = alter,conf.level = confLevel))->fisherTest
           if(any(c(class(dt$x)[1],class(dt$y)[1])=='ordered')){
-            hTestRes<-list(DescResult=tab,chisqTest=chisq.test(tab),fisherTest=fisherTest,CMHtest=CMHtest(tab))
+            hTestRes<-list(DescResult=tab2,chisqTest=chisq.test(tab),fisherTest=fisherTest,CMHtest=CMHtest(tab))
           } else {
-            hTestRes<-list(DescResult=tab,chisqTest=chisq.test(tab),fisherTest=fisherTest)
+            hTestRes<-list(DescResult=tab2,chisqTest=chisq.test(tab),fisherTest=fisherTest)
           }
           
         } else {
           if(any(c(class(dt$x)[1],class(dt$y)[1])=='ordered')){
-            hTestRes<-list(DescResult=tab,chisqTest=chisq.test(tab),CMHtest=CMHtest(tab))
+            hTestRes<-list(DescResult=tab2,chisqTest=chisq.test(tab),CMHtest=CMHtest(tab))
           } else {
-            hTestRes<-list(DescResult=tab,chisqTest=chisq.test(tab))
+            hTestRes<-list(DescResult=tab2,chisqTest=chisq.test(tab))
           }
           #hTestRes<-list(DescResult=tab,chisqTest=chisq.test(tab),CMHtest=CMHtest(tab))
         }

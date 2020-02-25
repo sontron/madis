@@ -62,10 +62,18 @@ uniVar<-function(data,xvars,varType=c('numeric','character','factor','integer','
   if(varType%in%c('character','factor','ordered')){
     table(x,useNA = 'ifany')->tabChar
     names(tabChar)[which(is.na(names(tabChar)))]<-'NAs'
-    resTab<-cbind(tabChar,round(tabChar/sum(tabChar,na.rm=T),Digits))
-    as.data.frame(resTab)->resTab
-    names(resTab)<-c('Freq','Perc')
-    resDesc<-list(resTabDesc=resTab)
+    
+    # resTab<-cbind(tabChar,round(tabChar/sum(tabChar,na.rm=T),Digits))
+    # as.data.frame(resTab)->resTab
+    # names(resTab)<-c('Freq','Perc')
+    # resDesc<-list(resTabDesc=resTab)
+    
+    matrix(tabChar,ncol=1)->tabMat
+    
+    apply(tabMat,2,function(x)paste(x,paste('(',round(100*x/sum(x),3),'%',')',sep='')))->tabMat
+    row.names(tabMat)<-names(tabChar)
+    as.table(tabMat)->tabMat
+    resDesc<-list(resTabDesc=tabMat)
     graphDesc<-ggplot(dt,aes(x,fill=x))+geom_bar(width=0.35,color='white')+labs(x=nameX)+theme_bw()
   }
   
