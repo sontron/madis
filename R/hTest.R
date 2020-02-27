@@ -30,14 +30,13 @@
 #'
 #' @export
 
-hTest<-function(data,xvars,yvars='',alter=c('two.sided','less','greater')[1],paired=FALSE,confLevel=0.95,nullHyp=0,normalSampleSize=100) {
+hTest<-function(data,xvars,yvars='',alter=c('two.sided','less','greater')[1],paired=FALSE,confLevel=0.95,nullHyp=0,normalSampleSize=30) {
   require(vcdExtra)
   require(fBasics)
   if(is.character(data)) data=eval(as.name(data))
   nrow(data)->obsNo
   if(yvars==''){
     dt<-data.frame(x=data[,xvars[1]],stringsAsFactors = F)
-    #names(dt)[1]<-'x'
     nameX<-xvars[1]
     if(class(dt$x)[1]%in%c('character','ordered','factor')){
       table(dt$x)->Tab
@@ -46,7 +45,6 @@ hTest<-function(data,xvars,yvars='',alter=c('two.sided','less','greater')[1],pai
       hTestRes<-list(DescResult=DescResult,hTestResult=prop.test(as.numeric(Tab),rep(sumTab,length(Tab)),alternative=alter,conf.level=confLevel))
       hTestGraph<-ggplot(dt,aes(x))+geom_bar(width=0.35,color='white')+labs(x=nameX)+theme_bw()
     } else {
-      #pvalShapiro<-ifelse(obsNo>5000,shapiro.test(dt$x[sample(1:obsNo,5000)])$p.value,shapiro.test(dt$x)$p.value) ## 采用ksnormTest 见下行
       pvalShapiro<-ksnormTest(dt$x)@test$p.value[1]
       uniVar(data=dt,xvars='x',varType='numeric')$resDesc$resTabDesc->DescResult
       if(pvalShapiro>0.05|obsNo>normalSampleSize){
@@ -69,12 +67,10 @@ hTest<-function(data,xvars,yvars='',alter=c('two.sided','less','greater')[1],pai
     if(class(dt$x)[1]%in%c('numeric','integer')&class(dt$y)[1]%in%c('numeric','integer')){
       dt$z<-dt$y-dt$x
       nameDiff=paste(nameY,nameX,sep='-')
-      #pvalShapiroX<-ifelse(obsNo>5000,shapiro.test(dt$x[sample(1:obsNo,5000)])$p.value,shapiro.test(dt$x)$p.value)
-      #pvalShapiroY<-ifelse(obsNo>5000,shapiro.test(dt$y[sample(1:obsNo,5000)])$p.value,shapiro.test(dt$y)$p.value)
+      
       pvalShapiroX<-ksnormTest(dt$x)@test$p.value[1]
       pvalShapiroY<-ksnormTest(dt$y)@test$p.value[1]
-      #pvalShapiroDiff<-ifelse(obsNo>5000,shapiro.test((dt$y-dt$x)[sample(1:obsNo,5000)])$p.value,shapiro.test(dt$y-dt$x)$p.value)
-      #pvalShapiroDiff<-ksnormTest(dt$y-dt$x)@test@p.value[1]
+      
       pvalShapiroDiff<-ksnormTest(dt$z)@test$p.value[1]
       if(paired){
         if(pvalShapiroDiff>0.05|obsNo>normalSampleSize){
@@ -85,7 +81,7 @@ hTest<-function(data,xvars,yvars='',alter=c('two.sided','less','greater')[1],pai
         hTestGraph<-ggplot(dt,aes(z))+geom_histogram(color='white',fill='steelblue')+labs(x=nameDiff)+theme_bw()
         
       } else {
-        if((pvalShapiroX>0.05&pvalShapiroY>0.05)|obsNo>100){
+        if((pvalShapiroX>0.05&pvalShapiroY>0.05)&obsNo>normalSampleSize){
           hTestRes<-list(hTestResult=cor.test(dt$x,dt$y,alternative = alter,conf.level = confLevel,method='pearson'))
         } else {
           hTestRes<-list(hTestResult=cor.test(dt$x,dt$y,alternative = alter,conf.level = confLevel,method='spearman'))
@@ -120,7 +116,7 @@ hTest<-function(data,xvars,yvars='',alter=c('two.sided','less','greater')[1],pai
           } else {
             hTestRes<-list(DescResult=tab2,chisqTest=chisq.test(tab))
           }
-          #hTestRes<-list(DescResult=tab,chisqTest=chisq.test(tab),CMHtest=CMHtest(tab))
+          
         }
       }
       hTestGraph<-ggplot(dt,aes(x,fill=y))+geom_bar(width=0.35,color='white',position='dodge')+labs(x=nameX)+scale_fill_discrete(nameY)+theme_bw()
@@ -142,9 +138,10 @@ hTest<-function(data,xvars,yvars='',alter=c('two.sided','less','greater')[1],pai
       row.names(matDesc)<-c('Min','0.25Qu.','Median','Mean','0.75Qu.','Max','NAs','NormalDist.','NonnormalDist.')
       as.data.frame(matDesc)->matDesc
       c(nameX,nameY)[c(indNum,indChar)]->namesdt
-      #pvalShapiroX<-ifelse(obsNo>5000,shapiro.test(dt$x[sample(1:obsNo,5000)])$p.value,shapiro.test(dt$x)$p.value)
+      
       pvalShapiroX<-ksnormTest(dt$x)@test$p.value[1]
-      if(pvalShapiroX>0.05|obsNo>normalSampleSize){
+      table(dt$grp)->tabF
+      if(pvalShapiroX>0.05|all(tabF)>normalSampleSize){
         if(length(unique(dt$grp))==2){
           hTestRes<-list(DescResult=matDesc,hTestResult=t.test(dt$x~dt$grp,alternative=alter,mu=nullHyp,conf.level=confLevel))
         } else {
