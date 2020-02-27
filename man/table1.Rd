@@ -6,6 +6,22 @@
 \usage{
 table1(data, grpVars = "", testVars, Digits = 5)
 }
+\arguments{
+\item{data}{data.frame}
+
+\item{grpVars}{grouping variable names in data. could also use ";" seperate different grouping variables, like grpVars="grp1;grp2"}
+
+\item{testVars}{variable names in data. could also use ";" seperate different vars, like "age;sex"}
+}
 \description{
 generate table1
+}
+\examples{
+
+table1(iris,grpVars=c('Species'),testVars=c('Sepal.Length','Sepal.Width'))
+
+table1(iris,grpVars=c('Species'),testVars=c('Sepal.Length;Sepal.Width'))
+
+
+
 }

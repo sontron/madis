@@ -663,7 +663,7 @@ if(!all(is.na(myTableParms$data))){
     cat('\n')
     cat(paste0('### 第',i,'个表格的结果：'))
     cat('\n')
-    cat(pander::pander(table1(data=LstMadis$Data[[myTableParms$data[i]]],grpVars=myTableParms$grpVars,testVars=myTableParms$testVars),split.table=Inf))
+    cat(pander::pander(table1(data=LstMadis$Data[[myTableParms$data[i]]],grpVars=myTableParms$grpVars[i],testVars=myTableParms$testVars[i]),split.table=Inf))
     cat('\n')
     cat('\n')
     

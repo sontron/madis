@@ -665,7 +665,7 @@ if(!all(is.na(myTableParms$data))){
     cat('\n')
     cat(paste0('### the ',i,'th table one'))
     cat('\n')
-    cat(pander::pander(table1(data=LstMadis$Data[[myTableParms$data[i]]],grpVars=myTableParms$grpVars,testVars=myTableParms$testVars),split.table=Inf))
+    cat(pander::pander(table1(data=LstMadis$Data[[myTableParms$data[i]]],grpVars=myTableParms$grpVars[i],testVars=myTableParms$testVars[i]),split.table=Inf))
     cat('\n')
     cat('\n')
     

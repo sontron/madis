@@ -1,6 +1,21 @@
 #' table1
 #'
-#' generate table1 
+#' generate table1
+#' 
+#' @param data  data.frame
+#' 
+#' @param grpVars grouping variable names in data. could also use ";" seperate different grouping variables, like grpVars="grp1;grp2"
+#' 
+#' @param testVars  variable names in data. could also use ";" seperate different vars, like "age;sex"
+#' 
+#' 
+#' @examples
+#' 
+#' table1(iris,grpVars=c('Species'),testVars=c('Sepal.Length','Sepal.Width'))
+#' 
+#' table1(iris,grpVars=c('Species'),testVars=c('Sepal.Length;Sepal.Width'))
+#' 
+#' 
 #' 
 #' @export
 
