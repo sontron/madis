@@ -46,8 +46,9 @@ hTest<-function(data,xvars,yvars='',alter=c('two.sided','less','greater')[1],pai
       hTestGraph<-ggplot(dt,aes(x))+geom_bar(width=0.35,color='white')+labs(x=nameX)+theme_bw()
     } else {
       pvalShapiro<-ksnormTest(dt$x)@test$p.value[1]
+      noX<-sum(!is.na(dt$x))
       uniVar(data=dt,xvars='x',varType='numeric')$resDesc$resTabDesc->DescResult
-      if(pvalShapiro>0.05|obsNo>normalSampleSize){
+      if(pvalShapiro>0.05|noX>normalSampleSize){
         hTestRes<-list(DescResult=DescResult,hTestResult=t.test(dt$x,alternative=alter,mu=nullHyp,conf.level=confLevel))
       } else {
         
@@ -68,12 +69,14 @@ hTest<-function(data,xvars,yvars='',alter=c('two.sided','less','greater')[1],pai
       dt$z<-dt$y-dt$x
       nameDiff=paste(nameY,nameX,sep='-')
       
+      noZ<-sum(!is.na(dt$z))
+      noXY<-sum(apply(dt[,c('x','y')],1,function(i)all(!is.na(i))))
       pvalShapiroX<-ksnormTest(dt$x)@test$p.value[1]
       pvalShapiroY<-ksnormTest(dt$y)@test$p.value[1]
       
       pvalShapiroDiff<-ksnormTest(dt$z)@test$p.value[1]
       if(paired){
-        if(pvalShapiroDiff>0.05|obsNo>normalSampleSize){
+        if(pvalShapiroDiff>0.05|noZ>normalSampleSize){
           hTestRes<-list(hTestResult=t.test(dt$z,mu=nullHyp,alternative = alter,conf.level=confLevel))
         } else {
           hTestRes<-list(hTestResult=wilcox.test(dt$z,mu=nullHyp,alternative = alter,conf.level=confLevel))
@@ -81,7 +84,7 @@ hTest<-function(data,xvars,yvars='',alter=c('two.sided','less','greater')[1],pai
         hTestGraph<-ggplot(dt,aes(z))+geom_histogram(color='white',fill='steelblue')+labs(x=nameDiff)+theme_bw()
         
       } else {
-        if((pvalShapiroX>0.05&pvalShapiroY>0.05)&obsNo>normalSampleSize){
+        if((pvalShapiroX>0.05&pvalShapiroY>0.05)&noXY>normalSampleSize){
           hTestRes<-list(hTestResult=cor.test(dt$x,dt$y,alternative = alter,conf.level = confLevel,method='pearson'))
         } else {
           hTestRes<-list(hTestResult=cor.test(dt$x,dt$y,alternative = alter,conf.level = confLevel,method='spearman'))
@@ -140,8 +143,9 @@ hTest<-function(data,xvars,yvars='',alter=c('two.sided','less','greater')[1],pai
       c(nameX,nameY)[c(indNum,indChar)]->namesdt
       
       pvalShapiroX<-ksnormTest(dt$x)@test$p.value[1]
-      table(dt$grp)->tabF
-      if(pvalShapiroX>0.05|all(tabF)>normalSampleSize){
+      # table(dt$grp)->tabF
+      tapply(dt$x,dt$grp,function(i)sum(!is.na(i)))->tabF
+      if(pvalShapiroX>0.05|all(tabF>normalSampleSize)){
         if(length(unique(dt$grp))==2){
           hTestRes<-list(DescResult=matDesc,hTestResult=t.test(dt$x~dt$grp,alternative=alter,mu=nullHyp,conf.level=confLevel))
         } else {

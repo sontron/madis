@@ -95,7 +95,7 @@ if(!all(is.na(hTestParams$xvars))){
     cat(paste0('### ',hTestParams$xvars[i],' & ',hTestParams$yvars[i],' '))
     cat('\n')
     #print(pander(resDesc[[i]]$resTabDesc))
-    hTest(data=LstMadis$Data[[hTestParams$dataName[i]]],xvars=hTestParams$xvars[i],yvars=hTestParams$yvars[i],alter=hTestParams$alter[i],paired=hTestParams$paired[i],confLevel=hTestParams$confLevel[i],nullHyp=hTestParams$nullHyp[i])->res
+    hTest(data=LstMadis$Data[[hTestParams$dataName[i]]],xvars=hTestParams$xvars[i],yvars=hTestParams$yvars[i],alter=hTestParams$alter[i],paired=hTestParams$paired[i],confLevel=hTestParams$confLevel[i],nullHyp=hTestParams$nullHyp[i],normalSampleSize =hTestParams$normalSampleSize[i] )->res
     cat(pander::pander(res$hTestRes,split.table=Inf))
     cat('\n')
     plot(res$hTestGraph)

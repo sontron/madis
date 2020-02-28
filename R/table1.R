@@ -19,7 +19,7 @@
 #' 
 #' @export
 
-table1<-function(data,grpVars='',testVars,Digits=5){
+table1<-function(data,grpVars='',testVars,Digits=5,normSamSize=30){
   require(stringi)
   if(is.character(data)) data=eval(as.name(data))
   grpVars<-unlist(stri_split_fixed(grpVars,';'))
@@ -40,9 +40,9 @@ table1<-function(data,grpVars='',testVars,Digits=5){
   lst<-list()
   for(i in testVars){
     if(all(is.na(data[,'GrpVar']))){
-      hTest(data,i)->resi
+      hTest(data,i,normalSampleSize = normSamSize)->resi
     } else {
-      hTest(data,i,'GrpVar')->resi
+      hTest(data,i,'GrpVar',normalSampleSize = normSamSize)->resi
       unique(data[,'GrpVar'])->Levels
     }
     

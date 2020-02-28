@@ -45,11 +45,11 @@ rm(list=c('seed','wd','wd2','sd'))
 environment()->envMadis
 LstMadis<-list()
 LstMadis$desc<-data.frame(xvars=NA,Digits=NA,dataName=NA,stringsAsFactors = F)
-LstMadis$hTest<-data.frame(xvars=NA,yvars=NA,alter=NA,paired=NA,nullHyp=NA,confLevel=NA,dataName=NA,stringsAsFactors = F)
+LstMadis$hTest<-data.frame(xvars=NA,yvars=NA,alter=NA,paired=NA,nullHyp=NA,confLevel=NA,dataName=NA,normalSampleSize=NA,stringsAsFactors = F)
 LstMadis$myGlm<-data.frame(Formula=NA,data=NA,weightsVar=NA,subset=NA,Family=NA,lower=NA)
 LstMadis$myTree<-data.frame(Formula=NA,data=NA,subset=NA,treeMethod=NA,Minsplit=NA,Minbucket=NA,Maxdepth=NA,CP=NA,Mincrit=NA)
 LstMadis$myCox<-data.frame(Formula=NA,data=NA,weightsVar=NA,subset=NA,strataVar=NA,lower=NA)
-LstMadis$myTable<-data.frame(data=NA,grpVars=NA,testVars=NA)
+LstMadis$myTable<-data.frame(data=NA,grpVars=NA,testVars=NA,normSamSize=NA)
 LstMadis$myGplt<-data.frame(data=NA,x=NA,y=NA,size=NA,fill=NA,color=NA,shape=NA,alpha=NA,facetVar=NA,
                             geom=NA,smoothMethod=NA,barPos=NA,labx=NA,laby=NA,title=NA,Bins=NA,theme=NA,Width=NA,
                             Colour=NA,Fill=NA,Size=NA,Alpha=NA,Shape=NA)
@@ -1974,7 +1974,8 @@ server<-function(input,output,session){
               selected='',
               multiple = TRUE,
               options = list(`actions-box` = TRUE)
-            )
+            ),
+            numericInput('normSamSize','threshole of samplesize for nonormal dist.',value=30)
       ),
       awesomeCheckbox('export_myTable','export to report?',FALSE)
     )
@@ -2000,7 +2001,7 @@ server<-function(input,output,session){
     # paste(input$rht_myTable,collapse='+')->rhtV
     # paste(lhtV,rhtV,sep='~')->Formula
     # descTab(Formula,dat)->res
-    table1(data=dat,grpVars=input$lht_myTable,testVars=input$rht_myTable)->res
+    table1(data=dat,grpVars=input$lht_myTable,testVars=input$rht_myTable,normSamSize=input$normSamSize)->res
     return(res)
     # })
   })
@@ -2018,7 +2019,7 @@ server<-function(input,output,session){
         # paste(lhtV,rhtV,sep='~')->Formula
         paste(input$lht_myTable,collapse=';')->lhtV
         paste(input$rht_myTable,collapse=';')->rhtV
-        dat_myTable<-data.frame(data=input$dataSel_myTable,grpVars=lhtV,testVars=rhtV)
+        dat_myTable<-data.frame(data=input$dataSel_myTable,grpVars=lhtV,testVars=rhtV,normSamSize=input$normSamSize)
         LstMadis$myTable<-unique(rbind(LstMadis$myTable,dat_myTable))
         subset(LstMadis$myTable,!is.na(data))->LstMadis$myTable
         assign('LstMadis',LstMadis,envir=envMadis)
@@ -2621,7 +2622,8 @@ server<-function(input,output,session){
               ),
               numericInput('nullHyp_hTest','population statistic',value=0),
               numericInput('confLevel_hTest','confidence level',value=0.95,min=0,max=1),
-              awesomeCheckbox('paired_hTest','matched?',FALSE)
+              awesomeCheckbox('paired_hTest','matched?',FALSE),
+              numericInput('normSamSize','threshole of samplesize for nonormal dist.',value=30)
               # numericInput('colsPlot_hTest','多个图形排放列数',min=1,max=10,value=2)
             ),
             awesomeCheckbox('myFun_hTest','user defined function',FALSE),
@@ -2663,7 +2665,7 @@ server<-function(input,output,session){
       resAll<-list()
       for(i in 1:length(input$varsy_hTest)){
         for (j in 1:length(input$varsx_hTest)){
-          resAll[[length(input$varsx_hTest)*(i-1)+j]]<-hTest(data=dat,xvars=input$varsx_hTest[j],yvars=input$varsy_hTest[i],alter=input$alter_hTest,paired=input$paired_hTest,nullHyp=input$nullHyp_hTest,confLevel=input$confLevel_hTest)
+          resAll[[length(input$varsx_hTest)*(i-1)+j]]<-hTest(data=dat,xvars=input$varsx_hTest[j],yvars=input$varsy_hTest[i],alter=input$alter_hTest,paired=input$paired_hTest,nullHyp=input$nullHyp_hTest,confLevel=input$confLevel_hTest,normalSampleSize = input$normSamSize)
         }
       }
       #biVar(data=dat,xvars=input$varsx_hTest,yvars=input$varsy_hTest,alter=input$alter_hTest,paired=input$paired_hTest,nullHyp=input$nullHyp_hTest,confLevel=input$confLevel_hTest)->res
@@ -2682,7 +2684,7 @@ server<-function(input,output,session){
         expand.grid(input$varsx_hTest,input$varsy_hTest)->varsInput
         names(varsInput)<-c('xvars','yvars')
         dat_hTest<-data.frame(varsInput,alter=input$alter_hTest,
-                              paired=input$paired_hTest,nullHyp=input$nullHyp_hTest,confLevel=input$confLevel_hTest,dataName=input$dataSel_hTest,stringsAsFactors = F)
+                              paired=input$paired_hTest,nullHyp=input$nullHyp_hTest,confLevel=input$confLevel_hTest,dataName=input$dataSel_hTest,normalSampleSize = input$normSamSize,stringsAsFactors = F)
         LstMadis$hTest<-unique(rbind(LstMadis$hTest,dat_hTest))
         subset(LstMadis$hTest,!is.na(xvars))->LstMadis$hTest
         as.logical(LstMadis$hTest$paired)->LstMadis$hTest$paired

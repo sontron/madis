@@ -4,7 +4,7 @@
 \alias{table1}
 \title{table1}
 \usage{
-table1(data, grpVars = "", testVars, Digits = 5)
+table1(data, grpVars = "", testVars, Digits = 5, normSamSize = 30)
 }
 \arguments{
 \item{data}{data.frame}
