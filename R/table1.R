@@ -19,8 +19,9 @@
 #' 
 #' @export
 
-table1<-function(data,grpVars='',testVars,Digits=5,normSamSize=30){
+table1<-function(data,grpVars='',testVars,Digits=2,normSamSize=30){
   require(stringi)
+  Digits+3->Digts
   if(is.character(data)) data=eval(as.name(data))
   grpVars<-unlist(stri_split_fixed(grpVars,';'))
   
@@ -40,9 +41,9 @@ table1<-function(data,grpVars='',testVars,Digits=5,normSamSize=30){
   lst<-list()
   for(i in testVars){
     if(all(is.na(data[,'GrpVar']))){
-      hTest(data,i,normalSampleSize = normSamSize)->resi
+      hTest(data,i,normalSampleSize = normSamSize,Digits=Digits)->resi
     } else {
-      hTest(data,i,'GrpVar',normalSampleSize = normSamSize)->resi
+      hTest(data,i,'GrpVar',normalSampleSize = normSamSize,Digits=Digits)->resi
       unique(data[,'GrpVar'])->Levels
     }
     
@@ -104,7 +105,7 @@ table1<-function(data,grpVars='',testVars,Digits=5,normSamSize=30){
       
       desci<-desci[order(names(desci))]
       
-      c(i,desci,methi,round(pvali,Digits))->rowi
+      c(i,desci,methi,round(pvali,Digts))->rowi
       
     } else {   # chisq or fisher test
       
@@ -134,7 +135,7 @@ table1<-function(data,grpVars='',testVars,Digits=5,normSamSize=30){
       }
       
       
-      c(i,rep('',ncol(desci)),methi,round(pvali,Digits))->rowi1
+      c(i,rep('',ncol(desci)),methi,round(pvali,Digts))->rowi1
       
       cbind(paste('-',row.names(desci)),desci,'','')->rowi2
       rbind(rowi1,rowi2)->rowi

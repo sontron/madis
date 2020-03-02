@@ -6,7 +6,7 @@
 \usage{
 hTest(data, xvars, yvars = "", alter = c("two.sided", "less",
   "greater")[1], paired = FALSE, confLevel = 0.95, nullHyp = 0,
-  normalSampleSize = 30)
+  normalSampleSize = 30, Digits = 4)
 }
 \arguments{
 \item{data}{data.frame}

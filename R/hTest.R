@@ -30,9 +30,10 @@
 #'
 #' @export
 
-hTest<-function(data,xvars,yvars='',alter=c('two.sided','less','greater')[1],paired=FALSE,confLevel=0.95,nullHyp=0,normalSampleSize=30) {
+hTest<-function(data,xvars,yvars='',alter=c('two.sided','less','greater')[1],paired=FALSE,confLevel=0.95,nullHyp=0,normalSampleSize=30,Digits=4) {
   require(vcdExtra)
   require(fBasics)
+  Digits->Digts
   if(is.character(data)) data=eval(as.name(data))
   nrow(data)->obsNo
   if(yvars==''){
@@ -41,13 +42,13 @@ hTest<-function(data,xvars,yvars='',alter=c('two.sided','less','greater')[1],pai
     if(class(dt$x)[1]%in%c('character','ordered','factor')){
       table(dt$x)->Tab
       sum(Tab,na.rm=T)->sumTab
-      uniVar(data=dt,xvars='x',varType='character')$resDesc$resTabDesc->DescResult
+      uniVar(data=dt,xvars='x',varType='character',Digits=Digts)$resDesc$resTabDesc->DescResult
       hTestRes<-list(DescResult=DescResult,hTestResult=prop.test(as.numeric(Tab),rep(sumTab,length(Tab)),alternative=alter,conf.level=confLevel))
       hTestGraph<-ggplot(dt,aes(x))+geom_bar(width=0.35,color='white')+labs(x=nameX)+theme_bw()
     } else {
       pvalShapiro<-ksnormTest(dt$x)@test$p.value[1]
       noX<-sum(!is.na(dt$x))
-      uniVar(data=dt,xvars='x',varType='numeric')$resDesc$resTabDesc->DescResult
+      uniVar(data=dt,xvars='x',varType='numeric',Digits=Digts)$resDesc$resTabDesc->DescResult
       if(pvalShapiro>0.05|noX>normalSampleSize){
         hTestRes<-list(DescResult=DescResult,hTestResult=t.test(dt$x,alternative=alter,mu=nullHyp,conf.level=confLevel))
       } else {
@@ -131,8 +132,8 @@ hTest<-function(data,xvars,yvars='',alter=c('two.sided','less','greater')[1],pai
       which(c(class(dt$x)[1],class(dt$y)[1])%in%c('character','factor'))->indChar
       dt[,c(indNum,indChar)]->dt
       names(dt)<-c('x','grp')
-      tapply(dt$x,dt$grp,function(i)uniVar(data=dt,xvars='x',varType='numeric')$resDesc$resTabDesc)->X
-      sapply(as.vector(na.omit(unique(dt$grp))),function(i)uniVar(data=dt[dt$grp==i,],xvars='x',varType='numeric')$resDesc$resTabDesc)->X
+      tapply(dt$x,dt$grp,function(i)uniVar(data=dt,xvars='x',varType='numeric',Digits=Digts)$resDesc$resTabDesc)->X
+      sapply(as.vector(na.omit(unique(dt$grp))),function(i)uniVar(data=dt[dt$grp==i,],xvars='x',varType='numeric',Digits=Digts)$resDesc$resTabDesc)->X
       matrix(nr=9,nc=length(X))->matDesc
       for(i in 1:ncol(matDesc)){
         matDesc[,i]<-as.character(X[[i]])
