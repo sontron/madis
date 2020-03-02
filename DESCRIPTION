@@ -53,7 +53,6 @@ Imports:
   party,
   partykit,
   rpart,
-  moonBook,
   fBasics,
   plotly,
   prophet,
