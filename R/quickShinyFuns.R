@@ -80,7 +80,7 @@ qGraph<-function(dt,...){
                 
                 pickerInput(
                   inputId='yvar_myGplt',
-                  label='select y vars',
+                  label='select y var',
                   choices = c('NULL'='NULL',names(dt)),
                   selected='NULL',
                   multiple = FALSE,
