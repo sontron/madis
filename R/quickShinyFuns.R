@@ -468,116 +468,137 @@ qTable<-function(dt,...){
   as.data.frame(dt)->dt
   if (interactive()) {
     shinyApp(options=list(...),
-      ui = fluidPage(
-        sidebarLayout(
-          sidebarPanel(
-            uiOutput('more1_DT'),
-            actionBttn('go_DT','confirm')
-          ),
-          mainPanel(
-            panel(
-              heading = 'set dataMnp args',
-              rHandsontableOutput("handsonTB"),
-              status='primary'
-            ),
-            panel(heading = 'results',
-                  DT:::dataTableOutput('resMnp'),
-                  status='primary'
-            )
-            
-            
-          )
-        )
-      ),
-      server = function(input, output) {
-        
-        output$more1_DT<-renderUI({
-          list(
-            panel(
-              heading = 'set no of args',
-              numericInput(
-                inputId = 'nrow_DT',
-                label = 'no of args',
-                value = 1,
-                min=1,
-                max=100
-              ),
-              status = 'primary'
-            )#,
-            # awesomeCheckbox('export_dataMnp','将该结果输出报告',FALSE)
-          )
-        })
-        
-        
-        
-        output$handsonTB<-renderRHandsontable({
-          rhandsontable(data.frame(
-            subset=rep('',input$nrow_DT),
-            newvars=rep('',input$nrow_DT),
-            newvarsformulas=rep('',input$nrow_DT),
-            newvarsby=rep('',input$nrow_DT),
-            indexnames=rep('',input$nrow_DT),
-            formulas=rep('',input$nrow_DT),
-            dimvars=rep('',input$nrow_DT),
-            dimnames=rep('',input$nrow_DT),
-            datevar=rep('',input$nrow_DT),
-            dtorders=rep('',input$nrow_DT),
-            margin=rep(0L,input$nrow_DT),  
-            revisedmargin=rep(0L,input$nrow_DT),  
-            revisednames=rep('',input$nrow_DT),  
-            revisedformulas=rep('',input$nrow_DT),  
-            ordervars=rep('',input$nrow_DT),   
-            orders=rep('',input$nrow_DT),   
-            digits=rep(0L,input$nrow_DT),      
-            tbvars=rep('',input$nrow_DT),         
-            hbvars=rep('',input$nrow_DT),          
-            colorder=rep('',input$nrow_DT)
-          ),readOnly=F)
-        })
-        
-        dtCfg <- reactive({
-          hot_to_r(req(input$handsonTB))
-        })
-        
-        res_DT<-eventReactive(input$go_DT,{
-          dtCfg()->cfg
-          cfg[cfg=='']<-NA
-          dataMnp(
-            data=dt,
-            subset=cfg$subset,
-            newVars=cfg$newvars,
-            newVarsFormulas=cfg$newvarsformulas,
-            newVarsBy=cfg$newvarsby,
-            indexNames=cfg$indexnames,
-            Formulas=cfg$formulas,
-            dimVars=cfg$dimvars,
-            dimNames=cfg$dimnames,
-            dateVar=cfg$datevar,
-            dtOrders=cfg$dtorders,
-            margin=cfg$margin,  
-            revisedMargin=cfg$revisedmargin,  
-            revisedNames=cfg$revisednames,  
-            revisedFormulas=cfg$revisedformulas,  
-            orderVars=cfg$ordervars,   
-            orders=cfg$orders,   
-            Digits=cfg$digits,      
-            tbVars=cfg$tbvars,         
-            hbVars=cfg$hbvars,          
-            colOrder=cfg$colorder
-            
-          )->res
-          return(res)
-        })
-        
-        
-        
-        output$resMnp<-DT:::renderDataTable(
-          res_DT()$tabRes,server=T
-        )
-        
-        
-        
-      }
+             ui = fluidPage(
+               sidebarLayout(
+                 sidebarPanel(
+                   uiOutput('more1_DT'),
+                   actionBttn('go_DT','confirm')
+                 ),
+                 mainPanel(
+                   panel(
+                     heading='View head of the data',
+                     rHandsontableOutput("dtHead"),
+                     status='primary'
+                     
+                   ),
+                   panel(
+                     heading = 'set dataMnp args',
+                     rHandsontableOutput("handsonTB"),
+                     status='primary'
+                   ),
+                   panel(heading = 'results',
+                         DT:::dataTableOutput('resMnp'),
+                         status='primary'
+                   ),
+                   downloadButton('downloadData','download result')
+                   
+                 )
+               )
+             ),
+             server = function(input, output) {
+               
+               output$more1_DT<-renderUI({
+                 list(
+                   panel(
+                     heading = 'set no of args',
+                     numericInput(
+                       inputId = 'nrow_DT',
+                       label = 'no of args',
+                       value = 1,
+                       min=1,
+                       max=100
+                     ),
+                     status = 'primary'
+                   )#,
+                   # awesomeCheckbox('export_dataMnp','将该结果输出报告',FALSE)
+                 )
+               })
+               
+               
+               output$dtHead<-renderRHandsontable({
+                 rhandsontable(head(dt))
+               })
+               
+               
+               output$handsonTB<-renderRHandsontable({
+                 rhandsontable(data.frame(
+                   subset=rep('',input$nrow_DT),
+                   newvars=rep('',input$nrow_DT),
+                   newvarsformulas=rep('',input$nrow_DT),
+                   newvarsby=rep('',input$nrow_DT),
+                   indexnames=rep('',input$nrow_DT),
+                   formulas=rep('',input$nrow_DT),
+                   dimvars=rep('',input$nrow_DT),
+                   dimnames=rep('',input$nrow_DT),
+                   datevar=rep('',input$nrow_DT),
+                   dtorders=rep('',input$nrow_DT),
+                   margin=rep(0L,input$nrow_DT),  
+                   revisedmargin=rep(0L,input$nrow_DT),  
+                   revisednames=rep('',input$nrow_DT),  
+                   revisedformulas=rep('',input$nrow_DT),  
+                   ordervars=rep('',input$nrow_DT),   
+                   orders=rep('',input$nrow_DT),   
+                   digits=rep(0L,input$nrow_DT),      
+                   tbvars=rep('',input$nrow_DT),         
+                   hbvars=rep('',input$nrow_DT),          
+                   colorder=rep('',input$nrow_DT)
+                 ),readOnly=F)
+               })
+               
+               dtCfg <- reactive({
+                 hot_to_r(req(input$handsonTB))
+               })
+               
+               res_DT<-eventReactive(input$go_DT,{
+                 dtCfg()->cfg
+                 cfg[cfg=='']<-NA
+                 dataMnp(
+                   data=dt,
+                   subset=cfg$subset,
+                   newVars=cfg$newvars,
+                   newVarsFormulas=cfg$newvarsformulas,
+                   newVarsBy=cfg$newvarsby,
+                   indexNames=cfg$indexnames,
+                   Formulas=cfg$formulas,
+                   dimVars=cfg$dimvars,
+                   dimNames=cfg$dimnames,
+                   dateVar=cfg$datevar,
+                   dtOrders=cfg$dtorders,
+                   margin=cfg$margin,  
+                   revisedMargin=cfg$revisedmargin,  
+                   revisedNames=cfg$revisednames,  
+                   revisedFormulas=cfg$revisedformulas,  
+                   orderVars=cfg$ordervars,   
+                   orders=cfg$orders,   
+                   Digits=cfg$digits,      
+                   tbVars=cfg$tbvars,         
+                   hbVars=cfg$hbvars,          
+                   colOrder=cfg$colorder
+                   
+                 )->res
+                 return(res)
+               })
+               
+               
+               
+               output$resMnp<-DT:::renderDataTable(
+                 res_DT()$tabRes,server=T
+               )
+               
+               
+               
+               output$downloadData<-downloadHandler(
+                 filename=function(){
+                   paste('tableRes-',Sys.Date(),'.csv',sep='')
+                 },
+                 content=function(file){
+                   write.csv(res_DT()$tabRes,file,fileEncoding='GB18030')
+                 }
+               )
+               
+               
+               
+             }
     )
   }
 }
