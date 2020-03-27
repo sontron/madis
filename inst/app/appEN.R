@@ -23,7 +23,7 @@ library(rio)
 library(rhandsontable)
 library(ROCR)
 library(mice)
-
+library(DT)
 
 
 options(shiny.maxRequestSize = 50000*1024^2)

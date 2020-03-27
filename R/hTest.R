@@ -97,7 +97,7 @@ hTest<-function(data,xvars,yvars='',alter=c('two.sided','less','greater')[1],pai
     if(class(dt$x)[1]%in%c('character','ordered','factor')&class(dt$y)[1]%in%c('character','ordered','factor')){
       table(dt$x,dt$y)->tab
       
-      as.table(apply(tab,2,function(x)paste(x,paste('(',round(100*x/sum(x),3),'%',')',sep=''))))->tab2
+      as.table(apply(tab,2,function(x)paste(x,paste('(',round(100*x/sum(x),Digts),'%',')',sep=''))))->tab2
       row.names(tab2)<-row.names(tab)
       
       if(paired){

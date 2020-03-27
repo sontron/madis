@@ -70,7 +70,7 @@ uniVar<-function(data,xvars,varType=c('numeric','character','factor','integer','
     
     matrix(tabChar,ncol=1)->tabMat
     
-    apply(tabMat,2,function(x)paste(x,paste('(',round(100*x/sum(x),3),'%',')',sep='')))->tabMat
+    apply(tabMat,2,function(x)paste(x,paste('(',round(100*x/sum(x),Digits),'%',')',sep='')))->tabMat
     row.names(tabMat)<-names(tabChar)
     as.table(tabMat)->tabMat
     resDesc<-list(resTabDesc=tabMat)
