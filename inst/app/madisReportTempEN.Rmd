@@ -139,7 +139,7 @@ if(!all(is.na(myGlmParms$data))){
       cat('\n')
       cat('\n')
       summary(res$glmResFull)->fitSum
-      fitSum$coefficients<-cbind(fitSum$coefficients,exp(confint(res$glmResFull)))
+      fitSum$coefficients<-cbind(fitSum$coefficients,OR=exp(fitSum$coefficients),exp(confint(res$glmResFull)))
       # cat(pander(exp(confint(res$glmResFull))))
       cat(pander::pander(fitSum,split.table=Inf))
       cat('\n')
@@ -188,7 +188,7 @@ if(!all(is.na(myGlmParms$data))){
       # cat(paste0('#### 第',i,'个模型的置信区间结果：'))
       cat('\n')
       summary(res$glmResStep)->fitSum
-      fitSum$coefficients<-cbind(fitSum$coefficients,exp(confint(res$glmResStep)))
+      fitSum$coefficients<-cbind(fitSum$coefficients,OR=exp(fitSum$coefficients),exp(confint(res$glmResStep)))
       # cat(pander(exp(confint(res$glmResFull))))
       cat(pander::pander(fitSum,split.table=Inf))
       cat('\n')
