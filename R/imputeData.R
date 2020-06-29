@@ -26,7 +26,7 @@
 #'
 #' @export
 
-imputeData<-function(data,impVars,modelVars,seed=1,treeParams=list(),method=c('sample','pred')[1]){
+imputeData<-function(data,impVars,modelVars,seed=1,treeMethod=c('rpart','ctree'),treeParams=list(),method=c('sample','pred')[1]){
   require(rpart)
   require(partykit)
   if(is.character(data)) data=eval(as.name(data))
@@ -41,8 +41,14 @@ imputeData<-function(data,impVars,modelVars,seed=1,treeParams=list(),method=c('s
   for(i in impVars){
     if(any(is.na(dat[,i]))) {
       paste(i,'~',paste(names(dat)[-which(names(dat)==i)],collapse='+'),sep='')->formula
-      rpart:::rpart(formula,data=dat,control=treeParams)->fit
-      as.party(fit)->fit
+      if(treeMethod=='rpart'){
+        rpart:::rpart(as.formula(formula),data=dat,control=treeParams)->fit
+        as.party(fit)->fit
+      } else {
+        partykit:::ctree(as.formula(formula),data=dat)->fit
+      }
+      
+      
       #as.party(fit)->fitParty
       if(length(unique(partykit:::predict.party(fit,type='node')))==1){
         dat[is.na(dat[,i]),i]<-sample(dat[!is.na(dat[,i]),i],length(dat[is.na(dat[,i]),i]),rep=T)

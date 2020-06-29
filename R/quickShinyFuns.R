@@ -440,7 +440,8 @@ qDT<-function(dt,...){
                         label = 'choose vars to show',
                         choices = names(dt),
                         selected = names(dt),
-                        multiple = T)
+                        multiple = T,
+                        options = list(`actions-box` = TRUE))
           )
         })
         

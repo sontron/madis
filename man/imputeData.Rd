@@ -4,8 +4,8 @@
 \alias{imputeData}
 \title{imputeData}
 \usage{
-imputeData(data, impVars, modelVars, seed = 1, treeParams = list(),
-  method = c("sample", "pred")[1])
+imputeData(data, impVars, modelVars, seed = 1, treeMethod = c("rpart",
+  "ctree"), treeParams = list(), method = c("sample", "pred")[1])
 }
 \arguments{
 \item{data}{data.frame}
