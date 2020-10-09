@@ -17,6 +17,7 @@ qGraph<-function(dt,...){
   require(shiny)
   require(shinyWidgets)
   require(showtext)
+  require(htmlwidgets)
   as.data.frame(dt)->dt
   if (interactive()) {
     shinyApp(options=list(...),
@@ -370,14 +371,14 @@ qGraph<-function(dt,...){
                
                output$downloadGraph<-downloadHandler(
                  filename=function(){
-                   paste('graph-',Sys.Date(),'.pdf',sep='')
+                   paste('graph-',Sys.Date(),'.html',sep='')
                  },
                  content=function(file){
-                   pdf(file)
-                   showtext_begin()
-                   plot(res_myGplt()$resGGplot)
-                   showtext_end()
-                   dev.off()
+                   # html(file)
+                   # showtext_begin()
+                   saveWidget(as_widget(res_myGplt()$resPlotly),file,selfcontained = TRUE)
+                   # showtext_end()
+                   # dev.off()
                    
                  }
                  
