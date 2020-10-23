@@ -2,7 +2,7 @@
 % Please edit documentation in R/quickShinyFuns.R
 \name{qGraph}
 \alias{qGraph}
-\title{qPlotly}
+\title{qGraph}
 \usage{
 qGraph(dt, ...)
 }
@@ -11,9 +11,4 @@ quick plotly based on ggplt2S. along with Filter param.
 }
 \details{
 use ggplt2S params in ...
-}
-\examples{
-
-fnPlotly(dt=mtcars,x='disp',y='mpg',geom=c('point','smooth'),Colour='red',alpha=.5,Filter=c('vs','gear','am'))
-
 }

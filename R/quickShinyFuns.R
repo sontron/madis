@@ -1,12 +1,8 @@
-#' qPlotly
+#' qGraph
 #' 
 #' quick plotly based on ggplt2S. along with Filter param.
 #' 
 #' use ggplt2S params in ...
-#' 
-#' @examples 
-#' 
-#' fnPlotly(dt=mtcars,x='disp',y='mpg',geom=c('point','smooth'),Colour='red',alpha=.5,Filter=c('vs','gear','am'))
 #' 
 #' @export
 
@@ -22,28 +18,167 @@ qGraph<-function(dt,...){
   if (interactive()) {
     shinyApp(options=list(...),
              ui = fluidPage(
-               sidebarLayout(
-                 sidebarPanel(
-                   panel(
-                     heading = 'Filter setting',
-                     uiOutput('more0_Filter'),
-                     uiOutput('more1_Filter'),
-                     status = 'primary'
-                   ),
-                   
-                   panel(
-                     heading = 'Plot settings',
-                     uiOutput('more2_myGplt'),
-                     status = 'primary'
-                   ),
-                   actionBttn('go_myGplt','confirm')
+               navbarPage(
+                 title=div(icon("r-project"), strong("qGraph")),
+                 tabPanel(
+                   'ggplot',
+                   sidebarLayout(
+                     sidebarPanel(
+                       panel(
+                         heading = 'Filter setting',
+                         uiOutput('more0_Filter'),
+                         uiOutput('more1_Filter'),
+                         status = 'primary'
+                       ),
+                       
+                       panel(
+                         heading = 'Plot settings',
+                         uiOutput('more2_myGplt'),
+                         status = 'primary'
+                       ),
+                       actionBttn('go_myGplt','confirm')
+                     ),
+                     mainPanel(
+                       uiOutput('more3_myGplt'),
+                       downloadButton('downloadGraph','download graph')
+                     )
+                   )
                  ),
-                 mainPanel(
-                   uiOutput('more3_myGplt'),
-                   downloadButton('downloadGraph','download graph')
+                 tabPanel(
+                   'prophet',
+                   sidebarLayout(
+                     sidebarPanel(
+                       panel(
+                         heading = 'Filter setting',
+                         # status='primary',
+                         uiOutput('more2_Filter'),
+                         uiOutput('more3_Filter'),
+                         status = 'primary'
+                       ),
+                       # flowLayout(
+                       panel(
+                         heading='set params',
+                         status='primary',
+                         
+                         pickerInput(
+                           inputId='tsvar_myProphet',
+                           label='选择日期时间变量',
+                           choices = c(names(dt)),
+                           selected='NULL',
+                           multiple = FALSE,
+                           options = list(`actions-box` = FALSE)
+                         ),
+                         
+                         pickerInput(
+                           inputId='dateFormat_myProphet',
+                           label='日期格式',
+                           choices=c(
+                             '年'='y',
+                             '年月'='ym',
+                             "年月日"="ymd",
+                             '月日年'='mdy',
+                             '日月年'='dmy'
+                           ),
+                           selected ='yyyymmdd',
+                           multiple=FALSE,
+                           options=list(`actions-box` = FALSE)
+                         ),
+                         
+                         pickerInput(
+                           inputId='timeFormat_myProphet',
+                           label='时间格式',
+                           choices=c(
+                             '无'='',
+                             '时'='H',
+                             "时分"="HM",
+                             '时分秒'='HMS'
+                           ),
+                           selected ='yyyymmdd',
+                           multiple=FALSE,
+                           options=list(`actions-box` = FALSE)
+                         ),
+                         
+                         pickerInput(
+                           inputId='measurevars_myProphet',
+                           label='选择待分析变量',
+                           choices = c(names(dt)),
+                           selected='NULL',
+                           multiple = TRUE,
+                           options = list(`actions-box` = TRUE)
+                         ),
+                         
+                         pickerInput(
+                           inputId='groupvars_myProphet',
+                           label='选择亚组分析变量',
+                           choices = c('无'='1',names(dt)),
+                           selected='1',
+                           multiple = TRUE,
+                           options = list(`actions-box` = TRUE)
+                         ),
+                         
+                         pickerInput(
+                           inputId='period_myProphet',
+                           label='选择处理时间段',
+                           choices = c(
+                             '日'='days',
+                             '周'='weeks',
+                             '月'='months',
+                             '季'='quarters',
+                             '年'='years'
+                             
+                           ),
+                           selected='months',
+                           multiple = FALSE,
+                           options = list(`actions-box` = FALSE)
+                         ),
+                         
+                         
+                         pickerInput(
+                           inputId='growth_myProphet',
+                           label='设定趋势类型',
+                           choices = c(
+                             '线性'='linear',
+                             'Logistic'='logistic'
+                           ),
+                           selected='linear',
+                           multiple = FALSE,
+                           options = list(`actions-box` = FALSE)
+                         ),
+                         pickerInput(
+                           inputId='FN_myProphet',
+                           label='设定分析方法',
+                           choices = c(
+                             '求和'='function(x)sum(x,na.rm=T)',
+                             '均值'='function(x)mean(x,na.rm=T)',
+                             '中位数'='function(x)median(x,na.rm=T)',
+                             '最大值'='function(x)max(x,na.rm=T)',
+                             '最小值'='function(x)min(x,na.rm=T)',
+                             '标准差'='function(x)sd(x,na.rm=T)'
+                           ),
+                           selected='function(x)sum(x,na.rm=T)',
+                           multiple = FALSE,
+                           options = list(`actions-box` = FALSE)
+                         ),
+                         awesomeCheckbox('dailyS_myProphet','是否分析日趋势',TRUE),
+                         awesomeCheckbox('weeklyS_myProphet','是否分析周趋势',TRUE),
+                         awesomeCheckbox('yearlyS_myProphet','是否分析年趋势',TRUE),
+                         actionBttn('go_myProphet','confirm')
+                       )
+                       
+                       # )
+                       
+                     ),
+                     mainPanel(
+                       uiOutput('more3_myProphet')#,
+                       # downloadButton('downloadGraph','download graph')
+                     )
+                   )
+                   
+                   
+                   
+                   
                  )
                )
-               
              ),
              server = function(input, output) {
                
@@ -51,7 +186,13 @@ qGraph<-function(dt,...){
                
                output$more0_Filter<-renderUI({
                  list(
-                   pickerInput('Filter','choose filter vars',choices = c('none'='',names(dt)),selected ='无',multiple=T )
+                   pickerInput(
+                     'Filter',
+                     'choose filter vars',
+                     choices = c('none'='',names(dt)),
+                     selected ='无',
+                     multiple=T,
+                     options = list(`actions-box` = T))
                  )
                  
                })
@@ -65,6 +206,7 @@ qGraph<-function(dt,...){
                    }
                  )
                })
+               
                
                
                output$more2_myGplt<-renderUI({
@@ -385,6 +527,199 @@ qGraph<-function(dt,...){
                )
                
                
+               output$more2_Filter<-renderUI({
+                 list(
+                   pickerInput('Filter2','choose filter vars',choices = c('none'='',names(dt)),selected ='无',multiple=T )
+                 )
+                 
+               })
+               
+               output$more3_Filter<-renderUI({
+                 list(
+                   if(length(setdiff(input$Filter2,''))==0){
+                     NULL
+                   } else {
+                     shinyFilter(dt,filter=setdiff(input$Filter2,''))
+                   }
+                 )
+               })
+               
+               output$more3_myProphet<-renderUI({
+                 list(
+                   tabsetPanel(
+                     tabPanel(
+                       '历史数据结果',
+                       tabsetPanel(
+                         tabPanel(
+                           '历史数据表格结果',
+                           dataTableOutput(
+                             'resTab_myProphet'
+                           )
+                         ),
+                         tabPanel(
+                           'ggplot结果',
+                           plotOutput('ggplotHis_myProphet',height='700px'),
+                           status='primary'
+                         ),
+                         tabPanel(
+                           'plotly结果',
+                           plotlyOutput('plotlyHis_myProphet',height='700px'),
+                           status='primary'
+                         )
+                       )
+                       
+                       
+                       
+                     ),
+                     tabPanel(
+                       '预测结果',
+                       tabsetPanel(
+                         tabPanel(
+                           '预测数据表格结果',
+                           dataTableOutput(
+                             'predTab_myProphet'
+                           )
+                         ),
+                         tabPanel(
+                           'ggplot结果',
+                           plotOutput('ggplotPred_myProphet',height='700px'),
+                           status='primary'
+                         ),
+                         tabPanel(
+                           'plotly结果',
+                           plotlyOutput('plotlyPred_myProphet',height='700px'),
+                           status='primary'
+                         )
+                       )
+                       
+                       
+                       
+                     )
+                   ),
+                   # tabsetPanel(
+                   tabPanel(
+                     '调整可变属性',
+                     flowLayout(
+                       
+                       numericInput(
+                         inputId='cap_myProphet',
+                         label='设定相对上限',
+                         value=-1,
+                         step=1
+                       ),
+                       
+                       numericInput(
+                         inputId='floor_myProphet',
+                         label='设定相对下限',
+                         value=-1,
+                         step=1
+                       ),
+                       
+                       numericInput(
+                         inputId='H_myProphet',
+                         label='设定预测时间长度',
+                         value=10,
+                         step=1
+                       )
+                     )
+                   )
+                   # )
+                   
+                 )
+               })
+               
+               res_myProphet<-reactive({
+                 input$go_myProphet
+                 req(input$go_myProphet)
+                 if(length(setdiff(input$Filter2,''))==0){
+                   dat<-dt
+                 } else {
+                   
+                   indMat<-sapply(setdiff(input$Filter2,''),function(i){
+                     if(class(dt[,i])%in%c('character','factor')){
+                       dt[,i]%in%input[[i]]
+                     } else {
+                       dt[,i]>=input[[i]][1]&dt[,i]<=input[[i]][2]
+                       
+                     }
+                   })
+                   
+                   apply(indMat,1,all)->Ind
+                   dat<-dt[Ind,]
+                   
+                 }
+                 # isolate({
+                 
+                 prophetS(data=dat,
+                          tsVar=input$tsvar_myProphet,
+                          tsFormat = paste(input$dateFormat_myProphet,input$timeFormat_myProphet,sep=''),
+                          measureVars=input$measurevars_myProphet,
+                          groupVars = input$groupvars_myProphet,
+                          Period = input$period_myProphet,
+                          FN=input$FN_myProphet,
+                          Cap=input$cap_myProphet,
+                          Floor=input$floor_myProphet,
+                          Growth=input$growth_myProphet,
+                          H=input$H_myProphet,
+                          yearlyS = input$yearlyS_myProphet,
+                          dailyS = input$dailyS_myProphet,
+                          weeklyS = input$weeklyS_myProphet
+                          
+                          
+                 )->res_Prophet
+                 return(res_Prophet)
+               })
+               
+               
+               
+               output$resTab_myProphet<-renderDataTable({
+                 input$go_myProphet
+                 isolate({
+                   res_myProphet()->resmyProphet
+                   resmyProphet$tabRes
+                 })
+               })
+               
+               output$ggplotHis_myProphet<-renderPlot({
+                 input$go_myProphet
+                 isolate({
+                   res_myProphet()->resmyProphet
+                   resmyProphet$graphRes
+                 })
+               })
+               
+               output$plotlyHis_myProphet<-renderPlotly({
+                 input$go_myProphet
+                 isolate({
+                   res_myProphet()->resmyProphet
+                   resmyProphet$graphRes
+                 })
+               })
+               
+               
+               output$predTab_myProphet<-renderDataTable({
+                 input$go_myProphet
+                 isolate({
+                   res_myProphet()->resmyProphet
+                   resmyProphet$tabPred
+                 })
+               })
+               
+               output$ggplotPred_myProphet<-renderPlot({
+                 input$go_myProphet
+                 isolate({
+                   res_myProphet()->resmyProphet
+                   resmyProphet$graphPredict
+                 })
+               })
+               
+               output$plotlyPred_myProphet<-renderPlotly({
+                 input$go_myProphet
+                 isolate({
+                   res_myProphet()->resmyProphet
+                   resmyProphet$graphPredict
+                 })
+               })
                
              }
     )
@@ -413,44 +748,44 @@ qDT<-function(dt,...){
   as.data.frame(dt)->dt
   if (interactive()) {
     shinyApp(options=list(...),
-      ui = fluidPage(
-        sidebarLayout(
-          sidebarPanel(
-            panel(
-              heading = 'vars to keep',
-              uiOutput('more1'),
-              status='primary'
-            )
-            
-          ),
-          mainPanel(
-            panel(
-              heading = 'DataTable Outputs',
-              DTOutput('tbl'),
-              status='primary'
-            )
-            
-          )
-        )
-      ),
-      server = function(input, output) {
-        
-        output$more1<-renderUI({
-          list(
-            pickerInput(inputId = 'varsKeep',
-                        label = 'choose vars to show',
-                        choices = names(dt),
-                        selected = names(dt),
-                        multiple = T,
-                        options = list(`actions-box` = TRUE))
-          )
-        })
-        
-        output$tbl = renderDT(
-          dt[,input$varsKeep,drop=F],
-          server=T,filter='top'
-        )
-      }
+             ui = fluidPage(
+               sidebarLayout(
+                 sidebarPanel(
+                   panel(
+                     heading = 'vars to keep',
+                     uiOutput('more1'),
+                     status='primary'
+                   )
+                   
+                 ),
+                 mainPanel(
+                   panel(
+                     heading = 'DataTable Outputs',
+                     DTOutput('tbl'),
+                     status='primary'
+                   )
+                   
+                 )
+               )
+             ),
+             server = function(input, output) {
+               
+               output$more1<-renderUI({
+                 list(
+                   pickerInput(inputId = 'varsKeep',
+                               label = 'choose vars to show',
+                               choices = names(dt),
+                               selected = names(dt),
+                               multiple = T,
+                               options = list(`actions-box` = TRUE))
+                 )
+               })
+               
+               output$tbl = renderDT(
+                 dt[,input$varsKeep,drop=F],
+                 server=T,filter='top'
+               )
+             }
     )
   }
 }
@@ -467,7 +802,7 @@ shinyFilter<-function(dt,filter=Filter){
   renderUI({
     lapply(filter,function(i){
       if(class(dt[,i])%in%c('character','factor')){
-        pickerInput(i,i,choices = unique(dt[,i]),selected = unique(dt[,i]),multiple = T)
+        pickerInput(i,i,choices = unique(dt[,i]),selected = unique(dt[,i]),multiple = T,options = list(`actions-box` = T))
       } else {
         numericRangeInput(i,i,value=c(min(dt[,i],na.rm=T),max(dt[,i],na.rm=T)))
       }
@@ -625,3 +960,328 @@ qTable<-function(dt,...){
   }
 }
 
+
+
+
+#' qTS
+#' 
+#' quick TS funs. same as time series in Madis
+#' 
+#' 
+#' @export
+
+qTS<-function(dt,...){
+  require(stringi)
+  require(plotly)
+  require(ggplot2)
+  require(shiny)
+  require(shinyWidgets)
+  require(showtext)
+  require(htmlwidgets)
+  require(lubridate)
+  require(prophet)
+  as.data.frame(dt)->dt
+  if (interactive()) {
+    shinyApp(options=list(...),
+             ui = fluidPage(
+               sidebarLayout(
+                 sidebarPanel(
+                   panel(heading='set params',
+                     status='primary',
+                         flowLayout(
+                           heading='选择时间序列分析各参数',
+                           pickerInput(
+                             inputId='tsvar_myProphet',
+                             label='选择日期时间变量',
+                             choices = c(names(dt)),
+                             selected='NULL',
+                             multiple = FALSE,
+                             options = list(`actions-box` = FALSE)
+                           ),
+                           
+                           pickerInput(
+                             inputId='dateFormat_myProphet',
+                             label='日期格式',
+                             choices=c(
+                               '年'='y',
+                               '年月'='ym',
+                               "年月日"="ymd",
+                               '月日年'='mdy',
+                               '日月年'='dmy'
+                             ),
+                             selected ='yyyymmdd',
+                             multiple=FALSE,
+                             options=list(`actions-box` = FALSE)
+                           ),
+                           
+                           pickerInput(
+                             inputId='timeFormat_myProphet',
+                             label='时间格式',
+                             choices=c(
+                               '无'='',
+                               '时'='H',
+                               "时分"="HM",
+                               '时分秒'='HMS'
+                             ),
+                             selected ='yyyymmdd',
+                             multiple=FALSE,
+                             options=list(`actions-box` = FALSE)
+                           ),
+                           
+                           pickerInput(
+                             inputId='measurevars_myProphet',
+                             label='选择待分析变量',
+                             choices = c(names(dt)),
+                             selected='NULL',
+                             multiple = TRUE,
+                             options = list(`actions-box` = TRUE)
+                           ),
+                           
+                           pickerInput(
+                             inputId='groupvars_myProphet',
+                             label='选择亚组分析变量',
+                             choices = c('无'='1',names(dt)),
+                             selected='1',
+                             multiple = TRUE,
+                             options = list(`actions-box` = TRUE)
+                           ),
+                           
+                           pickerInput(
+                             inputId='period_myProphet',
+                             label='选择处理时间段',
+                             choices = c(
+                               '日'='days',
+                               '周'='weeks',
+                               '月'='months',
+                               '季'='quarters',
+                               '年'='years'
+                               
+                             ),
+                             selected='months',
+                             multiple = FALSE,
+                             options = list(`actions-box` = FALSE)
+                           ),
+                           
+                           
+                           pickerInput(
+                             inputId='growth_myProphet',
+                             label='设定趋势类型',
+                             choices = c(
+                               '线性'='linear',
+                               'Logistic'='logistic'
+                             ),
+                             selected='linear',
+                             multiple = FALSE,
+                             options = list(`actions-box` = FALSE)
+                           ),
+                           pickerInput(
+                             inputId='FN_myProphet',
+                             label='设定分析方法',
+                             choices = c(
+                               '求和'='function(x)sum(x,na.rm=T)',
+                               '均值'='function(x)mean(x,na.rm=T)',
+                               '中位数'='function(x)median(x,na.rm=T)',
+                               '最大值'='function(x)max(x,na.rm=T)',
+                               '最小值'='function(x)min(x,na.rm=T)',
+                               '标准差'='function(x)sd(x,na.rm=T)'
+                             ),
+                             selected='function(x)sum(x,na.rm=T)',
+                             multiple = FALSE,
+                             options = list(`actions-box` = FALSE)
+                           ),
+                           awesomeCheckbox('dailyS_myProphet','是否分析日趋势',TRUE),
+                           awesomeCheckbox('weeklyS_myProphet','是否分析周趋势',TRUE),
+                           awesomeCheckbox('yearlyS_myProphet','是否分析年趋势',TRUE)
+                         ),
+                         actionBttn('go_myProphet','confirm')
+                   )
+                   
+                 ),
+                 mainPanel(
+                   uiOutput('more3_myProphet')#,
+                   # downloadButton('downloadGraph','download graph')
+                 )
+               )
+               
+             ),
+             server = function(input, output) {
+               
+               output$more3_myProphet<-renderUI({
+                 list(
+                   tabsetPanel(
+                     tabPanel(
+                       '历史数据结果',
+                       tabsetPanel(
+                         tabPanel(
+                           '历史数据表格结果',
+                           dataTableOutput(
+                             'resTab_myProphet'
+                           )
+                         ),
+                         tabPanel(
+                           'ggplot结果',
+                           plotOutput('ggplotHis_myProphet',height='700px'),
+                           status='primary'
+                         ),
+                         tabPanel(
+                           'plotly结果',
+                           plotlyOutput('plotlyHis_myProphet',height='700px'),
+                           status='primary'
+                         )
+                       )
+                       
+                       
+                       
+                     ),
+                     tabPanel(
+                       '预测结果',
+                       tabsetPanel(
+                         tabPanel(
+                           '预测数据表格结果',
+                           dataTableOutput(
+                             'predTab_myProphet'
+                           )
+                         ),
+                         tabPanel(
+                           'ggplot结果',
+                           plotOutput('ggplotPred_myProphet',height='700px'),
+                           status='primary'
+                         ),
+                         tabPanel(
+                           'plotly结果',
+                           plotlyOutput('plotlyPred_myProphet',height='700px'),
+                           status='primary'
+                         )
+                       )
+                       
+                       
+                       
+                     )
+                   ),
+                   # tabsetPanel(
+                   tabPanel(
+                     '调整可变属性',
+                     flowLayout(
+                       
+                       numericInput(
+                         inputId='cap_myProphet',
+                         label='设定相对上限',
+                         value=-1,
+                         step=1
+                       ),
+                       
+                       numericInput(
+                         inputId='floor_myProphet',
+                         label='设定相对下限',
+                         value=-1,
+                         step=1
+                       ),
+                       
+                       numericInput(
+                         inputId='H_myProphet',
+                         label='设定预测时间长度',
+                         value=10,
+                         step=1
+                       )
+                     )
+                   )
+                   # )
+                   
+                 )
+               })
+               
+               res_myProphet<-reactive({
+                 input$go_myProphet
+                 req(input$go_myProphet)
+                 # isolate({
+                 
+                 prophetS(data=dt,
+                          tsVar=input$tsvar_myProphet,
+                          tsFormat = paste(input$dateFormat_myProphet,input$timeFormat_myProphet,sep=''),
+                          measureVars=input$measurevars_myProphet,
+                          groupVars = input$groupvars_myProphet,
+                          Period = input$period_myProphet,
+                          FN=input$FN_myProphet,
+                          Cap=input$cap_myProphet,
+                          Floor=input$floor_myProphet,
+                          Growth=input$growth_myProphet,
+                          H=input$H_myProphet,
+                          yearlyS = input$yearlyS_myProphet,
+                          dailyS = input$dailyS_myProphet,
+                          weeklyS = input$weeklyS_myProphet
+                          
+                          
+                 )->res_Prophet
+                 return(res_Prophet)
+               })
+               
+               
+               
+               output$resTab_myProphet<-renderDataTable({
+                 input$go_myProphet
+                 isolate({
+                   res_myProphet()->resmyProphet
+                   resmyProphet$tabRes
+                 })
+               })
+               
+               output$ggplotHis_myProphet<-renderPlot({
+                 input$go_myProphet
+                 isolate({
+                   res_myProphet()->resmyProphet
+                   resmyProphet$graphRes
+                 })
+               })
+               
+               output$plotlyHis_myProphet<-renderPlotly({
+                 input$go_myProphet
+                 isolate({
+                   res_myProphet()->resmyProphet
+                   resmyProphet$graphRes
+                 })
+               })
+               
+               
+               output$predTab_myProphet<-renderDataTable({
+                 input$go_myProphet
+                 isolate({
+                   res_myProphet()->resmyProphet
+                   resmyProphet$tabPred
+                 })
+               })
+               
+               output$ggplotPred_myProphet<-renderPlot({
+                 input$go_myProphet
+                 isolate({
+                   res_myProphet()->resmyProphet
+                   resmyProphet$graphPredict
+                 })
+               })
+               
+               output$plotlyPred_myProphet<-renderPlotly({
+                 input$go_myProphet
+                 isolate({
+                   res_myProphet()->resmyProphet
+                   resmyProphet$graphPredict
+                 })
+               })
+               
+               
+               # output$downloadGraph<-downloadHandler(
+               #   filename=function(){
+               #     paste('graph-',Sys.Date(),'.html',sep='')
+               #   },
+               #   content=function(file){
+               #     saveWidget(as_widget(res_myGplt()$resPlotly),file,selfcontained = TRUE)
+               #     
+               #   }
+               #   
+               # )
+               
+               
+               
+             }
+    )
+  }
+  
+}
