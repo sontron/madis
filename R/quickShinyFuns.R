@@ -952,9 +952,6 @@ qTable<-function(dt,...){
                    write.csv(res_DT()$tabRes,file,fileEncoding='GB18030')
                  }
                )
-               
-               
-               
              }
     )
   }
@@ -987,7 +984,7 @@ qTS<-function(dt,...){
                sidebarLayout(
                  sidebarPanel(
                    panel(heading='set params',
-                     status='primary',
+                         status='primary',
                          flowLayout(
                            heading='选择时间序列分析各参数',
                            pickerInput(
