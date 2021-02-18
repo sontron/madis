@@ -69,5 +69,6 @@ Imports:
   vegan,
   rhandsontable,
   rio,
+  mice,
   DT
 ByteCompile: true
