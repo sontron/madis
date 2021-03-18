@@ -70,5 +70,6 @@ Imports:
   rhandsontable,
   rio,
   mice,
+  lubridate,
   DT
 ByteCompile: true
